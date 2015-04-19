@@ -8,6 +8,16 @@ IterativeRobot::RobotInit()
 }
 
 void
+IterativeRobot::DisabledInit()
+{
+}
+
+void
+IterativeRobot::DisabledPeriodic()
+{
+}
+
+void
 IterativeRobot::AutonomousInit()
 {
 }
@@ -24,6 +34,11 @@ IterativeRobot::TeleopInit()
 
 void
 IterativeRobot::TeleopPeriodic()
+{
+}
+
+void
+IterativeRobot::TestInit()
 {
 }
 

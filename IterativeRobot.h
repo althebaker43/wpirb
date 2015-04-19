@@ -8,6 +8,10 @@ class IterativeRobot
 
         virtual void RobotInit();
 
+        virtual void DisabledInit();
+
+        virtual void DisabledPeriodic();
+
         virtual void AutonomousInit();
 
         virtual void AutonomousPeriodic();
@@ -15,6 +19,8 @@ class IterativeRobot
         virtual void TeleopInit();
 
         virtual void TeleopPeriodic();
+
+        virtual void TestInit();
 
         virtual void TestPeriodic();
 };

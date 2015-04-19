@@ -4,6 +4,7 @@ CPPFLAGS= \
 	-Werror
 
 MODULES= \
+	FieldControlSystem \
 	IterativeRobot \
 	RobotDrive \
 	Joystick \
@@ -11,7 +12,7 @@ MODULES= \
 OBJS=$(MODULES:%=%.o)
 LIB=libwpirb.a
 
-CPPUTEST_HOME = $(HOME)/Development/tdd/cpputest-build
+CPPUTEST_HOME = $(HOME)/Development/tdd/cpputest-3.6
 CPPFLAGS += -I$(CPPUTEST_HOME)/include
 CXXFLAGS += -include  $(CPPUTEST_HOME)/include/CppUTest/MemoryLeakDetectorNewMacros.h
 LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
