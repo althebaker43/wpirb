@@ -8,11 +8,13 @@ class LiveWindow
 
         static LiveWindow* GetInstance();
 
+        static void DestroyInstance();
+
         void Run();
 
     private:
 
-        static LiveWindow* myInstance;
+        static LiveWindow* ourInstance;
 
         LiveWindow();
         LiveWindow(const LiveWindow&);

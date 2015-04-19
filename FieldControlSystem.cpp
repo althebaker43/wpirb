@@ -1,6 +1,7 @@
 
 #include "FieldControlSystem.h"
 #include "IterativeRobot.h"
+#include <stdlib.h>
 
 
 FieldControlSystem* FieldControlSystem::ourInstance = NULL;

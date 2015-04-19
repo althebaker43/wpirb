@@ -6,7 +6,9 @@ class Joystick
 {
     public:
 
-        Joystick(int);
+        Joystick(
+                int port
+                );
 };
 
 #endif /* ifndef JOYSTICK_H */

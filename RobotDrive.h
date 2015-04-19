@@ -15,8 +15,17 @@ class RobotDrive
                 uint32_t rightChannel
                 );
 
+        void SetExpiration(
+                double expiration
+                );
+
         void ArcadeDrive(
-                Joystick*
+                Joystick& joystick
+                );
+
+        void Drive(
+                double mangitude,
+                double curve
                 );
 };
 
