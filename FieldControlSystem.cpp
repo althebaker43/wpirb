@@ -1,6 +1,6 @@
 
 #include "FieldControlSystem.h"
-#include "IterativeRobot.h"
+#include "RedBot.h"
 #include <stdlib.h>
 
 
@@ -40,7 +40,7 @@ FieldControlSystem::~FieldControlSystem()
 
 void
 FieldControlSystem::Register(
-        IterativeRobot* robot
+        RedBot* robot
         )
 {
     myRobot = robot;
@@ -50,52 +50,32 @@ void
 FieldControlSystem::EnableAutonomous()
 {
     myMode = MODE_AUTO;
-    myRobot->AutonomousInit();
+    myRobot->modeInit(MODE_AUTO);
 }
 
 void
 FieldControlSystem::EnableTeleop()
 {
     myMode = MODE_TELEOP;
-    myRobot->TeleopInit();
+    myRobot->modeInit(MODE_TELEOP);
 }
 
 void
 FieldControlSystem::EnableTest()
 {
     myMode = MODE_TEST;
-    myRobot->TestInit();
+    myRobot->modeInit(MODE_TEST);
 }
 
 void
 FieldControlSystem::Step()
 {
-    switch (myMode)
-    {
-        case MODE_DISABLED:
-            myRobot->DisabledPeriodic();
-            break;
-
-        case MODE_AUTO:
-            myRobot->AutonomousPeriodic();
-            break;
-
-        case MODE_TELEOP:
-            myRobot->TeleopPeriodic();
-            break;
-
-        case MODE_TEST:
-            myRobot->TestPeriodic();
-            break;
-
-        default:
-            break;
-    };
+    myRobot->modePeriodic(myMode);
 }
 
 void
 FieldControlSystem::Disable()
 {
     myMode = MODE_DISABLED;
-    myRobot->DisabledInit();
+    myRobot->modeInit(MODE_DISABLED);
 }

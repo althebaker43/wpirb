@@ -1,5 +1,6 @@
 
 #include "IterativeRobot.h"
+#include "RedBot.h"
 #include "FieldControlSystem.h"
 #include "CppUTest/TestHarness.h"
 
@@ -53,6 +54,26 @@ class CountRobot : public IterativeRobot
         }
 };
 
+class MockRedBot : public RedBot
+{
+    public:
+
+        MockRedBot(
+                IterativeRobot* program
+                ) :
+            RedBot(
+                    program,
+                    NULL
+                  )
+        {
+        }
+
+        bool isConnected()
+        {
+            return true;
+        }
+};
+
 TEST(IterativeRobot, BasicTest)
 {
     CountRobot robot;
@@ -73,8 +94,9 @@ TEST(IterativeRobot, BasicTest)
 TEST(IterativeRobot, BasicFCSTest)
 {
     CountRobot robot;
+    MockRedBot redBot(&robot);
     FieldControlSystem* fcs = FieldControlSystem::GetInstance();
-    fcs->Register(&robot);
+    fcs->Register(&redBot);
     fcs->EnableAutonomous();
 
     CHECK_EQUAL(0, robot.getCount(FieldControlSystem::MODE_AUTO));

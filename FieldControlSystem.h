@@ -2,7 +2,7 @@
 #define FIELDCONTROLSYSTEM_H
 
 // Forward declaration
-class IterativeRobot;
+class RedBot;
 
 /**
  * Encapsuales the Field Control System
@@ -44,7 +44,7 @@ class FieldControlSystem
          * notified about mode changes.
          */
         void Register(
-                IterativeRobot* robot
+                RedBot* robot
                 );
 
         /**
@@ -88,8 +88,10 @@ class FieldControlSystem
 
         /**
          * Robot running on the field
+         *
+         * \todo Add support for multiple robots running at once
          */
-        IterativeRobot* myRobot;
+        RedBot* myRobot;
 
         /**
          * Current mode of the system

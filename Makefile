@@ -8,7 +8,8 @@ MODULES= \
 	IterativeRobot \
 	RobotDrive \
 	Joystick \
-	LiveWindow
+	LiveWindow \
+	RedBot
 OBJS=$(MODULES:%=%.o)
 LIB=libwpirb.a
 
