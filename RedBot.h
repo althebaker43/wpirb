@@ -2,6 +2,8 @@
 #define REDBOT_H
 
 #include "FieldControlSystem.h"
+#include <stdio.h>
+#include <termios.h>
 
 // Forward declaration
 class IterativeRobot;
@@ -56,9 +58,24 @@ class RedBot
     private:
 
         /**
+         * Baud rate enumerator for robot connection
+         */
+        static const speed_t OUR_DEV_SPEED = B9600;
+
+        /**
          * Program that controls this robot
          */
         IterativeRobot* myProgram;
+
+        /**
+         * Flag for robot connection status
+         */
+        bool myIsConnected;
+
+        /**
+         * File stream object for robot connection
+         */
+        FILE* myDevice;
 };
 
 #endif /* ifndef REDBOT_H */

@@ -63,12 +63,12 @@ class MockRedBot : public RedBot
                 ) :
             RedBot(
                     program,
-                    NULL
+                    NULL // Do not attempt to establish serial link
                   )
         {
         }
 
-        bool isConnected()
+        bool isConnected() const
         {
             return true;
         }
