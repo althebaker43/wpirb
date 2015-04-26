@@ -1,7 +1,8 @@
 
 CPPFLAGS= \
 	-Wall \
-	-Werror
+	-Werror \
+	-g
 
 MODULES= \
 	FieldControlSystem \
@@ -18,7 +19,8 @@ CPPFLAGS += -I$(CPPUTEST_HOME)/include
 # CXXFLAGS += -include $(CPPUTEST_HOME)/include/CppUTest/MemoryLeakDetectorNewMacros.h
 LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 TEST_MODULES= \
-	TestIterativeRobot
+	TestIterativeRobot \
+	TestRedBot
 TEST_OBJS=$(TEST_MODULES:%=%.o)
 TEST_RUNNER=runTests
 

@@ -1,6 +1,7 @@
 
 #include "RedBot.h"
 #include "IterativeRobot.h"
+#include <sstream>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -140,4 +141,149 @@ RedBot::modePeriodic(
         default:
             break;
     };
+}
+
+
+Packet*
+Packet::Read(
+        std::istream&   inputStream
+        )
+{
+    char header;
+    inputStream.get(header);
+    if (header == '\xFF')
+    {
+        Packet* packet;
+        char packetType;
+        inputStream.get(packetType);
+        
+        switch (packetType)
+        {
+            case '\x01':
+                packet = new PingPacket();
+                break;
+
+            default:
+                break;
+        };
+
+        if (packet != NULL)
+        {
+            inputStream >> *packet;
+            if (packet->isValid())
+            {
+                return packet;
+            }
+            else
+            {
+                delete packet;
+                return NULL;
+            }
+        }
+    }
+
+    // Read out remainder of packet from stream and discard
+    for(
+            char garbage = '\0';
+            garbage != '\xFF' || inputStream.eof() == false;
+            inputStream.get(garbage)
+       )
+    {
+    }
+
+    return NULL;
+}
+
+bool
+Packet::operator!=(
+        const Packet&   packet
+        ) const
+{
+    return !(*this == packet);
+}
+
+std::ostream&
+operator<<(
+        std::ostream&   outputStream,
+        const Packet&   packet
+        )
+{
+    packet.write(outputStream);
+    return outputStream;
+}
+
+std::istream&
+operator>>(
+        std::istream&   inputStream,
+        Packet&         packet
+        )
+{
+    packet.read(inputStream);
+    return inputStream;
+}
+
+
+PingPacket::PingPacket() :
+    myIsValid(true)
+{
+}
+
+void
+PingPacket::write(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream << "\xFF\x01\xFF";
+}
+
+void
+PingPacket::read(
+        std::istream& inputStream
+        )
+{
+    unsigned char trailer;
+
+    inputStream >> trailer;
+    if (trailer == 0xFF)
+    {
+        myIsValid = true;
+    }
+    else
+    {
+        myIsValid = false;
+    }
+}
+
+bool
+PingPacket::isValid() const
+{
+    return myIsValid;
+}
+
+bool
+PingPacket::operator==(
+        const Packet&   packet
+        ) const
+{
+    if (getType() == packet.getType())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+Packet::Type
+PingPacket::getType() const
+{
+    return TYPE_PING;
+}
+
+PingPacket::operator std::string() const
+{
+    std::ostringstream stringStream;
+    write(stringStream);
+    return stringStream.str();
 }
