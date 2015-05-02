@@ -18,6 +18,11 @@ InputBuffer::~InputBuffer()
 bool
 InputBuffer::read()
 {
+    if (isPacketComplete() == true)
+    {
+        return false;
+    }
+
     int readVal = getc(myInputFile);
 
     if (readVal == EOF)
@@ -55,6 +60,14 @@ InputBuffer::getContents()
     return myByteBuffer;
 }
 
+void
+InputBuffer::clear()
+{
+    myByteBuffer.str("");
+    myIsPacketComplete = false;
+    myIsHeaderRead = false;
+}
+
 
 OutputBuffer::OutputBuffer(
         FILE* outputFile
@@ -77,6 +90,11 @@ OutputBuffer::~OutputBuffer()
 bool
 OutputBuffer::write()
 {
+    if (isPacketComplete() == true)
+    {
+        return false;
+    }
+
     myByteBuffer.flush();
 
     int writeVal = myByteBuffer.get();
@@ -115,4 +133,13 @@ std::ostream&
 OutputBuffer::getContents()
 {
     return myByteBuffer;
+}
+
+void
+OutputBuffer::clear()
+{
+    myByteBuffer.clear();
+    myByteBuffer.str("");
+    myIsPacketComplete = false;
+    myIsHeaderWritten = false;
 }

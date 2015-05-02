@@ -44,6 +44,11 @@ class InputBuffer
          */
         std::istream& getContents();
 
+        /**
+         * Clears the contents of this buffer
+         */
+        void clear();
+
     private:
 
         /**
@@ -105,6 +110,11 @@ class OutputBuffer
          * Provides an output stream to write complete packets to
          */
         std::ostream& getContents();
+
+        /**
+         * Clears the contents of this buffer
+         */
+        void clear();
 
     private:
 

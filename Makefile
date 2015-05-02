@@ -47,7 +47,7 @@ $(TEST_RUNNER) : $(LIB) $(TEST_OBJS)
 $(LIB) : $(OBJS)
 	ar r $@ $^
 
-tags :
+tags : $(MODULES:%=%.cpp) $(MODULES:%=%.h)
 	ctags $(MODULES:%=%.cpp) $(MODULES:%=%.h)
 
 .PHONY : clean
