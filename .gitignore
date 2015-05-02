@@ -3,3 +3,5 @@
 *.a
 *~
 runTests
+tags
+*.patch
