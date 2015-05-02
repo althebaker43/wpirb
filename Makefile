@@ -10,7 +10,8 @@ MODULES= \
 	RobotDrive \
 	Joystick \
 	LiveWindow \
-	RedBot
+	RedBot \
+	IOBuffer
 OBJS=$(MODULES:%=%.o)
 LIB=libwpirb.a
 
@@ -45,6 +46,9 @@ $(TEST_RUNNER) : $(LIB) $(TEST_OBJS)
 
 $(LIB) : $(OBJS)
 	ar r $@ $^
+
+tags :
+	ctags $(MODULES:%=%.cpp) $(MODULES:%=%.h)
 
 .PHONY : clean
 clean :

@@ -149,6 +149,11 @@ Packet::Read(
         std::istream&   inputStream
         )
 {
+    if (inputStream.good() == false)
+    {
+        return NULL;
+    }
+
     char header;
     inputStream.get(header);
     if (header == '\xFF')
@@ -180,15 +185,6 @@ Packet::Read(
                 return NULL;
             }
         }
-    }
-
-    // Read out remainder of packet from stream and discard
-    for(
-            char garbage = '\0';
-            garbage != '\xFF' || inputStream.eof() == false;
-            inputStream.get(garbage)
-       )
-    {
     }
 
     return NULL;
