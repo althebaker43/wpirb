@@ -1,6 +1,7 @@
 
 #include "RedBot.h"
 #include "IOBuffer.h"
+#include "Packet.h"
 #include "CppUTest/TestHarness.h"
 #include <fstream>
 #include <sstream>
@@ -22,6 +23,29 @@ TEST(RedBot, PacketWriteTest)
     CHECK_EQUAL(expectedOutput, outputStream.str());
 }
 
+TEST(RedBot, PacketParameterWriteTest)
+{
+    DigitalOutputPacket packet1(13, true);
+    std::ostringstream outputStream;
+    std::string expectedOutput;
+    std::string actualOutput;
+
+    expectedOutput = "\xFF\x02\x0D\x02\xFF";
+    packet1.write(outputStream);
+    actualOutput = outputStream.str();
+
+    CHECK_EQUAL(expectedOutput, actualOutput);
+
+    outputStream.str("");
+    DigitalOutputPacket packet2(5, false);
+
+    expectedOutput = "\xFF\x02\x05\x01\xFF";
+    packet2.write(outputStream);
+    actualOutput = outputStream.str();
+
+    CHECK_EQUAL(expectedOutput, actualOutput);
+}
+
 TEST(RedBot, PacketReadTest)
 {
     std::istringstream inputStream;
@@ -34,6 +58,33 @@ TEST(RedBot, PacketReadTest)
 
     delete packet;
 }
+
+TEST(RedBot, PacketParameterReadTest)
+{
+    std::istringstream inputStream;
+    Packet* actualPacket;
+    DigitalOutputPacket expectedPacket1(7, true);
+    DigitalOutputPacket expectedPacket2(4, false);
+
+    inputStream.str("\xFF\x02\x07\x02\xFF");
+    actualPacket = Packet::Read(inputStream);
+
+    CHECK(actualPacket != NULL);
+    CHECK_EQUAL(expectedPacket1, *actualPacket);
+    CHECK(expectedPacket2 != *actualPacket);
+
+    delete actualPacket;
+
+    inputStream.str("\xFF\x02\x04\x01\xFF");
+    actualPacket = Packet::Read(inputStream);
+
+    CHECK(actualPacket != NULL);
+    CHECK_EQUAL(expectedPacket2, *actualPacket);
+    CHECK(expectedPacket1 != *actualPacket);
+
+    delete actualPacket;
+}
+
 
 TEST_GROUP(IOBuffer)
 {

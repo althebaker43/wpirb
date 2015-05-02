@@ -11,7 +11,8 @@ MODULES= \
 	Joystick \
 	LiveWindow \
 	RedBot \
-	IOBuffer
+	IOBuffer \
+	Packet
 OBJS=$(MODULES:%=%.o)
 LIB=libwpirb.a
 
