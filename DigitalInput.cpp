@@ -7,6 +7,7 @@
 DigitalInput::DigitalInput(
         uint32_t channel
         ) :
+    Component(),
     myChannel(channel),
     myValue(false)
 {

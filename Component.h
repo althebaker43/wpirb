@@ -12,6 +12,18 @@ class Component
     public:
 
         /**
+         * Default constructor
+         *
+         * This registers this component with a robot
+         */
+        Component();
+
+        /**
+         * Destructor
+         */
+        virtual ~Component(){};
+
+        /**
          * Provides a pointer to the next packet to send to the robot
          *
          * If the returned pointer is non-NULL, the caller is responsible for

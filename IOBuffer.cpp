@@ -69,6 +69,18 @@ InputBuffer::clear()
 }
 
 
+OutputBuffer::OutputBuffer() :
+    myOutputFile(NULL),
+    myByteBuffer(
+            std::ios::in |
+            std::ios::out |
+            std::ios::binary
+            ),
+    myIsHeaderWritten(false),
+    myIsPacketComplete(false)
+{
+}
+
 OutputBuffer::OutputBuffer(
         FILE* outputFile
         ) :
@@ -81,6 +93,17 @@ OutputBuffer::OutputBuffer(
     myIsHeaderWritten(false),
     myIsPacketComplete(false)
 {
+}
+
+OutputBuffer&
+OutputBuffer::operator=(
+        const OutputBuffer& source
+        )
+{
+    clear();
+    myOutputFile = source.myOutputFile;
+
+    return (*this);
 }
 
 OutputBuffer::~OutputBuffer()

@@ -2,6 +2,7 @@
 #include "DigitalOutput.h"
 #include "DigitalInput.h"
 #include "Packet.h"
+#include "RedBot.h"
 #include "CppUTest/TestHarness.h"
 #include <list>
 
@@ -22,6 +23,8 @@ TEST_GROUP(Components)
         }
 
         myPackets.clear();
+
+        RedBot::ClearRegisteredComponents();
     }
 };
 

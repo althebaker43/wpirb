@@ -7,6 +7,7 @@
 DigitalOutput::DigitalOutput(
         uint32_t channel
         ) :
+    Component(),
     myChannel(channel),
     myCurrentPacket(NULL)
 {

@@ -14,19 +14,21 @@ MODULES= \
 	LiveWindow \
 	RedBot \
 	IOBuffer \
-	Packet
+	Packet \
+	Component
 OBJS=$(MODULES:%=%.o)
 LIB=libwpirb.a
 
 CPPUTEST_HOME = $(HOME)/Development/tdd/cpputest-3.6
 CPPFLAGS += -I$(CPPUTEST_HOME)/include
-# CXXFLAGS += -include $(CPPUTEST_HOME)/include/CppUTest/MemoryLeakDetectorNewMacros.h
+#CXXFLAGS += -include $(CPPUTEST_HOME)/include/CppUTest/MemoryLeakDetectorNewMacros.h
 LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 TEST_MODULES= \
 	TestIterativeRobot \
 	TestRedBot \
 	TestPackets \
-	TestComponents
+	TestComponents \
+	TestIOBuffer
 TEST_OBJS=$(TEST_MODULES:%=%.o)
 TEST_RUNNER=runTests
 

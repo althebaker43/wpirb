@@ -80,10 +80,22 @@ class OutputBuffer
     public:
 
         /**
+         * Default constructor
+         */
+        OutputBuffer();
+
+        /**
          * Construtor with file stream to write packets to
          */
         OutputBuffer(
                 FILE* outputFile
+                );
+
+        /**
+         * Assignment operator
+         */
+        OutputBuffer& operator=(
+                const OutputBuffer& source
                 );
 
         /**

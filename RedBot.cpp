@@ -1,13 +1,33 @@
 
 #include "RedBot.h"
 #include "IterativeRobot.h"
+#include "Packet.h"
+#include "Component.h"
 #include <sstream>
+#include <algorithm>
 
 #include <unistd.h>
 #include <fcntl.h>
 #include <error.h>
 #include <errno.h>
 
+
+RedBot::Components RedBot::ourCurrentComponents;
+
+
+void
+RedBot::RegisterComponent(
+        Component* component
+        )
+{
+    ourCurrentComponents.push_back(component);
+}
+
+void
+RedBot::ClearRegisteredComponents()
+{
+    ourCurrentComponents.clear();
+}
 
 RedBot::RedBot(
         IterativeRobot* program,
@@ -17,6 +37,10 @@ RedBot::RedBot(
     myIsConnected(false),
     myDevice(NULL)
 {
+    // Move all newly registered components to my own collection
+    myComponents = ourCurrentComponents;
+    ourCurrentComponents.clear();
+
     if (deviceName != NULL)
     {
         // Open device
@@ -59,8 +83,23 @@ RedBot::RedBot(
             return;
         }
 
+        myOutputBuffer = OutputBuffer(myDevice);
         myIsConnected = true;
     }
+}
+
+RedBot::RedBot(
+        IterativeRobot* program,
+        FILE*           device
+        ) :
+    myProgram(program),
+    myIsConnected(true),
+    myDevice(device),
+    myOutputBuffer(device)
+{
+    // Move all newly registered components to my own collection
+    myComponents = ourCurrentComponents;
+    ourCurrentComponents.clear();
 }
 
 RedBot::~RedBot()
@@ -141,4 +180,25 @@ RedBot::modePeriodic(
         default:
             break;
     };
+
+    for(
+            Components::const_iterator compIter = myComponents.begin();
+            compIter != myComponents.end();
+            ++compIter
+       )
+    {
+        Component* component = *compIter;
+        Packet* packet = component->getNextPacket();
+
+        if (packet == NULL)
+        {
+            continue;
+        }
+
+        packet->write(myOutputBuffer.getContents());
+        delete packet;
+
+        while (myOutputBuffer.write() == true);
+        myOutputBuffer.clear();
+    }
 }

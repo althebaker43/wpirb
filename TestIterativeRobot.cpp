@@ -63,7 +63,7 @@ class MockRedBot : public RedBot
                 ) :
             RedBot(
                     program,
-                    NULL // Do not attempt to establish serial link
+                    (const char*)NULL // Do not attempt to establish serial link
                   )
         {
         }
