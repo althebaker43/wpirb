@@ -9,6 +9,7 @@ MODULES= \
 	IterativeRobot \
 	RobotDrive \
 	DigitalOutput \
+	DigitalInput \
 	Joystick \
 	LiveWindow \
 	RedBot \
@@ -24,6 +25,7 @@ LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 TEST_MODULES= \
 	TestIterativeRobot \
 	TestRedBot \
+	TestPackets \
 	TestComponents
 TEST_OBJS=$(TEST_MODULES:%=%.o)
 TEST_RUNNER=runTests

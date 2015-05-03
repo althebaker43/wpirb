@@ -1,34 +1,34 @@
-#ifndef DIGITALOUTPUT_H
-#define DIGITALOUTPUT_H
+#ifndef DIGITALINPUT_H
+#define DIGITALINPUT_H
 
-#include <stdint.h>
 #include "Component.h"
+#include <stdint.h>
 
 /**
- * Digital output class
+ * Digital input class
  */
-class DigitalOutput : public Component
+class DigitalInput : public Component
 {
     public:
 
         /**
          * Constructor given digital channel
          */
-        DigitalOutput(
+        DigitalInput(
                 uint32_t channel
                 );
 
         /**
          * Destructor
          */
-        ~DigitalOutput();
+        ~DigitalInput();
 
         /**
-         * Sets the output channel to the given digital value (0 or 1)
+         * Gets the current value from the input channel
+         *
+         * \return True if the input is high, false if it is low
          */
-        void Set(
-                uint32_t value
-                );
+        bool Get();
 
         /**
          * Provides the next available packet to send
@@ -38,7 +38,7 @@ class DigitalOutput : public Component
         /**
          * Examines and processes a packet if needed
          *
-         * Digital output components never process incoming packets.
+         * Digital input components only process instances of DigitalValuePacket.
          */
         bool processPacket(
                 const Packet& packet
@@ -47,14 +47,14 @@ class DigitalOutput : public Component
     private:
 
         /**
-         * Output channel to drive digital signals on
+         * Channel to read digital signal from
          */
         uint32_t myChannel;
 
         /**
-         * Packet to send to robot
+         * Last digital value read from pin
          */
-        Packet* myCurrentPacket;
+        bool myValue;
 };
 
-#endif /* ifndef DIGITALOUTPUT_H */
+#endif /* ifndef DIGITALINPUT_H */

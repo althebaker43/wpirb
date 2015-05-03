@@ -21,6 +21,15 @@ class Component
          * available
          */
         virtual Packet* getNextPacket() = 0;
+
+        /**
+         * Examines a packet and processes it if desired
+         *
+         * \return True if the packet was processed, false otherwise
+         */
+        virtual bool processPacket(
+                const Packet& packet
+                ) = 0;
 };
 
 #endif /* ifndef COMPONENT_H */

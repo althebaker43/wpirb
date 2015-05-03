@@ -16,8 +16,14 @@ class Packet
         enum Type
         {
             TYPE_UNKNOWN = 0,
+
+            // Request packets
             TYPE_PING,      /**< Ping packet */
-            TYPE_DOUTPUT    /**< Digital output packet */
+            TYPE_DOUTPUT,   /**< Digital output packet */
+            TYPE_DINPUT,    /**< Digital input packet */
+
+            // Response packets
+            TYPE_DVALUE,    /**< Digital value response packet */
         };
 
         /**
@@ -223,6 +229,143 @@ class DigitalOutputPacket : public Packet
 
         /**
          * Digital value to output to pin
+         */
+        bool myValue;
+};
+
+/**
+ * Digital input request class
+ *
+ * This packet requests a digital value from the robot
+ */
+class DigitalInputPacket : public Packet
+{
+    public:
+
+        /**
+         * Constructor with pin and value
+         */
+        DigitalInputPacket(
+                unsigned int    pin     /**< Pin to output to */
+                );
+
+        /**
+         * Writes serialized binary data to output stream
+         */
+        void write(
+                std::ostream&
+                ) const;
+
+        /**
+         * Reads serialized binary data from input stream
+         */
+        void read(
+                std::istream&
+                );
+
+        /**
+         * Indicates if this packet is valid or not
+         */
+        bool isValid() const;
+
+        /**
+         * Equality operator
+         */
+        bool operator==(
+                const Packet&
+                ) const;
+
+        /**
+         * Provides the type of this packet
+         */
+        Type getType() const;
+
+        /**
+         * Provides the pin to read from
+         */
+        unsigned int getPin() const;
+
+    private:
+
+        /**
+         * Pin to read digital signal from
+         */
+        unsigned int myPin;
+};
+
+/**
+ * Digital value response class
+ *
+ * This packet is a response from the robot containing a digital input value.
+ * It should be expected after sending a DigitalInputPacket.
+ */
+class DigitalValuePacket : public Packet
+{
+    public:
+
+        /**
+         * Default constructor
+         */
+        DigitalValuePacket();
+
+        /**
+         * Constructor with pin and value
+         */
+        DigitalValuePacket(
+                unsigned int    pin,    /**< Pin read from */
+                bool            value   /**< Value detected on pin */
+                );
+
+        /**
+         * Writes serialized binary data to output stream
+         */
+        void write(
+                std::ostream&
+                ) const;
+
+        /**
+         * Reads serialized binary data from input stream
+         */
+        void read(
+                std::istream&
+                );
+
+        /**
+         * Indicates if this packet is valid or not
+         */
+        bool isValid() const;
+
+        /**
+         * Equality operator
+         */
+        bool operator==(
+                const Packet&
+                ) const;
+
+        /**
+         * Provides the type of this packet
+         */
+        Type getType() const;
+
+        /**
+         * Provides the pin read from
+         */
+        unsigned int getPin() const;
+
+        /**
+         * Provides the value read from the pin
+         */
+        bool getValue() const;
+
+    private:
+
+        /**
+         * Pin read from
+         */
+        unsigned int myPin;
+
+        /**
+         * Value read from pin
          */
         bool myValue;
 };

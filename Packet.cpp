@@ -31,6 +31,10 @@ Packet::Read(
                 packet = new DigitalOutputPacket();
                 break;
 
+            case '\x81':
+                packet = new DigitalValuePacket();
+                break;
+
             default:
                 break;
         };
@@ -38,7 +42,7 @@ Packet::Read(
         if (packet != NULL)
         {
             inputStream >> *packet;
-            if (packet->isValid())
+            if (packet->isValid() == true)
             {
                 return packet;
             }
@@ -248,6 +252,138 @@ DigitalOutputPacket::getPin() const
 
 bool
 DigitalOutputPacket::getValue() const
+{
+    return myValue;
+}
+
+
+DigitalInputPacket::DigitalInputPacket(
+        unsigned int pin
+        ) :
+    myPin(pin)
+{
+}
+
+void
+DigitalInputPacket::write(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream << "\xFF\x03";
+    outputStream << (unsigned char)myPin;
+    outputStream << '\xFF';
+}
+
+void
+DigitalInputPacket::read(
+        std::istream& inputStream
+        )
+{
+}
+
+bool
+DigitalInputPacket::isValid() const
+{
+    return true;
+}
+
+bool
+DigitalInputPacket::operator==(
+        const Packet& packet
+        ) const
+{
+    return true;
+}
+
+Packet::Type
+DigitalInputPacket::getType() const
+{
+    return TYPE_DINPUT;
+}
+
+unsigned int
+DigitalInputPacket::getPin() const
+{
+    return myPin;
+}
+
+
+DigitalValuePacket::DigitalValuePacket() :
+    myPin(0),
+    myValue(false)
+{
+}
+
+DigitalValuePacket::DigitalValuePacket(
+        unsigned int    pin,
+        bool            value
+        ) :
+    myPin(pin),
+    myValue(value)
+{
+}
+
+void
+DigitalValuePacket::write(
+        std::ostream& outputStream
+        ) const
+{
+}
+
+void
+DigitalValuePacket::read(
+        std::istream& inputStream
+        )
+{
+    int pin = -1;
+    int value = -1;
+
+    pin = inputStream.get();
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+    myPin = (unsigned int)pin;
+
+    value = inputStream.get();
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+    myValue = (value == 0x02);
+
+    // Read out trailer
+    inputStream.get();
+}
+
+bool
+DigitalValuePacket::isValid() const
+{
+    return true;
+}
+
+bool
+DigitalValuePacket::operator==(
+        const Packet& packet
+        ) const
+{
+    return true;
+}
+
+Packet::Type
+DigitalValuePacket::getType() const
+{
+    return TYPE_DVALUE;
+}
+
+unsigned int
+DigitalValuePacket::getPin() const
+{
+    return myPin;
+}
+
+bool
+DigitalValuePacket::getValue() const
 {
     return myValue;
 }

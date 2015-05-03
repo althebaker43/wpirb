@@ -21,6 +21,11 @@ DigitalOutput::Set(
         uint32_t value
         )
 {
+    if (myCurrentPacket != NULL)
+    {
+        delete myCurrentPacket;
+    }
+
     myCurrentPacket = new DigitalOutputPacket(
             myChannel,
             ((value == 0) ? false : true)
@@ -34,4 +39,12 @@ DigitalOutput::getNextPacket()
     myCurrentPacket = NULL;
 
     return packet;
+}
+
+bool
+DigitalOutput::processPacket(
+        const Packet& packet
+        )
+{
+    return false;
 }
