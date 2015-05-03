@@ -2,6 +2,7 @@
 #include "IterativeRobot.h"
 #include "RedBot.h"
 #include "DigitalOutput.h"
+#include "DigitalInput.h"
 #include "CppUTest/TestHarness.h"
 
 
@@ -15,7 +16,7 @@ TEST_GROUP(RedBot)
     }
 };
 
-class DigitalIORobot : public IterativeRobot
+class DigitalOutputRobot : public IterativeRobot
 {
     private:
 
@@ -23,7 +24,7 @@ class DigitalIORobot : public IterativeRobot
 
     public:
 
-        DigitalIORobot() :
+        DigitalOutputRobot() :
             IterativeRobot(),
             dOut(4)
         {
@@ -37,7 +38,7 @@ class DigitalIORobot : public IterativeRobot
 
 TEST(RedBot, CommandTest)
 {
-    DigitalIORobot program;
+    DigitalOutputRobot program;
     RedBot robot(
             &program,
             myPacketFile
@@ -67,4 +68,61 @@ TEST(RedBot, CommandTest)
 
     CHECK(fgets(packetBytes, 6, myPacketFile) != NULL);
     STRCMP_EQUAL("\xFF\x02\x04\x02\xFF", packetBytes);
+}
+
+class DigitalInputRobot : public IterativeRobot
+{
+    private:
+
+        DigitalInput dIn;
+
+        bool myValue;
+
+    public:
+
+        DigitalInputRobot() :
+            IterativeRobot(),
+            dIn(6),
+            myValue(false)
+        {
+        }
+
+        void DisabledPeriodic()
+        {
+            myValue = dIn.Get();
+        }
+
+        bool getValue() const
+        {
+            return myValue;
+        }
+};
+
+TEST(RedBot, ResponseTest)
+{
+    DigitalInputRobot program;
+    RedBot robot(
+            &program,
+            myPacketFile
+            );
+    //char packetBytes [6];
+
+    FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
+
+    fputs("\xFF\xFF\xFF\xFF", myPacketFile);        // Space for first outgoing packet
+    fputs("\xFF\x81\x06\x02\xFF", myPacketFile);    // First response packet
+    fputs("\xFF\xFF\xFF\xFF", myPacketFile);        // Space for second outgoing packet
+    fputs("\xFF\x81\x06\x01\xFF", myPacketFile);    // Second response packet
+    fflush(myPacketFile);
+    rewind(myPacketFile);
+
+    robot.modeInit(mode);
+    robot.modePeriodic(mode);
+    robot.modePeriodic(mode);
+
+    CHECK_TRUE(program.getValue());
+
+    robot.modePeriodic(mode);
+
+    CHECK_FALSE(program.getValue());
 }

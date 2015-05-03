@@ -6,10 +6,12 @@
 #include <stdio.h>
 #include <termios.h>
 #include <list>
+#include <queue>
 
-// Forward declaration
+// Forward declarations
 class IterativeRobot;
 class Component;
+class Packet;
 
 /**
  * Handler for all communications with a robot
@@ -126,9 +128,19 @@ class RedBot
         Components myComponents;
 
         /**
+         * Buffer for incoming communication to robot
+         */
+        InputBuffer myInputBuffer;
+
+        /**
          * Buffer for outgoing communication to robot
          */
         OutputBuffer myOutputBuffer;
+
+        /**
+         * Incoming packets from robot
+         */
+        std::queue<Packet*> myIncomingPackets;
 };
 
 #endif /* ifndef REDBOT_H */

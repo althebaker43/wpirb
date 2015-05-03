@@ -13,10 +13,22 @@ class InputBuffer
     public:
 
         /**
+         * Default constructor
+         */
+        InputBuffer();
+
+        /**
          * Constructor with file stream to read packets from
          */
         InputBuffer(
                 FILE* inputFile
+                );
+
+        /**
+         * Assignment operator
+         */
+        InputBuffer& operator=(
+                const InputBuffer& source
                 );
 
         /**

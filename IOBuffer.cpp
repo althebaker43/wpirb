@@ -2,6 +2,13 @@
 #include "IOBuffer.h"
 
 
+InputBuffer::InputBuffer() :
+    myInputFile(NULL),
+    myIsHeaderRead(false),
+    myIsPacketComplete(false)
+{
+}
+
 InputBuffer::InputBuffer(
         FILE* inputFile
         ) :
@@ -9,6 +16,17 @@ InputBuffer::InputBuffer(
     myIsHeaderRead(false),
     myIsPacketComplete(false)
 {
+}
+
+InputBuffer&
+InputBuffer::operator=(
+        const InputBuffer& source
+        )
+{
+    clear();
+    myInputFile = source.myInputFile;
+
+    return (*this);
 }
 
 InputBuffer::~InputBuffer()

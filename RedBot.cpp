@@ -83,6 +83,7 @@ RedBot::RedBot(
             return;
         }
 
+        myInputBuffer = InputBuffer(myDevice);
         myOutputBuffer = OutputBuffer(myDevice);
         myIsConnected = true;
     }
@@ -95,6 +96,7 @@ RedBot::RedBot(
     myProgram(program),
     myIsConnected(true),
     myDevice(device),
+    myInputBuffer(device),
     myOutputBuffer(device)
 {
     // Move all newly registered components to my own collection
@@ -104,9 +106,17 @@ RedBot::RedBot(
 
 RedBot::~RedBot()
 {
+    // Close the serial device
     if (myDevice != NULL)
     {
         fclose(myDevice);
+    }
+
+    // Discard the unused incoming packets
+    while (myIncomingPackets.empty() == false)
+    {
+        delete (myIncomingPackets.front());
+        myIncomingPackets.pop();
     }
 }
 
@@ -159,6 +169,29 @@ RedBot::modePeriodic(
         return;
     }
 
+    // Process incoming packets
+    while (myIncomingPackets.empty() == false)
+    {
+        Packet* packet = myIncomingPackets.front();
+        myIncomingPackets.pop();
+
+        for(
+                Components::const_iterator compIter = myComponents.begin();
+                compIter != myComponents.end();
+                ++compIter
+           )
+        {
+            Component* component = *compIter;
+
+            if (component->processPacket(*packet) == true)
+            {
+                break;
+            }
+        }
+
+        delete packet;
+    }
+
     switch (mode)
     {
         case FieldControlSystem::MODE_DISABLED:
@@ -181,6 +214,7 @@ RedBot::modePeriodic(
             break;
     };
 
+    // Send outgoing packets
     for(
             Components::const_iterator compIter = myComponents.begin();
             compIter != myComponents.end();
@@ -188,17 +222,28 @@ RedBot::modePeriodic(
        )
     {
         Component* component = *compIter;
-        Packet* packet = component->getNextPacket();
+        Packet* outPacket = component->getNextPacket();
 
-        if (packet == NULL)
+        if (outPacket == NULL)
         {
             continue;
         }
 
-        packet->write(myOutputBuffer.getContents());
-        delete packet;
+        outPacket->write(myOutputBuffer.getContents());
+        delete outPacket;
 
         while (myOutputBuffer.write() == true);
         myOutputBuffer.clear();
+
+        myInputBuffer.clear();
+        while (myInputBuffer.read() == true);
+        Packet* inPacket = Packet::Read(myInputBuffer.getContents());
+
+        if (inPacket == NULL)
+        {
+            continue;
+        }
+
+        myIncomingPackets.push(inPacket);
     }
 }
