@@ -8,6 +8,7 @@ MODULES= \
 	FieldControlSystem \
 	IterativeRobot \
 	RobotDrive \
+	DigitalOutput \
 	Joystick \
 	LiveWindow \
 	RedBot \
@@ -22,7 +23,8 @@ CPPFLAGS += -I$(CPPUTEST_HOME)/include
 LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 TEST_MODULES= \
 	TestIterativeRobot \
-	TestRedBot
+	TestRedBot \
+	TestComponents
 TEST_OBJS=$(TEST_MODULES:%=%.o)
 TEST_RUNNER=runTests
 
@@ -32,6 +34,9 @@ RESIDUE= \
 	$(TEST_OBJS) \
 	$(TEST_RUNNER)
 
+
+.PHONY : all
+all : tags test
 
 .PHONY : test
 test : $(TEST_RUNNER)
