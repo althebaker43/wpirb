@@ -2,14 +2,7 @@
 #include "IOBuffer.h"
 
 
-InputBuffer::InputBuffer() :
-    myInputFile(NULL),
-    myIsHeaderRead(false),
-    myIsPacketComplete(false)
-{
-}
-
-InputBuffer::InputBuffer(
+InputFileBuffer::InputFileBuffer(
         FILE* inputFile
         ) :
     myInputFile(inputFile),
@@ -18,23 +11,12 @@ InputBuffer::InputBuffer(
 {
 }
 
-InputBuffer&
-InputBuffer::operator=(
-        const InputBuffer& source
-        )
-{
-    clear();
-    myInputFile = source.myInputFile;
-
-    return (*this);
-}
-
-InputBuffer::~InputBuffer()
+InputFileBuffer::~InputFileBuffer()
 {
 }
 
 bool
-InputBuffer::read()
+InputFileBuffer::read()
 {
     if (isPacketComplete() == true)
     {
@@ -67,19 +49,19 @@ InputBuffer::read()
 }
 
 bool
-InputBuffer::isPacketComplete() const
+InputFileBuffer::isPacketComplete() const
 {
     return myIsPacketComplete;
 }
 
 std::istream&
-InputBuffer::getContents()
+InputFileBuffer::getContents()
 {
     return myByteBuffer;
 }
 
 void
-InputBuffer::clear()
+InputFileBuffer::clear()
 {
     myByteBuffer.str("");
     myIsPacketComplete = false;
@@ -87,19 +69,7 @@ InputBuffer::clear()
 }
 
 
-OutputBuffer::OutputBuffer() :
-    myOutputFile(NULL),
-    myByteBuffer(
-            std::ios::in |
-            std::ios::out |
-            std::ios::binary
-            ),
-    myIsHeaderWritten(false),
-    myIsPacketComplete(false)
-{
-}
-
-OutputBuffer::OutputBuffer(
+OutputFileBuffer::OutputFileBuffer(
         FILE* outputFile
         ) :
     myOutputFile(outputFile),
@@ -113,23 +83,12 @@ OutputBuffer::OutputBuffer(
 {
 }
 
-OutputBuffer&
-OutputBuffer::operator=(
-        const OutputBuffer& source
-        )
-{
-    clear();
-    myOutputFile = source.myOutputFile;
-
-    return (*this);
-}
-
-OutputBuffer::~OutputBuffer()
+OutputFileBuffer::~OutputFileBuffer()
 {
 }
 
 bool
-OutputBuffer::write()
+OutputFileBuffer::write()
 {
     if (isPacketComplete() == true)
     {
@@ -165,19 +124,19 @@ OutputBuffer::write()
 }
 
 bool
-OutputBuffer::isPacketComplete() const
+OutputFileBuffer::isPacketComplete() const
 {
     return myIsPacketComplete;
 }
 
 std::ostream&
-OutputBuffer::getContents()
+OutputFileBuffer::getContents()
 {
     return myByteBuffer;
 }
 
 void
-OutputBuffer::clear()
+OutputFileBuffer::clear()
 {
     myByteBuffer.clear();
     myByteBuffer.str("");

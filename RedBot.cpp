@@ -35,7 +35,9 @@ RedBot::RedBot(
         ) :
     myProgram(program),
     myIsConnected(false),
-    myDevice(NULL)
+    myDevice(NULL),
+    myInputBuffer(NULL),
+    myOutputBuffer(NULL)
 {
     // Move all newly registered components to my own collection
     myComponents = ourCurrentComponents;
@@ -83,8 +85,8 @@ RedBot::RedBot(
             return;
         }
 
-        myInputBuffer = InputBuffer(myDevice);
-        myOutputBuffer = OutputBuffer(myDevice);
+        myInputBuffer = new InputFileBuffer(myDevice);
+        myOutputBuffer = new OutputFileBuffer(myDevice);
         myIsConnected = true;
     }
 }
@@ -96,8 +98,24 @@ RedBot::RedBot(
     myProgram(program),
     myIsConnected(true),
     myDevice(device),
-    myInputBuffer(device),
-    myOutputBuffer(device)
+    myInputBuffer(new InputFileBuffer(device)),
+    myOutputBuffer(new OutputFileBuffer(device))
+{
+    // Move all newly registered components to my own collection
+    myComponents = ourCurrentComponents;
+    ourCurrentComponents.clear();
+}
+
+RedBot::RedBot(
+        IterativeRobot* program,
+        InputBuffer*    inputBuffer,
+        OutputBuffer*   outputBuffer
+        ) :
+    myProgram(program),
+    myIsConnected(true),
+    myDevice(NULL),
+    myInputBuffer(inputBuffer),
+    myOutputBuffer(outputBuffer)
 {
     // Move all newly registered components to my own collection
     myComponents = ourCurrentComponents;
@@ -118,6 +136,9 @@ RedBot::~RedBot()
         delete (myIncomingPackets.front());
         myIncomingPackets.pop();
     }
+
+    delete myInputBuffer;
+    delete myOutputBuffer;
 }
 
 bool
@@ -229,15 +250,15 @@ RedBot::modePeriodic(
             continue;
         }
 
-        outPacket->write(myOutputBuffer.getContents());
+        outPacket->write(myOutputBuffer->getContents());
         delete outPacket;
 
-        while (myOutputBuffer.write() == true);
-        myOutputBuffer.clear();
+        while (myOutputBuffer->write() == true);
+        myOutputBuffer->clear();
 
-        myInputBuffer.clear();
-        while (myInputBuffer.read() == true);
-        Packet* inPacket = Packet::Read(myInputBuffer.getContents());
+        myInputBuffer->clear();
+        while (myInputBuffer->read() == true);
+        Packet* inPacket = Packet::Read(myInputBuffer->getContents());
 
         if (inPacket == NULL)
         {

@@ -53,11 +53,22 @@ class RedBot
          * Constructor given program and open serial device
          *
          * This makes this robot object use the given file stream for packet
-         * IO.
+         * I/O.
          */
         RedBot(
                 IterativeRobot* program,
                 FILE*           device
+              );
+
+        /**
+         * Constructor given program and I/O buffers
+         *
+         * This makes this robot object use the given buffers for packet I/O.
+         */
+        RedBot(
+                IterativeRobot* program,
+                InputBuffer*    inputBuffer,
+                OutputBuffer*   outputBuffer
               );
 
         /**
@@ -130,12 +141,12 @@ class RedBot
         /**
          * Buffer for incoming communication to robot
          */
-        InputBuffer myInputBuffer;
+        InputBuffer* myInputBuffer;
 
         /**
          * Buffer for outgoing communication to robot
          */
-        OutputBuffer myOutputBuffer;
+        OutputBuffer* myOutputBuffer;
 
         /**
          * Incoming packets from robot

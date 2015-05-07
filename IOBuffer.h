@@ -6,29 +6,89 @@
 
 
 /**
- * Reads and buffers packet from a file or device
+ * Common interface for input packet buffers
  */
 class InputBuffer
 {
     public:
 
         /**
-         * Default constructor
+         * Destructor
          */
-        InputBuffer();
+        virtual ~InputBuffer(){};
+
+        /**
+         * Reads in a single byte
+         *
+         * \return True if read operation was successful, false otherwise or if
+         * a complete packet has already been read in.
+         */
+        virtual bool read() = 0;
+
+        /**
+         * Indicates if a complete packet is currently buffered
+         */
+        virtual bool isPacketComplete() const = 0;
+
+        /**
+         * Provides an input stream to read complete packets from
+         */
+        virtual std::istream& getContents() = 0;
+
+        /**
+         * Clears the contents of this buffer
+         */
+        virtual void clear() = 0;
+};
+
+/**
+ * Common interface for output packet buffers
+ */
+class OutputBuffer
+{
+    public:
+
+        /**
+         * Destructor
+         */
+        virtual ~OutputBuffer(){};
+
+        /**
+         * Writes a single byte to the output file stream
+         *
+         * \return True if the write operation was successful, false otherwise
+         * or if a complete packet has already been written out.
+         */
+        virtual bool write() = 0;
+
+        /**
+         * Indicates if a complete packet has been written out
+         */
+        virtual bool isPacketComplete() const = 0;
+
+        /**
+         * Provides an output stream to write complete packets to
+         */
+        virtual std::ostream& getContents() = 0;
+
+        /**
+         * Clears the contents of this buffer
+         */
+        virtual void clear() = 0;
+};
+
+/**
+ * Reads and buffers packets from a file or device
+ */
+class InputFileBuffer : public InputBuffer
+{
+    public:
 
         /**
          * Constructor with file stream to read packets from
          */
-        InputBuffer(
+        InputFileBuffer(
                 FILE* inputFile
-                );
-
-        /**
-         * Assignment operator
-         */
-        InputBuffer& operator=(
-                const InputBuffer& source
                 );
 
         /**
@@ -36,7 +96,7 @@ class InputBuffer
          *
          * The file stream is not closed when this object is destroyed.
          */
-        ~InputBuffer();
+        ~InputFileBuffer();
 
         /**
          * Reads a single byte from the input file stream
@@ -87,27 +147,15 @@ class InputBuffer
 /**
  * Buffers and writes packets to a file stream
  */
-class OutputBuffer
+class OutputFileBuffer : public OutputBuffer
 {
     public:
 
         /**
-         * Default constructor
-         */
-        OutputBuffer();
-
-        /**
          * Construtor with file stream to write packets to
          */
-        OutputBuffer(
+        OutputFileBuffer(
                 FILE* outputFile
-                );
-
-        /**
-         * Assignment operator
-         */
-        OutputBuffer& operator=(
-                const OutputBuffer& source
                 );
 
         /**
@@ -115,7 +163,7 @@ class OutputBuffer
          *
          * The file stream is not closed when this object is destroyed.
          */
-        ~OutputBuffer();
+        ~OutputFileBuffer();
 
         /**
          * Writes a single byte to the output file stream

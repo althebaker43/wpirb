@@ -21,7 +21,7 @@ TEST_GROUP(IOBuffer)
 
 TEST(IOBuffer, InputBufferReadTest)
 {
-    InputBuffer iBuffer(packetFile);
+    InputFileBuffer iBuffer(packetFile);
 
     fprintf(packetFile, "\xFF\x01\xFF");
     fflush(packetFile);
@@ -50,7 +50,7 @@ TEST(IOBuffer, InputBufferReadTest)
 
 TEST(IOBuffer, InputBufferMultiReadTest)
 {
-    InputBuffer iBuffer(packetFile);
+    InputFileBuffer iBuffer(packetFile);
     PingPacket expectedPacket;
     Packet* packet = NULL;
 
@@ -86,7 +86,7 @@ TEST(IOBuffer, InputBufferMultiReadTest)
 
 TEST(IOBuffer, OutputBufferWriteTest)
 {
-    OutputBuffer oBuffer(packetFile);
+    OutputFileBuffer oBuffer(packetFile);
     PingPacket outputPacket;
     outputPacket.write(oBuffer.getContents());
 
@@ -111,7 +111,7 @@ TEST(IOBuffer, OutputBufferWriteTest)
 
 TEST(IOBuffer, OutputBufferMultiWriteTest)
 {
-    OutputBuffer oBuffer(packetFile);
+    OutputFileBuffer oBuffer(packetFile);
     PingPacket outputPacket;
     char writtenPacket [4];
 
@@ -148,8 +148,8 @@ TEST(IOBuffer, OutputBufferMultiWriteTest)
 
 TEST(IOBuffer, IOBufferPacketIntegrityTest)
 {
-    OutputBuffer oBuffer(packetFile);
-    InputBuffer iBuffer(packetFile);
+    OutputFileBuffer oBuffer(packetFile);
+    InputFileBuffer iBuffer(packetFile);
     PingPacket outputPacket;
 
     outputPacket.write(oBuffer.getContents());
