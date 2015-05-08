@@ -1,32 +1,8 @@
 
+#include "TestComponents.h"
 #include "DigitalOutput.h"
 #include "DigitalInput.h"
-#include "Packet.h"
-#include "RedBot.h"
-#include "CppUTest/TestHarness.h"
-#include <list>
 
-
-TEST_GROUP(Components)
-{
-    std::list<Packet*> myPackets;
-
-    void teardown()
-    {
-        for(
-                std::list<Packet*>::iterator packetIter = myPackets.begin();
-                packetIter != myPackets.end();
-                ++packetIter
-           )
-        {
-            delete (*packetIter);
-        }
-
-        myPackets.clear();
-
-        RedBot::ClearRegisteredComponents();
-    }
-};
 
 TEST(Components, DigitalOutputTest)
 {
@@ -81,4 +57,41 @@ TEST(Components, DigitalInputTest)
 
     CHECK(dIn.processPacket(dValPacket2));
     CHECK_TRUE(dIn.Get());
+}
+
+TEST(Components, TimerTest)
+{
+    MockTimer timer(MockTimeAccessor);
+    MockTime.tv_sec = 0;
+    MockTime.tv_nsec = 0;
+
+    CHECK_EQUAL(0.0, timer.Get());
+
+    timer.Start();
+    MockTime.tv_sec = 1;
+
+    CHECK_EQUAL(1.0, timer.Get());
+
+    timer.Stop();
+    MockTime.tv_sec = 2;
+
+    CHECK_EQUAL(1.0, timer.Get());
+
+    timer.Start();
+
+    CHECK_EQUAL(1.0, timer.Get());
+    CHECK_FALSE(timer.HasPeriodPassed(1.25));
+
+    MockTime.tv_nsec = 5e8;
+
+    CHECK_EQUAL(1.5, timer.Get());
+    CHECK_TRUE(timer.HasPeriodPassed(1.25));
+
+    timer.Reset();
+
+    CHECK_EQUAL(0.0, timer.Get());
+
+    timer.Stop();
+
+    CHECK_EQUAL(0.0, timer.Get());
 }

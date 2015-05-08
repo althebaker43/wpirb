@@ -45,12 +45,10 @@ TEST(RedBot, ResponseTest)
     FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
 
     inputBuffer->getMockContents() << "\xFF\x81\x06\x02\xFF";    // First response packet
+    inputBuffer->getMockContents() << "\xFF\x81\x06\x01\xFF";    // Second response packet
 
     robot.modeInit(mode);
     robot.modePeriodic(mode);
-
-    inputBuffer->getMockContents() << "\xFF\x81\x06\x01\xFF";    // Second response packet
-
     robot.modePeriodic(mode);
 
     CHECK_TRUE(program.getValue());

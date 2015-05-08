@@ -10,6 +10,7 @@ MODULES= \
 	RobotDrive \
 	DigitalOutput \
 	DigitalInput \
+	Timer \
 	Joystick \
 	LiveWindow \
 	RedBot \
