@@ -33,7 +33,7 @@ class InputBuffer
         /**
          * Provides an input stream to read complete packets from
          */
-        virtual std::istream& getContents() = 0;
+        virtual std::istream& getInputStream() = 0;
 
         /**
          * Clears the contents of this buffer
@@ -69,7 +69,7 @@ class OutputBuffer
         /**
          * Provides an output stream to write complete packets to
          */
-        virtual std::ostream& getContents() = 0;
+        virtual std::ostream& getOutputStream() = 0;
 
         /**
          * Clears the contents of this buffer
@@ -114,7 +114,7 @@ class InputFileBuffer : public InputBuffer
         /**
          * Provides an input stream to read complete packets from
          */
-        std::istream& getContents();
+        std::istream& getInputStream();
 
         /**
          * Clears the contents of this buffer
@@ -181,7 +181,7 @@ class OutputFileBuffer : public OutputBuffer
         /**
          * Provides an output stream to write complete packets to
          */
-        std::ostream& getContents();
+        std::ostream& getOutputStream();
 
         /**
          * Clears the contents of this buffer

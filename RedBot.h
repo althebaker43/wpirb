@@ -129,6 +129,14 @@ class RedBot
         bool myIsConnected;
 
         /**
+         * Indicates if this object is using externally provided IO buffers
+         *
+         * In the event that external I/O buffers are being used, they will not
+         * be deleted when this object is deleted.
+         */
+        bool myIsUsingExternalBuffers;
+
+        /**
          * File stream object for robot connection
          */
         FILE* myDevice;

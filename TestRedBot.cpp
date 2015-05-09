@@ -6,12 +6,10 @@
 TEST(RedBot, CommandTest)
 {
     DigitalOutputRobot program;
-    MockInputBuffer* inputBuffer = new MockInputBuffer();
-    MockOutputBuffer* outputBuffer = new MockOutputBuffer();
     RedBot robot(
             &program,
-            inputBuffer,
-            outputBuffer
+            myMockInputBuffer,
+            myMockOutputBuffer
             );
     std::string mockOutput;
 
@@ -20,32 +18,49 @@ TEST(RedBot, CommandTest)
     robot.modeInit(mode);
     robot.modePeriodic(mode);
 
-    outputBuffer->getMockContents() >> mockOutput;
+    myMockOutputBuffer->getMockContents() >> mockOutput;
 
     STRCMP_EQUAL("\xFF\x02\x04\x02\xFF", mockOutput.c_str());
 
     robot.modePeriodic(mode);
 
-    outputBuffer->getMockContents() >> mockOutput;
+    myMockOutputBuffer->getMockContents() >> mockOutput;
 
     STRCMP_EQUAL("\xFF\x02\x04\x02\xFF", mockOutput.c_str());
+}
+
+TEST(RedBot, ExchangeTest)
+{
+    DigitalOutputRobot program;
+    RedBot robot(
+            &program,
+            myMockInputOutputBuffer,
+            myMockInputOutputBuffer
+            );
+
+    FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
+    robot.modeInit(mode);
+
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x02\x04\x02\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+    robot.modePeriodic(mode);
+
+    mock().checkExpectations();
 }
 
 TEST(RedBot, ResponseTest)
 {
     DigitalInputRobot program;
-    MockInputBuffer* inputBuffer = new MockInputBuffer();
-    MockOutputBuffer* outputBuffer = new MockOutputBuffer();
     RedBot robot(
             &program,
-            inputBuffer,
-            outputBuffer
+            myMockInputBuffer,
+            myMockOutputBuffer
             );
 
     FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
 
-    inputBuffer->getMockContents() << "\xFF\x81\x06\x02\xFF";    // First response packet
-    inputBuffer->getMockContents() << "\xFF\x81\x06\x01\xFF";    // Second response packet
+    myMockInputBuffer->getMockContents() << "\xFF\x81\x06\x02\xFF";    // First response packet
+    myMockInputBuffer->getMockContents() << "\xFF\x81\x06\x01\xFF";    // Second response packet
 
     robot.modeInit(mode);
     robot.modePeriodic(mode);

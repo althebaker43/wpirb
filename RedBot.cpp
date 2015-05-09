@@ -35,6 +35,7 @@ RedBot::RedBot(
         ) :
     myProgram(program),
     myIsConnected(false),
+    myIsUsingExternalBuffers(false),
     myDevice(NULL),
     myInputBuffer(NULL),
     myOutputBuffer(NULL)
@@ -97,6 +98,7 @@ RedBot::RedBot(
         ) :
     myProgram(program),
     myIsConnected(true),
+    myIsUsingExternalBuffers(false),
     myDevice(device),
     myInputBuffer(new InputFileBuffer(device)),
     myOutputBuffer(new OutputFileBuffer(device))
@@ -113,6 +115,7 @@ RedBot::RedBot(
         ) :
     myProgram(program),
     myIsConnected(true),
+    myIsUsingExternalBuffers(true),
     myDevice(NULL),
     myInputBuffer(inputBuffer),
     myOutputBuffer(outputBuffer)
@@ -137,8 +140,11 @@ RedBot::~RedBot()
         myIncomingPackets.pop();
     }
 
-    delete myInputBuffer;
-    delete myOutputBuffer;
+    if (myIsUsingExternalBuffers == false)
+    {
+        delete myInputBuffer;
+        delete myOutputBuffer;
+    }
 }
 
 bool
@@ -250,7 +256,7 @@ RedBot::modePeriodic(
             continue;
         }
 
-        outPacket->write(myOutputBuffer->getContents());
+        outPacket->write(myOutputBuffer->getOutputStream());
         delete outPacket;
 
         while (myOutputBuffer->write() == true);
@@ -258,7 +264,7 @@ RedBot::modePeriodic(
 
         myInputBuffer->clear();
         while (myInputBuffer->read() == true);
-        Packet* inPacket = Packet::Read(myInputBuffer->getContents());
+        Packet* inPacket = Packet::Read(myInputBuffer->getInputStream());
 
         if (inPacket == NULL)
         {

@@ -37,7 +37,7 @@ TEST(IOBuffer, InputBufferReadTest)
     CHECK(iBuffer.isPacketComplete() == true);
     CHECK(iBuffer.read() == false);
 
-    Packet* packet = Packet::Read(iBuffer.getContents());
+    Packet* packet = Packet::Read(iBuffer.getInputStream());
 
     CHECK(packet != NULL);
 
@@ -62,7 +62,7 @@ TEST(IOBuffer, InputBufferMultiReadTest)
 
     CHECK(iBuffer.isPacketComplete());
 
-    packet = Packet::Read(iBuffer.getContents());
+    packet = Packet::Read(iBuffer.getInputStream());
 
     CHECK(packet != NULL);
     CHECK_EQUAL(expectedPacket, *packet);
@@ -76,7 +76,7 @@ TEST(IOBuffer, InputBufferMultiReadTest)
 
     CHECK(iBuffer.isPacketComplete());
 
-    packet = Packet::Read(iBuffer.getContents());
+    packet = Packet::Read(iBuffer.getInputStream());
 
     CHECK(packet != NULL);
     CHECK_EQUAL(expectedPacket, *packet);
@@ -88,7 +88,7 @@ TEST(IOBuffer, OutputBufferWriteTest)
 {
     OutputFileBuffer oBuffer(packetFile);
     PingPacket outputPacket;
-    outputPacket.write(oBuffer.getContents());
+    outputPacket.write(oBuffer.getOutputStream());
 
     CHECK(oBuffer.write());
     CHECK(oBuffer.isPacketComplete() == false);
@@ -115,7 +115,7 @@ TEST(IOBuffer, OutputBufferMultiWriteTest)
     PingPacket outputPacket;
     char writtenPacket [4];
 
-    outputPacket.write(oBuffer.getContents());
+    outputPacket.write(oBuffer.getOutputStream());
 
     CHECK(oBuffer.isPacketComplete() == false);
 
@@ -131,7 +131,7 @@ TEST(IOBuffer, OutputBufferMultiWriteTest)
     STRCMP_EQUAL("\xFF\x01\xFF", writtenPacket);
 
     oBuffer.clear();
-    outputPacket.write(oBuffer.getContents());
+    outputPacket.write(oBuffer.getOutputStream());
 
     CHECK(oBuffer.isPacketComplete() == false);
 
@@ -152,14 +152,14 @@ TEST(IOBuffer, IOBufferPacketIntegrityTest)
     InputFileBuffer iBuffer(packetFile);
     PingPacket outputPacket;
 
-    outputPacket.write(oBuffer.getContents());
+    outputPacket.write(oBuffer.getOutputStream());
     while (oBuffer.write() == true);
 
     fflush(packetFile);
     rewind(packetFile);
 
     while (iBuffer.read() == true);
-    Packet* inputPacket = Packet::Read(iBuffer.getContents());
+    Packet* inputPacket = Packet::Read(iBuffer.getInputStream());
 
     CHECK(inputPacket != NULL);
     CHECK_EQUAL(outputPacket, *inputPacket);

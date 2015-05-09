@@ -55,7 +55,7 @@ InputFileBuffer::isPacketComplete() const
 }
 
 std::istream&
-InputFileBuffer::getContents()
+InputFileBuffer::getInputStream()
 {
     return myByteBuffer;
 }
@@ -130,7 +130,7 @@ OutputFileBuffer::isPacketComplete() const
 }
 
 std::ostream&
-OutputFileBuffer::getContents()
+OutputFileBuffer::getOutputStream()
 {
     return myByteBuffer;
 }
