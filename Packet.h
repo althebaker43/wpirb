@@ -67,6 +67,13 @@ class Packet
                 ) const = 0;
 
         /**
+         * Generates an XML representation of this packet
+         */
+        virtual void writeXML(
+                std::ostream&
+                ) const = 0;
+
+        /**
          * Reads serialized binary data from input stream
          */
         virtual void read(
@@ -144,6 +151,13 @@ class PingPacket : public Packet
                 ) const;
 
         /**
+         * Generates an XML representation of this packet
+         */
+        void writeXML(
+                std::ostream&
+                ) const;
+
+        /**
          * Reads serialized binary data from input stream
          */
         void read(
@@ -201,6 +215,13 @@ class DigitalOutputPacket : public Packet
          * Writes serialized binary data to output stream
          */
         void write(
+                std::ostream&
+                ) const;
+
+        /**
+         * Generates an XML representation of this packet
+         */
+        void writeXML(
                 std::ostream&
                 ) const;
 
@@ -280,6 +301,13 @@ class DigitalInputPacket : public Packet
                 ) const;
 
         /**
+         * Generates an XML representation of this packet
+         */
+        void writeXML(
+                std::ostream&
+                ) const;
+
+        /**
          * Reads serialized binary data from input stream
          */
         void read(
@@ -332,6 +360,13 @@ class AcknowledgePacket : public Packet
          * Writes serialized binary data to output stream
          */
         void write(
+                std::ostream&
+                ) const;
+
+        /**
+         * Generates an XML representation of this packet
+         */
+        void writeXML(
                 std::ostream&
                 ) const;
 
@@ -394,6 +429,13 @@ class DigitalValuePacket : public Packet
          * Writes serialized binary data to output stream
          */
         void write(
+                std::ostream&
+                ) const;
+
+        /**
+         * Generates an XML representation of this packet
+         */
+        void writeXML(
                 std::ostream&
                 ) const;
 

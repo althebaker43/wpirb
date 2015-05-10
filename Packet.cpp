@@ -118,6 +118,13 @@ PingPacket::write(
 }
 
 void
+PingPacket::writeXML(
+        std::ostream& outputStream
+        ) const
+{
+}
+
+void
 PingPacket::read(
         std::istream& inputStream
         )
@@ -188,6 +195,19 @@ DigitalOutputPacket::write(
     outputStream << (unsigned char)myPin;
     outputStream << (myValue ? '\x02' : '\x01');
     outputStream << '\xFF';
+}
+
+void
+DigitalOutputPacket::writeXML(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream
+        << "<packet>"
+        << "<type>DOUTPUT</type>"
+        << "<pin>" << myPin << "</pin>"
+        << "<value>" << ((myValue == true) ? "1" : "0") << "</value>"
+        << "</packet>";
 }
 
 void
@@ -292,6 +312,18 @@ DigitalInputPacket::write(
 }
 
 void
+DigitalInputPacket::writeXML(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream
+        << "<packet>"
+        << "<type>DINPUT</type>"
+        << "<pin>" << myPin << "</pin>"
+        << "</packet>";
+}
+
+void
 DigitalInputPacket::read(
         std::istream& inputStream
         )
@@ -348,6 +380,13 @@ AcknowledgePacket::write(
     outputStream << '\xFF';
     outputStream << (unsigned char)BID_ACK;
     outputStream << '\xFF';
+}
+
+void
+AcknowledgePacket::writeXML(
+        std::ostream& outputStream
+        ) const
+{
 }
 
 void
@@ -423,6 +462,19 @@ DigitalValuePacket::write(
     outputStream << (unsigned char)myPin;
     outputStream << ((myValue == true) ? '\x02' : '\x01');
     outputStream << '\xFF';
+}
+
+void
+DigitalValuePacket::writeXML(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream
+        << "<packet>"
+        << "<type>DVALUE</type>"
+        << "<pin>" << myPin << "</pin>"
+        << "<value>" << ((myValue == true) ? "1" : "0") << "</value>"
+        << "</packet>";
 }
 
 void

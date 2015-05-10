@@ -188,3 +188,91 @@ TEST(Packets, AcknowledgePacket)
 
     delete packet2;
 }
+
+TEST(Packets, DigitalOutputPacketXML)
+{
+    std::ostringstream packetStream;
+    std::string expectedOutput;
+    DigitalOutputPacket dOutPacket1(7, true);
+
+    dOutPacket1.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>DOUTPUT</type>"
+        "<pin>7</pin>"
+        "<value>1</value>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+
+    DigitalOutputPacket dOutPacket2(8, false);
+
+    packetStream.str("");
+    dOutPacket2.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>DOUTPUT</type>"
+        "<pin>8</pin>"
+        "<value>0</value>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+}
+
+TEST(Packets, DigitalInputPacketXML)
+{
+    std::ostringstream packetStream;
+    std::string expectedOutput;
+    DigitalInputPacket dInPacket1(13);
+
+    dInPacket1.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>DINPUT</type>"
+        "<pin>13</pin>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+
+    DigitalInputPacket dInPacket2(4);
+
+    packetStream.str("");
+    dInPacket2.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>DINPUT</type>"
+        "<pin>4</pin>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+}
+
+TEST(Packets, DigitalValuePacketXML)
+{
+    std::ostringstream packetStream;
+    std::string expectedOutput;
+    DigitalValuePacket dValPacket1(10, true);
+
+    dValPacket1.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>DVALUE</type>"
+        "<pin>10</pin>"
+        "<value>1</value>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+
+    DigitalValuePacket dValPacket2(6, false);
+
+    packetStream.str("");
+    dValPacket2.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>DVALUE</type>"
+        "<pin>6</pin>"
+        "<value>0</value>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+}
