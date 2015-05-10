@@ -368,6 +368,11 @@ class DigitalValuePacket : public Packet
          * Value read from pin
          */
         bool myValue;
+
+        /**
+         * Indicates that this packet is valid
+         */
+        bool myIsValid;
 };
 
 #endif /* ifndef PACKET_H */

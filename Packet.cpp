@@ -310,7 +310,8 @@ DigitalInputPacket::getPin() const
 
 DigitalValuePacket::DigitalValuePacket() :
     myPin(0),
-    myValue(false)
+    myValue(false),
+    myIsValid(false)
 {
 }
 
@@ -319,7 +320,8 @@ DigitalValuePacket::DigitalValuePacket(
         bool            value
         ) :
     myPin(pin),
-    myValue(value)
+    myValue(value),
+    myIsValid(true)
 {
 }
 
@@ -337,6 +339,9 @@ DigitalValuePacket::read(
 {
     int pin = -1;
     int value = -1;
+    int trailer;
+
+    myIsValid = false;
 
     pin = inputStream.get();
     if (inputStream.good() == false)
@@ -353,7 +358,13 @@ DigitalValuePacket::read(
     myValue = (value == 0x02);
 
     // Read out trailer
-    inputStream.get();
+    trailer = inputStream.get();
+    if (trailer != 0xFF)
+    {
+        return;
+    }
+
+    myIsValid = true;
 }
 
 bool

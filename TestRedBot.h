@@ -136,6 +136,8 @@ class MockInputOutputBuffer : public InputBuffer, public OutputBuffer
 
         void clear()
         {
+            myStream.clear();
+            myStream.str("");
         }
 
         std::istream& getInputStream()
@@ -145,7 +147,15 @@ class MockInputOutputBuffer : public InputBuffer, public OutputBuffer
 
         std::ostream& getOutputStream()
         {
+            clear();
             return myStream;
+        }
+
+        void getContents(
+                std::string& contents
+                )
+        {
+            contents = myStream.str();
         }
 
     private:
@@ -155,21 +165,15 @@ class MockInputOutputBuffer : public InputBuffer, public OutputBuffer
 
 TEST_GROUP(RedBot)
 {
-    MockInputBuffer* myMockInputBuffer;
-    MockOutputBuffer* myMockOutputBuffer;
     MockInputOutputBuffer* myMockInputOutputBuffer;
 
     void setup()
     {
-        myMockInputBuffer = new MockInputBuffer();
-        myMockOutputBuffer = new MockOutputBuffer();
         myMockInputOutputBuffer = new MockInputOutputBuffer();
     }
 
     void teardown()
     {
-        delete myMockInputBuffer;
-        delete myMockOutputBuffer;
         delete myMockInputOutputBuffer;
         mock().clear();
     }
