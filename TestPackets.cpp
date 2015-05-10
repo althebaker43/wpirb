@@ -101,6 +101,7 @@ TEST(Packets, DigitalInputPacket)
 {
     DigitalInputPacket dInPacket1(3);
     std::ostringstream outputStream;
+    std::istringstream inputStream;
 
     CHECK_EQUAL(3, dInPacket1.getPin());
 
@@ -116,6 +117,18 @@ TEST(Packets, DigitalInputPacket)
     dInPacket2.write(outputStream);
 
     STRCMP_EQUAL("\xFF\x03\x0C\xFF", outputStream.str().c_str());
+
+    inputStream.str("\xFF\x03\x01\xFF");
+    Packet* packet3 = Packet::Read(inputStream);
+
+    CHECK(NULL != packet3);
+    CHECK_EQUAL(Packet::TYPE_DINPUT, packet3->getType());
+
+    DigitalInputPacket* dInPacket3 = static_cast<DigitalInputPacket*>(packet3);
+
+    CHECK_EQUAL(1, dInPacket3->getPin());
+
+    delete dInPacket3;
 }
 
 TEST(Packets, DigitalValuePacket)
@@ -125,6 +138,11 @@ TEST(Packets, DigitalValuePacket)
     CHECK_EQUAL(Packet::TYPE_DVALUE, dValPacket1.getType());
     CHECK_EQUAL(2, dValPacket1.getPin());
     CHECK_EQUAL(true, dValPacket1.getValue());
+
+    std::ostringstream outputStream;
+    outputStream << dValPacket1;
+
+    STRCMP_EQUAL("\xFF\x81\x02\x02\xFF", outputStream.str().c_str());
 
     std::istringstream inputStream;
     inputStream.str("\xFF\x81\x0A\x01\xFF");
@@ -152,4 +170,21 @@ TEST(Packets, DigitalValuePacket)
 
     CHECK_EQUAL(15, dValPacket3->getPin());
     CHECK_EQUAL(true, dValPacket3->getValue());
+}
+
+TEST(Packets, AcknowledgePacket)
+{
+    AcknowledgePacket ackPacket1;
+    std::stringstream packetStream;
+
+    packetStream << ackPacket1;
+
+    STRCMP_EQUAL("\xFF\x82\xFF", packetStream.str().c_str());
+
+    Packet* packet2 = Packet::Read(packetStream);
+
+    CHECK(NULL != packet2);
+    CHECK_EQUAL(Packet::TYPE_ACK, packet2->getType());
+
+    delete packet2;
 }

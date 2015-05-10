@@ -28,6 +28,23 @@ class Packet
         };
 
         /**
+         * Packet binary ID enumerations
+         *
+         * These IDs are encoded into the serialized data stream.
+         */
+        enum BinaryID
+        {
+            // Request packets
+            BID_PING =      0x01,
+            BID_DOUTPUT =   0x02,
+            BID_DINPUT =    0x03,
+
+            // Response packets
+            BID_ACK =       0x82,
+            BID_DVALUE =    0x81,
+        };
+
+        /**
          * Reads a packet from the given input stream
          *
          * A new packet is allocated on the heap and a pointer to it is returned.
@@ -242,6 +259,11 @@ class DigitalOutputPacket : public Packet
 class DigitalInputPacket : public Packet
 {
     public:
+
+        /**
+         * Default constructor
+         */
+        DigitalInputPacket();
 
         /**
          * Constructor with pin and value

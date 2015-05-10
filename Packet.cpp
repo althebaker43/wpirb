@@ -21,21 +21,25 @@ Packet::Read(
         char packetType = '\0';
         inputStream.get(packetType);
         
-        switch (packetType)
+        switch ((unsigned char)packetType)
         {
-            case '\x01':
+            case BID_PING:
                 packet = new PingPacket();
                 break;
 
-            case '\x02':
+            case BID_DOUTPUT:
                 packet = new DigitalOutputPacket();
                 break;
 
-            case '\x81':
+            case BID_DINPUT:
+                packet = new DigitalInputPacket();
+                break;
+
+            case BID_DVALUE:
                 packet = new DigitalValuePacket();
                 break;
 
-            case '\x82':
+            case BID_ACK:
                 packet = new AcknowledgePacket();
                 break;
 
@@ -108,7 +112,9 @@ PingPacket::write(
         std::ostream& outputStream
         ) const
 {
-    outputStream << "\xFF\x01\xFF";
+    outputStream << '\xFF';
+    outputStream << (unsigned char)BID_PING;
+    outputStream << '\xFF';
 }
 
 void
@@ -177,7 +183,8 @@ DigitalOutputPacket::write(
         std::ostream& outputStream
         ) const
 {
-    outputStream << "\xFF\x02";
+    outputStream << '\xFF';
+    outputStream << (unsigned char)BID_DOUTPUT;
     outputStream << (unsigned char)myPin;
     outputStream << (myValue ? '\x02' : '\x01');
     outputStream << '\xFF';
@@ -261,6 +268,11 @@ DigitalOutputPacket::getValue() const
 }
 
 
+DigitalInputPacket::DigitalInputPacket() :
+    myPin(0)
+{
+}
+
 DigitalInputPacket::DigitalInputPacket(
         unsigned int pin
         ) :
@@ -273,7 +285,8 @@ DigitalInputPacket::write(
         std::ostream& outputStream
         ) const
 {
-    outputStream << "\xFF\x03";
+    outputStream << '\xFF';
+    outputStream << (unsigned char)BID_DINPUT;
     outputStream << (unsigned char)myPin;
     outputStream << '\xFF';
 }
@@ -283,6 +296,16 @@ DigitalInputPacket::read(
         std::istream& inputStream
         )
 {
+    int pin = -1;
+
+    pin = inputStream.get();
+    myPin = (unsigned int)pin;
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+
+    inputStream.get();
 }
 
 bool
@@ -322,6 +345,9 @@ AcknowledgePacket::write(
         std::ostream& outputStream
         ) const
 {
+    outputStream << '\xFF';
+    outputStream << (unsigned char)BID_ACK;
+    outputStream << '\xFF';
 }
 
 void
@@ -392,6 +418,11 @@ DigitalValuePacket::write(
         std::ostream& outputStream
         ) const
 {
+    outputStream << '\xFF';
+    outputStream << (unsigned char)BID_DVALUE;
+    outputStream << (unsigned char)myPin;
+    outputStream << ((myValue == true) ? '\x02' : '\x01');
+    outputStream << '\xFF';
 }
 
 void
