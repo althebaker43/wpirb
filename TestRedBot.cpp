@@ -17,6 +17,9 @@ TEST(RedBot, CommandTest)
 
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x02\x04\x02\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+
     robot.modePeriodic(mode);
 
     mock().checkExpectations();
@@ -36,10 +39,16 @@ TEST(RedBot, ResponseTest)
 
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x03\x06\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x06\x02\xFF");
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x03\x06\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x06\x01\xFF");
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x03\x06\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x06\x02\xFF");
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
 
     robot.modePeriodic(mode);
     robot.modePeriodic(mode);

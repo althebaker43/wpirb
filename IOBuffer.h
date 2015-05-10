@@ -18,17 +18,12 @@ class InputBuffer
         virtual ~InputBuffer(){};
 
         /**
-         * Reads in a single byte
+         * Attempts to read a packet from an input source
          *
          * \return True if read operation was successful, false otherwise or if
          * a complete packet has already been read in.
          */
-        virtual bool read() = 0;
-
-        /**
-         * Indicates if a complete packet is currently buffered
-         */
-        virtual bool isPacketComplete() const = 0;
+        virtual bool readPacket() = 0;
 
         /**
          * Provides an input stream to read complete packets from
@@ -54,17 +49,12 @@ class OutputBuffer
         virtual ~OutputBuffer(){};
 
         /**
-         * Writes a single byte to the output file stream
+         * Attempts to write a single packet to an output destination
          *
          * \return True if the write operation was successful, false otherwise
          * or if a complete packet has already been written out.
          */
-        virtual bool write() = 0;
-
-        /**
-         * Indicates if a complete packet has been written out
-         */
-        virtual bool isPacketComplete() const = 0;
+        virtual bool writePacket() = 0;
 
         /**
          * Provides an output stream to write complete packets to
@@ -97,6 +87,14 @@ class InputFileBuffer : public InputBuffer
          * The file stream is not closed when this object is destroyed.
          */
         ~InputFileBuffer();
+
+        /**
+         * Attempts to read a packet from a file/device
+         *
+         * \return True if read operation was successful, false otherwise or if
+         * a complete packet has already been read in.
+         */
+        bool readPacket();
 
         /**
          * Reads a single byte from the input file stream
@@ -164,6 +162,14 @@ class OutputFileBuffer : public OutputBuffer
          * The file stream is not closed when this object is destroyed.
          */
         ~OutputFileBuffer();
+
+        /**
+         * Attempts to write a single packet to a file/device
+         *
+         * \return True if the write operation was successful, false otherwise
+         * or if a complete packet has already been written out.
+         */
+        bool writePacket();
 
         /**
          * Writes a single byte to the output file stream

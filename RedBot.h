@@ -119,6 +119,11 @@ class RedBot
         static const speed_t OUR_DEV_SPEED = B9600;
 
         /**
+         * Exchanges data packets with the robot
+         */
+        void transferData();
+
+        /**
          * Program that controls this robot
          */
         IterativeRobot* myProgram;

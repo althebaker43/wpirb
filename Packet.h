@@ -23,6 +23,7 @@ class Packet
             TYPE_DINPUT,    /**< Digital input packet */
 
             // Response packets
+            TYPE_ACK,       /**< Acknowledgement packet */
             TYPE_DVALUE,    /**< Digital value response packet */
         };
 
@@ -291,6 +292,57 @@ class DigitalInputPacket : public Packet
          * Pin to read digital signal from
          */
         unsigned int myPin;
+};
+
+/**
+ * Acknowledgement response class
+ */
+class AcknowledgePacket : public Packet
+{
+    public:
+
+        /**
+         * Default constructor
+         */
+        AcknowledgePacket();
+
+        /**
+         * Writes serialized binary data to output stream
+         */
+        void write(
+                std::ostream&
+                ) const;
+
+        /**
+         * Reads serialized binary data from input stream
+         */
+        void read(
+                std::istream&
+                );
+
+        /**
+         * Indicates if this packet is valid or not
+         */
+        bool isValid() const;
+
+        /**
+         * Equality operator
+         */
+        bool operator==(
+                const Packet&
+                ) const;
+
+        /**
+         * Provides the type of packet
+         */
+        Type getType() const;
+
+    private:
+
+        /**
+         * Indicates if this packet is valid or not
+         */
+        bool myIsValid;
 };
 
 /**

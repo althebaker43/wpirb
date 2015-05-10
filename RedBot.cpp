@@ -219,6 +219,7 @@ RedBot::modePeriodic(
         delete packet;
     }
 
+    // Run user's periodic function
     switch (mode)
     {
         case FieldControlSystem::MODE_DISABLED:
@@ -241,7 +242,24 @@ RedBot::modePeriodic(
             break;
     };
 
-    // Send outgoing packets
+    // Exchange data with the robot
+    transferData();
+}
+
+void
+RedBot::transferData()
+{
+    if(
+            (myInputBuffer == NULL) ||
+            (myOutputBuffer == NULL)
+      )
+    {
+        return;
+    }
+
+    std::queue<Packet*> outgoingPackets;
+
+    // Collect outgoing packets from components
     for(
             Components::const_iterator compIter = myComponents.begin();
             compIter != myComponents.end();
@@ -256,14 +274,23 @@ RedBot::modePeriodic(
             continue;
         }
 
+        outgoingPackets.push(outPacket);
+    }
+
+    // Send outgoing packets
+    while (outgoingPackets.empty() == false)
+    {
+        Packet* outPacket = outgoingPackets.front();
+        outgoingPackets.pop();
+
         outPacket->write(myOutputBuffer->getOutputStream());
         delete outPacket;
 
-        while (myOutputBuffer->write() == true);
+        myOutputBuffer->writePacket();
         myOutputBuffer->clear();
 
         myInputBuffer->clear();
-        while (myInputBuffer->read() == true);
+        myInputBuffer->readPacket();
         Packet* inPacket = Packet::Read(myInputBuffer->getInputStream());
 
         if (inPacket == NULL)
@@ -272,5 +299,34 @@ RedBot::modePeriodic(
         }
 
         myIncomingPackets.push(inPacket);
+    }
+
+    // Continue pinging until no more incoming packets to process
+    PingPacket pingPacket;
+    while (true)
+    {
+        pingPacket.write(myOutputBuffer->getOutputStream());
+
+        myOutputBuffer->writePacket();
+        myOutputBuffer->clear();
+
+        myInputBuffer->clear();
+        myInputBuffer->readPacket();
+        Packet* inPacket = Packet::Read(myInputBuffer->getInputStream());
+
+        if (inPacket == NULL)
+        {
+            continue;
+        }
+
+        if (inPacket->getType() == Packet::TYPE_ACK)
+        {
+            delete inPacket;
+            break;
+        }
+        else
+        {
+            myIncomingPackets.push(inPacket);
+        }
     }
 }

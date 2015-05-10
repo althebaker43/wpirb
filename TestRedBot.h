@@ -9,88 +9,6 @@
 #include "CppUTestExt/MockSupport.h"
 #include <stdio.h>
 
-class MockInputBuffer : public InputBuffer
-{
-    public:
-
-        MockInputBuffer()
-        {
-        }
-
-        ~MockInputBuffer()
-        {
-        }
-
-        bool read()
-        {
-            return false;
-        }
-
-        bool isPacketComplete() const
-        {
-            return false;
-        }
-
-        std::istream& getInputStream()
-        {
-            return myInputStream;
-        }
-
-        void clear()
-        {
-        }
-
-        std::ostream& getMockContents()
-        {
-            return myInputStream;
-        }
-
-    private:
-
-        std::stringstream myInputStream;
-};
-
-class MockOutputBuffer : public OutputBuffer
-{
-    public:
-
-        MockOutputBuffer()
-        {
-        }
-
-        ~MockOutputBuffer()
-        {
-        }
-
-        bool write()
-        {
-            return false;
-        }
-
-        bool isPacketComplete() const
-        {
-            return false;
-        }
-
-        std::ostream& getOutputStream()
-        {
-            return myOutputStream;
-        }
-
-        void clear()
-        {
-        }
-
-        std::istream& getMockContents()
-        {
-            return myOutputStream;
-        }
-
-    private:
-
-        std::stringstream myOutputStream;
-};
-
 class MockInputOutputBuffer : public InputBuffer, public OutputBuffer
 {
     public:
@@ -117,13 +35,13 @@ class MockInputOutputBuffer : public InputBuffer, public OutputBuffer
             return mock().actualCall("receiveString").returnStringValue();
         }
 
-        bool read()
+        bool readPacket()
         {
             myStream.str(receiveString());
             return false;
         }
 
-        bool write()
+        bool writePacket()
         {
             sendString(myStream.str().c_str());
             return false;

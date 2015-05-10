@@ -35,6 +35,10 @@ Packet::Read(
                 packet = new DigitalValuePacket();
                 break;
 
+            case '\x82':
+                packet = new AcknowledgePacket();
+                break;
+
             default:
                 break;
         };
@@ -305,6 +309,64 @@ unsigned int
 DigitalInputPacket::getPin() const
 {
     return myPin;
+}
+
+
+AcknowledgePacket::AcknowledgePacket() :
+    myIsValid(true)
+{
+}
+
+void
+AcknowledgePacket::write(
+        std::ostream& outputStream
+        ) const
+{
+}
+
+void
+AcknowledgePacket::read(
+        std::istream& inputStream
+        )
+{
+    unsigned char trailer;
+
+    inputStream >> trailer;
+    if (trailer == 0xFF)
+    {
+        myIsValid = true;
+    }
+    else
+    {
+        myIsValid = false;
+    }
+}
+
+bool
+AcknowledgePacket::isValid() const
+{
+    return myIsValid;
+}
+
+bool
+AcknowledgePacket::operator==(
+        const Packet& packet
+        ) const
+{
+    if (packet.getType() == TYPE_ACK)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+Packet::Type
+AcknowledgePacket::getType() const
+{
+    return TYPE_ACK;
 }
 
 

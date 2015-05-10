@@ -16,6 +16,14 @@ InputFileBuffer::~InputFileBuffer()
 }
 
 bool
+InputFileBuffer::readPacket()
+{
+    while (read() == true);
+
+    return isPacketComplete();
+}
+
+bool
 InputFileBuffer::read()
 {
     if (isPacketComplete() == true)
@@ -85,6 +93,14 @@ OutputFileBuffer::OutputFileBuffer(
 
 OutputFileBuffer::~OutputFileBuffer()
 {
+}
+
+bool
+OutputFileBuffer::writePacket()
+{
+    while (write() == true);
+
+    return isPacketComplete();
 }
 
 bool
