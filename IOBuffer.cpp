@@ -100,6 +100,8 @@ OutputFileBuffer::writePacket()
 {
     while (write() == true);
 
+    fflush(myOutputFile);
+
     return isPacketComplete();
 }
 

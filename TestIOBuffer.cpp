@@ -100,7 +100,6 @@ TEST(IOBuffer, OutputBufferWriteTest)
     CHECK(oBuffer.isPacketComplete() == true);
     CHECK(oBuffer.write() == false);
 
-    fflush(packetFile);
     rewind(packetFile);
 
     char writtenPacket [4];
@@ -124,7 +123,6 @@ TEST(IOBuffer, OutputBufferMultiWriteTest)
     CHECK(oBuffer.isPacketComplete());
     CHECK(oBuffer.write() == false);
 
-    fflush(packetFile);
     rewind(packetFile);
 
     CHECK(fgets(writtenPacket, 4, packetFile) != NULL);
@@ -139,7 +137,6 @@ TEST(IOBuffer, OutputBufferMultiWriteTest)
 
     CHECK(oBuffer.isPacketComplete());
 
-    fflush(packetFile);
     rewind(packetFile);
 
     CHECK(fgets(writtenPacket, 4, packetFile) != NULL);
@@ -155,7 +152,6 @@ TEST(IOBuffer, IOBufferPacketIntegrityTest)
     outputPacket.write(oBuffer.getOutputStream());
     while (oBuffer.write() == true);
 
-    fflush(packetFile);
     rewind(packetFile);
 
     while (iBuffer.read() == true);
