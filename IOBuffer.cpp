@@ -1,5 +1,7 @@
 
 #include "IOBuffer.h"
+#include <error.h>
+#include <errno.h>
 
 
 InputFileBuffer::InputFileBuffer(
@@ -32,7 +34,6 @@ InputFileBuffer::read()
     }
 
     int readVal = getc(myInputFile);
-
     if (readVal == EOF)
     {
         return false;
@@ -135,6 +136,7 @@ OutputFileBuffer::write()
 
     if (putc(writeVal, myOutputFile) == EOF)
     {
+        error(0, errno, "OutputFileBuffer: could not write byte 0x%X", writeVal);
         return false;
     }
 

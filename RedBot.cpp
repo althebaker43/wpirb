@@ -48,15 +48,15 @@ RedBot::RedBot(
     {
         // Open device
 
-        int deviceFD = open(deviceName, O_RDONLY);
-        if (deviceFD == -1)
+        myDevice = fopen(deviceName, "r+");
+        if (myDevice == NULL)
         {
             error(0, errno, "Could not open %s", deviceName);
             return;
         }
 
-        myDevice = fdopen(deviceFD, "rb");
-        if (myDevice == NULL)
+        int deviceFD = fileno(myDevice);
+        if (deviceFD == -1)
         {
             error(0, errno, "Could not open %s", deviceName);
             return;
