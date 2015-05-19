@@ -1,0 +1,4 @@
+#ifndef TESTWPIRBROBOT_H
+#define TESTWPIRBROBOT_H
+
+#endif /* ifndef TESTWPIRBROBOT_H */
