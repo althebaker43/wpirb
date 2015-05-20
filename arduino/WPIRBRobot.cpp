@@ -33,10 +33,26 @@ WPIRBRobot::loop()
             {
                 if (myPacketSize < PACKET_BUFSIZE)
                 {
-                    myPacketBuffer[myPacketSize++] = PACKET_BOUND;
-                    parsePacket();
+                    if (myPacketSize > 1)
+                    {
+                        // Valid complete packet
+                        myPacketBuffer[myPacketSize++] = PACKET_BOUND;
+                        parsePacket();
+                        myIsHeaderRead = false;
+                    }
+                    else
+                    {
+                        // Back-to-back packet bounds
+                        myPacketSize = 0;
+                        myPacketBuffer[myPacketSize++] = PACKET_BOUND;
+                        myIsHeaderRead = true;
+                    }
                 }
-                myIsHeaderRead = false;
+                else
+                {
+                    // Packet too large
+                    myIsHeaderRead = false;
+                }
             }
         }
         else
@@ -45,7 +61,7 @@ WPIRBRobot::loop()
             {
                 if (myPacketSize < PACKET_BUFSIZE)
                 {
-                  myPacketBuffer[myPacketSize++] = curByte;
+                    myPacketBuffer[myPacketSize++] = curByte;
                 }
             }
         }
