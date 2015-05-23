@@ -40,6 +40,7 @@ class Packet
             BID_PING =      0x01,
             BID_DOUTPUT =   0x02,
             BID_DINPUT =    0x03,
+            BID_MDRIVE =    0x04,
 
             // Response packets
             BID_ACK =       0x82,
@@ -370,6 +371,11 @@ class MotorDrivePacket : public Packet
             DIR_FORWARD,
             DIR_BACKWARD
         };
+
+        /**
+         * Default constructor
+         */
+        MotorDrivePacket();
 
         /**
          * Constructor given motor information

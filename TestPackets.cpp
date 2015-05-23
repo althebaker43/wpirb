@@ -131,6 +131,45 @@ TEST(Packets, DigitalInputPacket)
     delete dInPacket3;
 }
 
+TEST(Packets, MotorDrivePacket)
+{
+    std::ostringstream outputStream;
+    std::istringstream inputStream;
+
+    MotorDrivePacket mDrivePacket1(
+            MotorDrivePacket::MOTOR_RIGHT,
+            255,
+            MotorDrivePacket::DIR_FORWARD
+            );
+    mDrivePacket1.write(outputStream);
+
+    STRCMP_EQUAL("\xFF\x04\x01\x01\x10\x10\xFF", outputStream.str().c_str());
+
+    outputStream.str("");
+    MotorDrivePacket mDrivePacket2(
+            MotorDrivePacket::MOTOR_LEFT,
+            128,
+            MotorDrivePacket::DIR_BACKWARD
+            );
+    mDrivePacket2.write(outputStream);
+
+    STRCMP_EQUAL("\xFF\x04\x02\x02\x09\x01\xFF", outputStream.str().c_str());
+
+    inputStream.str("\xFF\x04\x02\x01\x01\x01\xFF");
+    Packet* packet3 = Packet::Read(inputStream);
+
+    CHECK(NULL != packet3);
+    CHECK_EQUAL(Packet::TYPE_MDRIVE, packet3->getType());
+
+    MotorDrivePacket* mDrivePacket3 = static_cast<MotorDrivePacket*>(packet3);
+
+    CHECK_EQUAL(MotorDrivePacket::MOTOR_LEFT, mDrivePacket3->getMotor());
+    CHECK_EQUAL(0, mDrivePacket3->getSpeed());
+    CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket3->getDirection());
+
+    delete mDrivePacket3;
+}
+
 TEST(Packets, DigitalValuePacket)
 {
     DigitalValuePacket dValPacket1(2, true);
@@ -243,6 +282,45 @@ TEST(Packets, DigitalInputPacketXML)
         "<packet>"
         "<type>DINPUT</type>"
         "<pin>4</pin>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+}
+
+TEST(Packets, MotorDrivePacketXML)
+{
+    std::ostringstream packetStream;
+    std::string expectedOutput;
+
+    MotorDrivePacket mDrivePacket1(
+            MotorDrivePacket::MOTOR_RIGHT,
+            255,
+            MotorDrivePacket::DIR_BACKWARD
+            );
+    mDrivePacket1.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>MDRIVE</type>"
+        "<motor>right</motor>"
+        "<speed>255</speed>"
+        "<direction>backward</direction>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+
+    packetStream.str("");
+    MotorDrivePacket mDrivePacket2(
+            MotorDrivePacket::MOTOR_LEFT,
+            34,
+            MotorDrivePacket::DIR_FORWARD
+            );
+    mDrivePacket2.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>MDRIVE</type>"
+        "<motor>left</motor>"
+        "<speed>34</speed>"
+        "<direction>forward</direction>"
         "</packet>";
     CHECK_EQUAL(expectedOutput, packetStream.str());
 }

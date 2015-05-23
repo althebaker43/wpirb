@@ -1,6 +1,7 @@
 
 #include "Packet.h"
 #include <sstream>
+#include <vector>
 
 
 Packet*
@@ -33,6 +34,10 @@ Packet::Read(
 
             case BID_DINPUT:
                 packet = new DigitalInputPacket();
+                break;
+
+            case BID_MDRIVE:
+                packet = new MotorDrivePacket();
                 break;
 
             case BID_DVALUE:
@@ -367,6 +372,13 @@ DigitalInputPacket::getPin() const
 }
 
 
+MotorDrivePacket::MotorDrivePacket() :
+    myMotor(MOTOR_RIGHT),
+    mySpeed(0),
+    myDirection(DIR_FORWARD)
+{
+}
+
 MotorDrivePacket::MotorDrivePacket(
         MotorDrivePacket::Motor     motor,
         uint8_t                     speed,
@@ -387,6 +399,13 @@ MotorDrivePacket::write(
         std::ostream& outputStream
         ) const
 {
+    outputStream << '\xFF';
+    outputStream << (unsigned char)BID_MDRIVE;
+    outputStream << ((myMotor == MOTOR_LEFT) ? '\x02' : '\x01');
+    outputStream << ((myDirection == DIR_FORWARD) ? '\x01' : '\x02');
+    outputStream << (unsigned char)(((mySpeed & 0xF0) >> 4) + 1);
+    outputStream << (unsigned char)((mySpeed & 0x0F) + 1);
+    outputStream << '\xFF';
 }
 
 void
@@ -394,6 +413,13 @@ MotorDrivePacket::writeXML(
         std::ostream& outputStream
         ) const
 {
+    outputStream
+        << "<packet>"
+        << "<type>MDRIVE</type>"
+        << "<motor>" << ((myMotor == MOTOR_RIGHT) ? "right" : "left") << "</motor>"
+        << "<speed>" << (unsigned int)mySpeed << "</speed>"
+        << "<direction>" << ((myDirection == DIR_FORWARD) ? "forward" : "backward") << "</direction>"
+        << "</packet>";
 }
 
 void
@@ -401,6 +427,30 @@ MotorDrivePacket::read(
         std::istream& inputStream
         )
 {
+    std::vector<unsigned char> byteBuf(4);
+
+    for (int i = 0; i < 4; i++)
+    {
+        unsigned char curByte;
+        inputStream >> curByte;
+
+        if(
+                (curByte == '\xFF') ||
+                (inputStream.good() == false)
+          )
+        {
+            return;
+        }
+
+        byteBuf[i] = curByte;
+    }
+
+    myMotor = ((byteBuf[0] == '\x01') ? MOTOR_RIGHT : MOTOR_LEFT);
+    mySpeed = ((byteBuf[2] - 1) << 4) | (byteBuf[3] - 1);
+    myDirection = ((byteBuf[1] == '\x01') ? DIR_FORWARD : DIR_BACKWARD);
+
+    unsigned char trailer;
+    inputStream >> trailer;
 }
 
 bool
