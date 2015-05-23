@@ -1,5 +1,6 @@
 
 #include "IOBuffer.h"
+#include <poll.h>
 #include <error.h>
 #include <errno.h>
 
@@ -30,6 +31,22 @@ InputFileBuffer::read()
 {
     if (isPacketComplete() == true)
     {
+        return false;
+    }
+
+    struct pollfd pollInfo;
+    pollInfo.fd = fileno(myInputFile);
+    pollInfo.events = POLLIN;
+
+    int pollRetVal = poll(&pollInfo, 1, 1000);
+    if (pollRetVal == 0)
+    {
+        fprintf(stderr, "Error: InputFileBuffer: timed-out waiting for input.\n");
+        return false;
+    }
+    else if (pollRetVal < 0)
+    {
+        error(0, errno, "InputFileBuffer: error while waiting for input");
         return false;
     }
 

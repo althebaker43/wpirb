@@ -55,37 +55,6 @@ RedBot::RedBot(
             return;
         }
 
-        int deviceFD = fileno(myDevice);
-        if (deviceFD == -1)
-        {
-            error(0, errno, "Could not open %s", deviceName);
-            return;
-        }
-
-        // Configure device
-
-        struct termios deviceConfig;
-        struct termios actualDeviceConfig;
-
-        tcgetattr(deviceFD, &deviceConfig);
-        cfsetspeed(&deviceConfig, OUR_DEV_SPEED);
-        if (tcsetattr(deviceFD, 0, &deviceConfig) == -1)
-        {
-            error(0, errno, "Could not configure device %s", deviceName);
-            return;
-        }
-
-        tcgetattr(deviceFD, &actualDeviceConfig);
-        if(
-                (cfgetispeed(&actualDeviceConfig) != OUR_DEV_SPEED) ||
-                (cfgetospeed(&actualDeviceConfig) != OUR_DEV_SPEED)
-          )
-        {
-            close(deviceFD);
-            error(0, 0, "Could not configure device %s", deviceName);
-            return;
-        }
-
         myInputBuffer = new InputFileBuffer(myDevice);
         myOutputBuffer = new OutputFileBuffer(myDevice);
         myIsConnected = true;

@@ -121,7 +121,7 @@ WPIRBRobot::parseDigitalOutputPacket()
     unsigned int pin = myPacketBuffer[2];
     unsigned int value = (myPacketBuffer[3] == 0x02) ? HIGH : LOW;
     
-    if (pin < 13)
+    if (pin <= 13)
     {
       pinMode(pin, OUTPUT);
       digitalWrite(pin, value);
