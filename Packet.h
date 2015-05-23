@@ -2,6 +2,7 @@
 #define PACKET_H
 
 #include <istream>
+#include <stdint.h>
 
 /**
  * Packet base class definition
@@ -21,6 +22,7 @@ class Packet
             TYPE_PING,      /**< Ping packet */
             TYPE_DOUTPUT,   /**< Digital output packet */
             TYPE_DINPUT,    /**< Digital input packet */
+            TYPE_MDRIVE,    /**< Motor drive packet */
 
             // Response packets
             TYPE_ACK,       /**< Acknowledgement packet */
@@ -342,6 +344,119 @@ class DigitalInputPacket : public Packet
          * Pin to read digital signal from
          */
         unsigned int myPin;
+};
+
+/**
+ * Motor drive command class
+ */
+class MotorDrivePacket : public Packet
+{
+    public:
+
+        /**
+         * Motor enumeration
+         */
+        enum Motor
+        {
+            MOTOR_LEFT,
+            MOTOR_RIGHT
+        };
+
+        /**
+         * Motor direction enumeration
+         */
+        enum Direction
+        {
+            DIR_FORWARD,
+            DIR_BACKWARD
+        };
+
+        /**
+         * Constructor given motor information
+         */
+        MotorDrivePacket(
+                Motor       motor,      /**< Motor to drive */
+                uint8_t     speed,      /**< Absolute speed to drive motor to */
+                Direction   direction   /**< Direction to drive motor in */
+                );
+
+        /**
+         * Destructor
+         */
+        ~MotorDrivePacket();
+
+        /**
+         * Writes serialized binary data to output stream
+         */
+        void write(
+                std::ostream&
+                ) const;
+
+        /**
+         * Generates an XML representation of this packet
+         */
+        void writeXML(
+                std::ostream&
+                ) const;
+
+        /**
+         * Reads serialized binary data from input stream
+         */
+        void read(
+                std::istream&
+                );
+
+        /**
+         * Indicates if this packet is valid or not
+         *
+         * A Packet can be invalid if it tried to read from a malformed byte
+         * stream.
+         */
+        bool isValid() const;
+
+        /**
+         * Equality operator
+         */
+        bool operator==(
+                const Packet&
+                ) const;
+
+        /**
+         * Provides the type of packet
+         */
+        Type getType() const;
+
+        /**
+         * Indicates which motor to drive
+         */
+        Motor getMotor() const;
+
+        /**
+         * Provides absolute speed to drive motor to
+         */
+        uint8_t getSpeed() const;
+
+        /**
+         * Indicates which way the motor will be driven
+         */
+        Direction getDirection() const;
+
+    private:
+
+        /**
+         * Motor to drive
+         */
+        Motor myMotor;
+
+        /**
+         * Speed to drive motor to
+         */
+        uint8_t mySpeed;
+
+        /**
+         * Direction to drive motor in
+         */
+        Direction myDirection;
 };
 
 /**

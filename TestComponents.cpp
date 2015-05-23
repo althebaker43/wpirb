@@ -2,6 +2,7 @@
 #include "TestComponents.h"
 #include "DigitalOutput.h"
 #include "DigitalInput.h"
+#include "RobotDrive.h"
 
 
 TEST(Components, DigitalOutputTest)
@@ -94,4 +95,105 @@ TEST(Components, TimerTest)
     timer.Stop();
 
     CHECK_EQUAL(0.0, timer.Get());
+}
+
+TEST(Components, RobotDriveSimpleTest)
+{
+    RobotDrive drive(0, 0);
+    myPackets.push_back(drive.getNextPacket());
+
+    CHECK_EQUAL((Packet*)NULL, myPackets.back());
+
+    drive.Drive(0.0, 0.0);
+    myPackets.push_back(drive.getNextPacket());
+
+    CHECK(NULL != myPackets.back());
+    CHECK_EQUAL(Packet::TYPE_MDRIVE, myPackets.back()->getType());
+
+    MotorDrivePacket* mDrivePacket1 = static_cast<MotorDrivePacket*>(myPackets.back());
+
+    CHECK_EQUAL(0, mDrivePacket1->getSpeed());
+    CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket1->getDirection());
+
+    myPackets.push_back(drive.getNextPacket());
+
+    CHECK(NULL != myPackets.back());
+    CHECK_EQUAL(Packet::TYPE_MDRIVE, myPackets.back()->getType());
+
+    MotorDrivePacket* mDrivePacket2 = static_cast<MotorDrivePacket*>(myPackets.back());
+
+    CHECK_EQUAL(0, mDrivePacket2->getSpeed());
+    CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket2->getDirection());
+
+    if (mDrivePacket1->getMotor() == MotorDrivePacket::MOTOR_RIGHT)
+    {
+        CHECK_EQUAL(MotorDrivePacket::MOTOR_LEFT, mDrivePacket2->getMotor())
+    }
+    else
+    {
+        CHECK_EQUAL(MotorDrivePacket::MOTOR_RIGHT, mDrivePacket2->getMotor())
+    }
+
+    myPackets.push_back(drive.getNextPacket());
+
+    CHECK_EQUAL((Packet*)NULL, myPackets.back());
+}
+
+TEST(Components, RobotDriveStraightTest)
+{
+    RobotDrive drive(0, 0);
+    MotorDrivePacket* mDrivePacket1;
+    MotorDrivePacket* mDrivePacket2;
+
+    drive.Drive(1.0, 0.0);
+
+    myPackets.push_back(drive.getNextPacket());
+    mDrivePacket1 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
+    myPackets.push_back(drive.getNextPacket());
+    mDrivePacket2 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
+
+    CHECK(NULL != mDrivePacket1);
+    CHECK(NULL != mDrivePacket2);
+    CHECK_EQUAL(255, mDrivePacket1->getSpeed());
+    CHECK_EQUAL(255, mDrivePacket2->getSpeed());
+    CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket1->getDirection());
+    CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket2->getDirection());
+
+    drive.Drive(-1.0, 0.0);
+
+    myPackets.push_back(drive.getNextPacket());
+    mDrivePacket1 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
+    myPackets.push_back(drive.getNextPacket());
+    mDrivePacket2 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
+
+    CHECK(NULL != mDrivePacket1);
+    CHECK(NULL != mDrivePacket2);
+    CHECK_EQUAL(255, mDrivePacket1->getSpeed());
+    CHECK_EQUAL(255, mDrivePacket2->getSpeed());
+    CHECK_EQUAL(MotorDrivePacket::DIR_BACKWARD, mDrivePacket1->getDirection());
+    CHECK_EQUAL(MotorDrivePacket::DIR_BACKWARD, mDrivePacket2->getDirection());
+
+    drive.Drive(0.5, 0.0);
+
+    myPackets.push_back(drive.getNextPacket());
+    mDrivePacket1 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
+    myPackets.push_back(drive.getNextPacket());
+    mDrivePacket2 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
+
+    CHECK(NULL != mDrivePacket1);
+    CHECK(NULL != mDrivePacket2);
+    CHECK_EQUAL(127, mDrivePacket1->getSpeed());
+    CHECK_EQUAL(127, mDrivePacket2->getSpeed());
+    CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket1->getDirection());
+    CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket2->getDirection());
+
+    drive.Drive(1.5, 0.0);
+
+    myPackets.push_back(drive.getNextPacket());
+    mDrivePacket1 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
+    myPackets.push_back(drive.getNextPacket());
+    mDrivePacket2 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
+
+    CHECK_EQUAL((MotorDrivePacket*)NULL, mDrivePacket1);
+    CHECK_EQUAL((MotorDrivePacket*)NULL, mDrivePacket2);
 }

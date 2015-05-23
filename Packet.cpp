@@ -367,6 +367,99 @@ DigitalInputPacket::getPin() const
 }
 
 
+MotorDrivePacket::MotorDrivePacket(
+        MotorDrivePacket::Motor     motor,
+        uint8_t                     speed,
+        MotorDrivePacket::Direction direction
+        ) :
+    myMotor(motor),
+    mySpeed(speed),
+    myDirection(direction)
+{
+}
+
+MotorDrivePacket::~MotorDrivePacket()
+{
+}
+
+void
+MotorDrivePacket::write(
+        std::ostream& outputStream
+        ) const
+{
+}
+
+void
+MotorDrivePacket::writeXML(
+        std::ostream& outputStream
+        ) const
+{
+}
+
+void
+MotorDrivePacket::read(
+        std::istream& inputStream
+        )
+{
+}
+
+bool
+MotorDrivePacket::isValid() const
+{
+    return true;
+}
+
+bool
+MotorDrivePacket::operator==(
+        const Packet& packet
+        ) const
+{
+    if (packet.getType() != TYPE_MDRIVE)
+    {
+        return false;
+    }
+
+    const MotorDrivePacket& mDrivePacket = static_cast<const MotorDrivePacket&>(packet);
+
+    if(
+            (mDrivePacket.getMotor() == myMotor) &&
+            (mDrivePacket.getSpeed() == mySpeed) &&
+            (mDrivePacket.getDirection() == myDirection)
+      )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+Packet::Type
+MotorDrivePacket::getType() const
+{
+    return TYPE_MDRIVE;
+}
+
+MotorDrivePacket::Motor
+MotorDrivePacket::getMotor() const
+{
+    return myMotor;
+}
+
+uint8_t
+MotorDrivePacket::getSpeed() const
+{
+    return mySpeed;
+}
+
+MotorDrivePacket::Direction
+MotorDrivePacket::getDirection() const
+{
+    return myDirection;
+}
+
+
 AcknowledgePacket::AcknowledgePacket() :
     myIsValid(true)
 {
