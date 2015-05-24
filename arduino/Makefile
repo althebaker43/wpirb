@@ -7,13 +7,14 @@ OBJS=$(MODULES:%=%.o)
 
 TEST_MODULES= \
 	TestWPIRBRobot \
-	Arduino
+	Arduino \
+	RedBot
 TEST_OBJS=$(TEST_MODULES:%=%.o)
 TEST_RUNNER=runTests
 
-CPPFLAGS += -I$(CPPUTEST_HOME)/include
+CPPFLAGS += -I$(CPPUTEST_HOME)/include -I..
 CXXFLAGS = -g -Wall -Werror
-LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
+LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt -L.. -lwpirb
 
 ARDUINO_ROOT = $(HOME)/Development/redbot/arduino-1.6.3
 

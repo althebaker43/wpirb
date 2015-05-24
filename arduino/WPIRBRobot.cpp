@@ -100,6 +100,10 @@ WPIRBRobot::parsePacket()
     case PACKET_TYPE_DINPUT:
       parseDigitalInputPacket();
       break;
+
+    case PACKET_TYPE_MDRIVE:
+      parseMotorDrivePacket();
+      break;
       
     default:
       acknowledge();
@@ -156,6 +160,37 @@ WPIRBRobot::parseDigitalInputPacket()
   }
   
   return;
+}
+
+void
+WPIRBRobot::parseMotorDrivePacket()
+{
+    if (myPacketSize == 7)
+    {
+        byte motor = myPacketBuffer[2];
+        byte direction = myPacketBuffer[3];
+        byte speedHi = myPacketBuffer[4];
+        byte speedLo = myPacketBuffer[5];
+
+        int speed = ((speedHi - 1) << 4) | (speedLo - 1);
+
+        if (direction == 0x02)
+        {
+            speed = -1 * speed;
+        }
+
+        if (motor == 0x01)
+        {
+            myMotors.rightMotor(speed);
+        }
+        else
+        {
+            myMotors.leftMotor(speed);
+        }
+    }
+
+    acknowledge();
+    return;
 }
 
 void
