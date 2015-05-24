@@ -236,14 +236,21 @@ RedBot::transferData()
        )
     {
         Component* component = *compIter;
-        Packet* outPacket = component->getNextPacket();
 
-        if (outPacket == NULL)
+        for(
+                size_t packetCount = 0;
+                packetCount < 10;
+                ++packetCount
+           )
         {
-            continue;
-        }
+            Packet* outPacket = component->getNextPacket();
+            if (outPacket == NULL)
+            {
+                break;
+            }
 
-        outgoingPackets.push(outPacket);
+            outgoingPackets.push(outPacket);
+        }
     }
 
     // Send outgoing packets

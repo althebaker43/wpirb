@@ -9,12 +9,17 @@ DigitalInput::DigitalInput(
         ) :
     Component(),
     myChannel(channel),
-    myValue(false)
+    myValue(false),
+    myOutgoingPacket(new DigitalInputPacket(myChannel))
 {
 }
 
 DigitalInput::~DigitalInput()
 {
+    if (myOutgoingPacket != NULL)
+    {
+        delete myOutgoingPacket;
+    }
 }
 
 bool
@@ -26,7 +31,10 @@ DigitalInput::Get()
 Packet*
 DigitalInput::getNextPacket()
 {
-    return new DigitalInputPacket(myChannel);
+    Packet* packet = myOutgoingPacket;
+    myOutgoingPacket = NULL;
+
+    return packet;
 }
 
 bool
@@ -36,6 +44,11 @@ DigitalInput::processPacket(
 {
     const DigitalValuePacket& dValPacket = static_cast<const DigitalValuePacket&>(packet);
     myValue = dValPacket.getValue();
+
+    if (myOutgoingPacket == NULL)
+    {
+        myOutgoingPacket = new DigitalInputPacket(myChannel);
+    }
 
     return true;
 }

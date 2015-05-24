@@ -4,6 +4,8 @@
 #include "Component.h"
 #include <stdint.h>
 
+class DigitalInputPacket;
+
 /**
  * Digital input class
  */
@@ -55,6 +57,11 @@ class DigitalInput : public Component
          * Last digital value read from pin
          */
         bool myValue;
+
+        /**
+         * Next packet to send to robot
+         */
+        DigitalInputPacket* myOutgoingPacket;
 };
 
 #endif /* ifndef DIGITALINPUT_H */

@@ -4,10 +4,17 @@
 #include "IterativeRobot.h"
 #include "DigitalOutput.h"
 #include "DigitalInput.h"
+#include "RobotDrive.h"
 #include "IOBuffer.h"
+#include "Packet.h"
+#include "FieldControlSystem.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include <stdio.h>
+#include <vector>
+#include <list>
+
+class RedBot;
 
 class MockInputOutputBuffer : public InputBuffer, public OutputBuffer
 {
@@ -85,6 +92,12 @@ TEST_GROUP(RedBot)
 {
     MockInputOutputBuffer* myMockInputOutputBuffer;
 
+    std::vector<Packet*> myRequestPackets;
+
+    std::vector<Packet*> myResponsePackets;
+
+    std::list<std::string> myPacketStrings;
+
     void setup()
     {
         myMockInputOutputBuffer = new MockInputOutputBuffer();
@@ -92,10 +105,41 @@ TEST_GROUP(RedBot)
 
     void teardown()
     {
+        for(
+                std::vector<Packet*>::const_iterator packetIter = myRequestPackets.begin();
+                packetIter != myRequestPackets.end();
+                ++packetIter
+           )
+        {
+            delete (*packetIter);
+        }
+        myRequestPackets.clear();
+
+        for(
+                std::vector<Packet*>::const_iterator packetIter = myResponsePackets.begin();
+                packetIter != myResponsePackets.end();
+                ++packetIter
+           )
+        {
+            delete (*packetIter);
+        }
+        myResponsePackets.clear();
+
+        myPacketStrings.clear();
+
         delete myMockInputOutputBuffer;
         mock().clear();
     }
 };
+
+void
+Exchange(
+        const std::vector<Packet*>& requestPackets,
+        const std::vector<Packet*>& responsePackets,
+        RedBot&                     robot,
+        FieldControlSystem::Mode    mode,
+        size_t                      numCycles
+        );
 
 class DigitalOutputRobot : public IterativeRobot
 {
@@ -142,6 +186,30 @@ class DigitalInputRobot : public IterativeRobot
         bool getValue() const
         {
             return myValue;
+        }
+};
+
+class DriveRobot : public IterativeRobot
+{
+    private:
+
+        RobotDrive drive;
+
+    public:
+
+        DriveRobot() :
+            IterativeRobot(),
+            drive(0,0)
+        {
+        }
+
+        void TeleopInit()
+        {
+            drive.Drive(1.0, 0);
+        }
+
+        void TeleopPeriodic()
+        {
         }
 };
 
