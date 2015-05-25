@@ -31,11 +31,14 @@ TEST_MODULES= \
 TEST_OBJS=$(TEST_MODULES:%=%.o)
 TEST_RUNNER=runTests
 
+DEPENDS = $(MODULES:%=%.d) $(TEST_MODULES:%=%.d)
+
 RESIDUE= \
 	$(LIB) \
 	$(OBJS) \
 	$(TEST_OBJS) \
-	$(TEST_RUNNER)
+	$(TEST_RUNNER) \
+	$(DEPENDS)
 
 
 .PHONY : all
@@ -55,6 +58,11 @@ $(TEST_RUNNER) : $(LIB) $(TEST_OBJS)
 
 $(LIB) : $(OBJS)
 	ar r $@ $^
+
+-include $(DEPENDS)
+
+$(DEPENDS) : %.d : %.cpp
+	$(CXX) $(CPPFLAGS) -MM $< > $@
 
 tags : $(MODULES:%=%.cpp) $(MODULES:%=%.h)
 	ctags $(MODULES:%=%.cpp) $(MODULES:%=%.h)

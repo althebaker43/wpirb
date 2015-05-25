@@ -12,6 +12,8 @@ TEST_MODULES= \
 TEST_OBJS=$(TEST_MODULES:%=%.o)
 TEST_RUNNER=runTests
 
+DEPENDS = $(MODULES:%=%.d) $(TEST_MODULES:%=%.d)
+
 CPPFLAGS += -I$(CPPUTEST_HOME)/include -I..
 CXXFLAGS = -g -Wall -Werror
 LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt -L.. -lwpirb
@@ -22,7 +24,8 @@ RESIDUE= \
 	$(LIB) \
 	$(OBJS) \
 	$(TEST_OBJS) \
-	$(TEST_RUNNER)
+	$(TEST_RUNNER) \
+	$(DEPENDS)
 
 
 .PHONY : test
@@ -36,6 +39,11 @@ $(TEST_RUNNER) : $(OBJS) $(TEST_OBJS)
 	    -o $@ \
 	    AllTests.cpp $(OBJS) $(TEST_OBJS) \
 	    $(LD_LIBRARIES)
+
+-include $(DEPENDS)
+
+$(DEPENDS) : %.d : %.cpp
+	$(CXX) $(CPPFLAGS) -MM $< > $@
 
 .PHONY : update_arduino
 update_arduino :
