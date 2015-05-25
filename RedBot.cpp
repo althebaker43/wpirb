@@ -35,6 +35,7 @@ RedBot::RedBot(
         ) :
     myProgram(program),
     myIsConnected(false),
+    myStatus(STATUS_DISCONNECTED),
     myIsUsingExternalBuffers(false),
     myDevice(NULL),
     myInputBuffer(NULL),
@@ -67,6 +68,7 @@ RedBot::RedBot(
         ) :
     myProgram(program),
     myIsConnected(true),
+    myStatus(STATUS_GOOD),
     myIsUsingExternalBuffers(false),
     myDevice(device),
     myInputBuffer(new InputFileBuffer(device)),
@@ -84,6 +86,7 @@ RedBot::RedBot(
         ) :
     myProgram(program),
     myIsConnected(true),
+    myStatus(STATUS_GOOD),
     myIsUsingExternalBuffers(true),
     myDevice(NULL),
     myInputBuffer(inputBuffer),
@@ -228,6 +231,9 @@ RedBot::transferData()
 
     std::queue<Packet*> outgoingPackets;
 
+    myLastTransactionSentData.clear();
+    myLastTransactionReceivedData.clear();
+
     // Collect outgoing packets from components
     for(
             Components::const_iterator compIter = myComponents.begin();
@@ -257,18 +263,15 @@ RedBot::transferData()
     while (outgoingPackets.empty() == false)
     {
         Packet* outPacket = outgoingPackets.front();
+        Packet* inPacket = NULL;
+
         outgoingPackets.pop();
 
-        outPacket->write(myOutputBuffer->getOutputStream());
+        exchangePackets(
+                outPacket,
+                inPacket
+                );
         delete outPacket;
-
-        myOutputBuffer->writePacket();
-        myOutputBuffer->clear();
-
-        myInputBuffer->clear();
-        myInputBuffer->readPacket();
-        Packet* inPacket = Packet::Read(myInputBuffer->getInputStream());
-
         if (inPacket == NULL)
         {
             continue;
@@ -281,18 +284,20 @@ RedBot::transferData()
     PingPacket pingPacket;
     while (true)
     {
-        pingPacket.write(myOutputBuffer->getOutputStream());
+        Packet* inPacket = NULL;
 
-        myOutputBuffer->writePacket();
-        myOutputBuffer->clear();
-
-        myInputBuffer->clear();
-        myInputBuffer->readPacket();
-        Packet* inPacket = Packet::Read(myInputBuffer->getInputStream());
-
+        exchangePackets(
+                &pingPacket,
+                inPacket
+                );
         if (inPacket == NULL)
         {
-            continue;
+            myStatus = STATUS_INCOHERENT;
+            break;
+        }
+        else
+        {
+            myStatus = STATUS_GOOD;
         }
 
         if (inPacket->getType() == Packet::TYPE_ACK)
@@ -305,4 +310,46 @@ RedBot::transferData()
             myIncomingPackets.push(inPacket);
         }
     }
+}
+
+void
+RedBot::exchangePackets(
+        Packet*     requestPacket,
+        Packet*&    responsePacket
+        )
+{
+    std::ostringstream packetStream;
+
+    requestPacket->write(myOutputBuffer->getOutputStream());
+    myOutputBuffer->writePacket();
+    myOutputBuffer->clear();
+
+    // Record sent data
+    packetStream << *requestPacket;
+    myLastTransactionSentData.push_back(packetStream.str());
+    packetStream.str("");
+
+    myInputBuffer->clear();
+    myInputBuffer->readPacket();
+    myLastTransactionReceivedData.push_back("");
+    responsePacket = Packet::Read(
+            myInputBuffer->getInputStream(),
+            &(myLastTransactionReceivedData.back()) // Record received data
+            );
+}
+
+RedBot::Status
+RedBot::getStatus() const
+{
+    return myStatus;
+}
+
+void
+RedBot::getLastBinaryTransaction(
+        std::list<std::string>& sentData,
+        std::list<std::string>& receivedData
+        ) const
+{
+    sentData = myLastTransactionSentData;
+    receivedData = myLastTransactionReceivedData;
 }

@@ -3,6 +3,7 @@
 
 #include <istream>
 #include <stdint.h>
+#include <vector>
 
 /**
  * Packet base class definition
@@ -54,7 +55,8 @@ class Packet
          * Callers are responsible for freeing the consumed memory afterwards.
          */
         static Packet* Read(
-                std::istream&
+                std::istream&   inputStream,
+                std::string*    readData = NULL /**< Optional buffer to dump read binary data to */
                 );
 
         /**
@@ -64,6 +66,10 @@ class Packet
 
         /**
          * Writes serialized binary data to output stream
+         *
+         * If this packet's contents were read from an input stream and it is
+         * invalid, then the raw data read from the stream will be written
+         * instead of a proper representation of a valid packet.
          */
         virtual void write(
                 std::ostream&
@@ -610,6 +616,11 @@ class DigitalValuePacket : public Packet
          * Indicates that this packet is valid
          */
         bool myIsValid;
+
+        /**
+         * Raw binary data read from input stream
+         */
+        std::vector<int> myBinaryData;
 };
 
 #endif /* ifndef PACKET_H */

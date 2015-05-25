@@ -354,3 +354,26 @@ TEST(Packets, DigitalValuePacketXML)
         "</packet>";
     CHECK_EQUAL(expectedOutput, packetStream.str());
 }
+
+TEST(Packets, InvalidReadPacket)
+{
+    std::istringstream inputStream;
+    std::ostringstream outputStream;
+
+    DigitalValuePacket dValPacket;
+
+    outputStream << dValPacket;
+
+    STRCMP_EQUAL("\xFF\x81", outputStream.str().c_str());
+
+    inputStream.str("\x0A\xFF");
+    inputStream >> dValPacket;
+
+    CHECK_FALSE(dValPacket.isValid());
+
+    outputStream.str("");
+    outputStream << dValPacket;
+    std::string dValPacketData = outputStream.str();
+
+    STRCMP_EQUAL("\xFF\x81\x0A\xFF", dValPacketData.c_str());
+}

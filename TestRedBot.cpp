@@ -154,3 +154,80 @@ TEST(RedBot, DriveTest)
 
     mock().checkExpectations();
 }
+
+TEST(RedBot, UnrecognizedPacketTest)
+{
+    IterativeRobot program;
+    RedBot robot(
+            &program,
+            myMockInputOutputBuffer,
+            myMockInputOutputBuffer
+            );
+    std::list<std::string> sentStrings;
+    std::list<std::string> receivedStrings;
+
+    FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
+    robot.modeInit(mode);
+
+    CHECK_EQUAL(RedBot::STATUS_GOOD, robot.getStatus());
+
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+    robot.modePeriodic(mode);
+
+    mock().checkExpectations();
+    CHECK_EQUAL(RedBot::STATUS_GOOD, robot.getStatus());
+
+    robot.getLastBinaryTransaction(
+            sentStrings,
+            receivedStrings
+            );
+
+    STRCMP_EQUAL("\xFF\x01\xFF", sentStrings.front().c_str());
+    STRCMP_EQUAL("\xFF\x82\xFF", receivedStrings.front().c_str());
+
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x8F\xFF");
+    robot.modePeriodic(mode);
+
+    mock().checkExpectations();
+    CHECK_EQUAL(RedBot::STATUS_INCOHERENT, robot.getStatus());
+
+    robot.getLastBinaryTransaction(
+            sentStrings,
+            receivedStrings
+            );
+
+    STRCMP_EQUAL("\xFF\x01\xFF", sentStrings.front().c_str());
+    STRCMP_EQUAL("\xFF\x8F", receivedStrings.front().c_str());
+
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x0A\xFF");
+    robot.modePeriodic(mode);
+
+    mock().checkExpectations();
+    CHECK_EQUAL(RedBot::STATUS_INCOHERENT, robot.getStatus());
+
+    robot.getLastBinaryTransaction(
+            sentStrings,
+            receivedStrings
+            );
+
+    STRCMP_EQUAL("\xFF\x01\xFF", sentStrings.front().c_str());
+    STRCMP_EQUAL("\xFF\x81\x0A\xFF", receivedStrings.front().c_str());
+
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+    robot.modePeriodic(mode);
+
+    mock().checkExpectations();
+    CHECK_EQUAL(RedBot::STATUS_GOOD, robot.getStatus());
+
+    robot.getLastBinaryTransaction(
+            sentStrings,
+            receivedStrings
+            );
+
+    STRCMP_EQUAL("\xFF\x01\xFF", sentStrings.front().c_str());
+    STRCMP_EQUAL("\xFF\x82\xFF", receivedStrings.front().c_str());
+}

@@ -6,7 +6,8 @@
 
 Packet*
 Packet::Read(
-        std::istream&   inputStream
+        std::istream&   inputStream,
+        std::string*    readData
         )
 {
     if (inputStream.good() == false)
@@ -14,13 +15,26 @@ Packet::Read(
         return NULL;
     }
 
+    std::string tmpDataBuf;
+
     char header;
     inputStream.get(header);
+    if (inputStream.good() == false)
+    {
+        return NULL;
+    }
+    tmpDataBuf.push_back(header);
+
     if (header == '\xFF')
     {
         Packet* packet = NULL;
         char packetType = '\0';
         inputStream.get(packetType);
+        if (inputStream.good() == false)
+        {
+            return NULL;
+        }
+        tmpDataBuf.push_back(packetType);
         
         switch ((unsigned char)packetType)
         {
@@ -55,16 +69,33 @@ Packet::Read(
         if (packet != NULL)
         {
             inputStream >> *packet;
+
+            if (readData != NULL)
+            {
+                // Dump read data for debugging
+                std::ostringstream outputStream;
+                outputStream << *packet;
+                *readData = outputStream.str();
+            }
+
             if (packet->isValid() == true)
             {
                 return packet;
             }
             else
             {
+                // Delete invalid packet
                 delete packet;
+
                 return NULL;
             }
         }
+    }
+
+    // Dump read data for debugging
+    if (readData != NULL)
+    {
+        *readData = tmpDataBuf;
     }
 
     return NULL;
@@ -602,9 +633,25 @@ DigitalValuePacket::write(
 {
     outputStream << '\xFF';
     outputStream << (unsigned char)BID_DVALUE;
-    outputStream << (unsigned char)myPin;
-    outputStream << ((myValue == true) ? '\x02' : '\x01');
-    outputStream << '\xFF';
+
+    if (isValid() == true)
+    {
+        outputStream << (unsigned char)myPin;
+        outputStream << ((myValue == true) ? '\x02' : '\x01');
+        outputStream << '\xFF';
+    }
+    else
+    {
+        // Dump raw data read from input stream
+        for(
+                size_t byteIdx = 0;
+                byteIdx < myBinaryData.size();
+                ++byteIdx
+           )
+        {
+            outputStream << (unsigned char)myBinaryData[byteIdx];
+        }
+    }
 }
 
 void
@@ -629,6 +676,7 @@ DigitalValuePacket::read(
     int value = -1;
     int trailer;
 
+    myBinaryData.clear();
     myIsValid = false;
 
     pin = inputStream.get();
@@ -636,6 +684,7 @@ DigitalValuePacket::read(
     {
         return;
     }
+    myBinaryData.push_back(pin);
     myPin = (unsigned int)pin;
 
     value = inputStream.get();
@@ -643,22 +692,29 @@ DigitalValuePacket::read(
     {
         return;
     }
+    myBinaryData.push_back(value);
     myValue = (value == 0x02);
 
     // Read out trailer
     trailer = inputStream.get();
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+    myBinaryData.push_back(trailer);
     if (trailer != 0xFF)
     {
         return;
     }
 
+    myBinaryData.clear();
     myIsValid = true;
 }
 
 bool
 DigitalValuePacket::isValid() const
 {
-    return true;
+    return myIsValid;
 }
 
 bool

@@ -24,6 +24,17 @@ class RedBot
     public:
 
         /**
+         * Enumeration of all possible statuses for the robot
+         */
+        enum Status
+        {
+            STATUS_DISCONNECTED,    /**< Unable to connect to robot */
+            STATUS_UNRESPONSIVE,    /**< Robot is unresponsive */
+            STATUS_INCOHERENT,      /**< Robot is not sending vaild packets */
+            STATUS_GOOD             /**< Robot is operating normally */
+        };
+
+        /**
          * Registers a component used in a program with a robot object
          *
          * This is done during program initialization so that packets can be
@@ -97,6 +108,19 @@ class RedBot
                 FieldControlSystem::Mode
                 );
 
+        /**
+         * Indicates the current status of the robot
+         */
+        Status getStatus() const;
+
+        /**
+         * Provides the last serialized binary transaction
+         */
+        void getLastBinaryTransaction(
+                std::list<std::string>& sentData,
+                std::list<std::string>& receivedData
+                ) const;
+
     private:
 
         /**
@@ -119,9 +143,19 @@ class RedBot
         static const speed_t OUR_DEV_SPEED = B9600;
 
         /**
-         * Exchanges data packets with the robot
+         * Transfers data packets with the robot
+         *
+         * One or several exchanges are carried out during a transfer.
          */
         void transferData();
+
+        /**
+         * Executes a single packet exchange with the robot
+         */
+        void exchangePackets(
+                Packet*     requestPacket,  /**< Packet to send to robot */
+                Packet*&    responsePacket  /**< Packet received from robot */
+                );
 
         /**
          * Program that controls this robot
@@ -132,6 +166,11 @@ class RedBot
          * Flag for robot connection status
          */
         bool myIsConnected;
+
+        /**
+         * Indicates the current status of the robot
+         */
+        Status myStatus;
 
         /**
          * Indicates if this object is using externally provided IO buffers
@@ -165,6 +204,16 @@ class RedBot
          * Incoming packets from robot
          */
         std::queue<Packet*> myIncomingPackets;
+
+        /**
+         * Binary data of packets sent in last transaction
+         */
+        std::list<std::string> myLastTransactionSentData;
+
+        /**
+         * Binary data of packets received in last transaction
+         */
+        std::list<std::string> myLastTransactionReceivedData;
 };
 
 #endif /* ifndef REDBOT_H */
