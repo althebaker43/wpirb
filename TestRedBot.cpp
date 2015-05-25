@@ -231,3 +231,32 @@ TEST(RedBot, UnrecognizedPacketTest)
     STRCMP_EQUAL("\xFF\x01\xFF", sentStrings.front().c_str());
     STRCMP_EQUAL("\xFF\x82\xFF", receivedStrings.front().c_str());
 }
+
+TEST(RedBot, UnresponsiveTest)
+{
+    IterativeRobot program;
+    RedBot robot(
+            &program,
+            myMockInputOutputBuffer,
+            myMockInputOutputBuffer
+            );
+
+    FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
+    robot.modeInit(mode);
+
+    CHECK_EQUAL(RedBot::STATUS_GOOD, robot.getStatus());
+
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("");
+    robot.modePeriodic(mode);
+
+    mock().checkExpectations();
+    CHECK_EQUAL(RedBot::STATUS_UNRESPONSIVE, robot.getStatus());
+
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+    robot.modePeriodic(mode);
+
+    mock().checkExpectations();
+    CHECK_EQUAL(RedBot::STATUS_GOOD, robot.getStatus());
+}

@@ -163,11 +163,6 @@ class RedBot
         IterativeRobot* myProgram;
 
         /**
-         * Flag for robot connection status
-         */
-        bool myIsConnected;
-
-        /**
          * Indicates the current status of the robot
          */
         Status myStatus;

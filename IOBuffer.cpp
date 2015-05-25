@@ -1,8 +1,6 @@
 
 #include "IOBuffer.h"
 #include <poll.h>
-#include <error.h>
-#include <errno.h>
 
 
 InputFileBuffer::InputFileBuffer(
@@ -39,14 +37,8 @@ InputFileBuffer::read()
     pollInfo.events = POLLIN;
 
     int pollRetVal = poll(&pollInfo, 1, 1000);
-    if (pollRetVal == 0)
+    if (pollRetVal <= 0)
     {
-        fprintf(stderr, "Error: InputFileBuffer: timed-out waiting for input.\n");
-        return false;
-    }
-    else if (pollRetVal < 0)
-    {
-        error(0, errno, "InputFileBuffer: error while waiting for input");
         return false;
     }
 
@@ -153,7 +145,6 @@ OutputFileBuffer::write()
 
     if (putc(writeVal, myOutputFile) == EOF)
     {
-        error(0, errno, "OutputFileBuffer: could not write byte 0x%X", writeVal);
         return false;
     }
 

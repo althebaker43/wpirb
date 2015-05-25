@@ -34,7 +34,6 @@ RedBot::RedBot(
         const char*     deviceName
         ) :
     myProgram(program),
-    myIsConnected(false),
     myStatus(STATUS_DISCONNECTED),
     myIsUsingExternalBuffers(false),
     myDevice(NULL),
@@ -58,7 +57,7 @@ RedBot::RedBot(
 
         myInputBuffer = new InputFileBuffer(myDevice);
         myOutputBuffer = new OutputFileBuffer(myDevice);
-        myIsConnected = true;
+        myStatus = STATUS_GOOD;
     }
 }
 
@@ -67,7 +66,6 @@ RedBot::RedBot(
         FILE*           device
         ) :
     myProgram(program),
-    myIsConnected(true),
     myStatus(STATUS_GOOD),
     myIsUsingExternalBuffers(false),
     myDevice(device),
@@ -85,7 +83,6 @@ RedBot::RedBot(
         OutputBuffer*   outputBuffer
         ) :
     myProgram(program),
-    myIsConnected(true),
     myStatus(STATUS_GOOD),
     myIsUsingExternalBuffers(true),
     myDevice(NULL),
@@ -122,7 +119,7 @@ RedBot::~RedBot()
 bool
 RedBot::isConnected() const
 {
-    return myIsConnected;
+    return (myStatus != STATUS_DISCONNECTED);
 }
 
 void
@@ -292,12 +289,7 @@ RedBot::transferData()
                 );
         if (inPacket == NULL)
         {
-            myStatus = STATUS_INCOHERENT;
             break;
-        }
-        else
-        {
-            myStatus = STATUS_GOOD;
         }
 
         if (inPacket->getType() == Packet::TYPE_ACK)
@@ -318,24 +310,42 @@ RedBot::exchangePackets(
         Packet*&    responsePacket
         )
 {
-    std::ostringstream packetStream;
+    std::ostringstream outgoingPacketStream;
+    std::string incomingPacketData;
 
     requestPacket->write(myOutputBuffer->getOutputStream());
     myOutputBuffer->writePacket();
     myOutputBuffer->clear();
 
     // Record sent data
-    packetStream << *requestPacket;
-    myLastTransactionSentData.push_back(packetStream.str());
-    packetStream.str("");
+    outgoingPacketStream << *requestPacket;
+    myLastTransactionSentData.push_back(outgoingPacketStream.str());
 
     myInputBuffer->clear();
     myInputBuffer->readPacket();
-    myLastTransactionReceivedData.push_back("");
     responsePacket = Packet::Read(
             myInputBuffer->getInputStream(),
-            &(myLastTransactionReceivedData.back()) // Record received data
+            &incomingPacketData // Record received data
             );
+
+    myLastTransactionReceivedData.push_back(incomingPacketData);
+
+    // Decide on robot status
+    if (responsePacket == NULL)
+    {
+        if (incomingPacketData.empty() == true)
+        {
+            myStatus = STATUS_UNRESPONSIVE;
+        }
+        else
+        {
+            myStatus = STATUS_INCOHERENT;
+        }
+    }
+    else
+    {
+        myStatus = STATUS_GOOD;
+    }
 }
 
 RedBot::Status

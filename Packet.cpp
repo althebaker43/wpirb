@@ -15,6 +15,11 @@ Packet::Read(
         return NULL;
     }
 
+    if (readData != NULL)
+    {
+        readData->clear();
+    }
+
     std::string tmpDataBuf;
 
     char header;
