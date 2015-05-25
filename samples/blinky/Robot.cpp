@@ -1,17 +1,18 @@
 #include "WPILib.h"
+#include <stdio.h>
 
 class Robot : public IterativeRobot
 {
     DigitalOutput myLED;
     Timer myBlinkTimer;
-    bool myLEDState;
+    uint32_t myLEDState;
 
     public:
 
         Robot() :
             myLED(13),
             myBlinkTimer(),
-            myLEDState(false)
+            myLEDState(0)
         {
         }
 
@@ -31,8 +32,9 @@ class Robot : public IterativeRobot
             if (myBlinkTimer.HasPeriodPassed(0.5) == true)
             {
                 myBlinkTimer.Reset();
-                myLEDState = !myLEDState;
+                myLEDState = ((myLEDState == 1) ? 0 : 1);
                 myLED.Set(myLEDState);
+                printf("Program: switched LED state to: %d\n", myLEDState);
             }
         }
 };

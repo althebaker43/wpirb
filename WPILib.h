@@ -1,8 +1,6 @@
 #ifndef WPILIB_H
 #define WPILIB_H
 
-#include <stdlib.h>
-
 // Framework
 #include "IterativeRobot.h"
 
@@ -13,18 +11,13 @@
 #include "Joystick.h"
 #include "LiveWindow.h"
 
-#include "FieldControlSystem.h"
-#include "RedBot.h"
+// Program entry point
+#include "Main.h"
 
 #define START_ROBOT_CLASS(RobotClass) \
     int main(int argc, char** argv) { \
         RobotClass program; \
-        RedBot robot(&program, (const char*)NULL); \
-        FieldControlSystem* fcs = FieldControlSystem::GetInstance(); \
-        fcs->Register(&robot); \
-        FieldControlSystem::DestroyInstance(); \
-        LiveWindow::DestroyInstance(); \
-        return 0; \
+        return WPIRBMain(argc, argv, program); \
     }
 
 #endif /* ifndef WPILIB_H */

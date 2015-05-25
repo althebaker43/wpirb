@@ -15,7 +15,8 @@ MODULES= \
 	RedBot \
 	IOBuffer \
 	Packet \
-	Component
+	Component \
+	Main
 OBJS=$(MODULES:%=%.o)
 LIB=libwpirb.a
 
