@@ -319,3 +319,50 @@ TEST(WPIRBRobot, MotorDrivePacketTest)
 
     mock().checkExpectations();
 }
+
+TEST(WPIRBRobot, ResyncTest)
+{
+    WPIRBRobot robot;
+
+    mock().expectOneCall("begin").onObject(&Serial).withParameter("baud", 9600);
+    robot.setup();
+    mock().checkExpectations();
+
+    // Fill buffer with bogus data
+    mock().expectOneCall("available").onObject(&Serial).andReturnValue(1);
+    mock().expectOneCall("read").onObject(&Serial).andReturnValue(0xFF);
+    for (int i = 0; i < 8; i++)
+    {
+        mock().expectOneCall("available").onObject(&Serial).andReturnValue(1);
+        mock().expectOneCall("read").onObject(&Serial).andReturnValue(0x0A);
+    }
+
+    // Resync
+    for (int i = 0; i < 5; i++)
+    {
+        mock().expectOneCall("available").onObject(&Serial).andReturnValue(1);
+        mock().expectOneCall("read").onObject(&Serial).andReturnValue(0xFF);
+    }
+
+    // Get acknowledge
+    mock().expectOneCall("write").onObject(&Serial).withParameter("data", 0xFF);
+    mock().expectOneCall("write").onObject(&Serial).withParameter("data", 0x82);
+    mock().expectOneCall("write").onObject(&Serial).withParameter("data", 0xFF);
+    mock().expectOneCall("flush").onObject(&Serial);
+
+    for (int i = 0; i < 14; i++)
+    {
+        robot.loop();
+    }
+
+    mock().checkExpectations();
+
+    // Ping and acknowledge
+    SendPacket(
+            PingPacket(),
+            AcknowledgePacket(),
+            robot
+            );
+
+    mock().checkExpectations();
+}

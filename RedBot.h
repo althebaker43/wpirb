@@ -109,6 +109,14 @@ class RedBot
                 );
 
         /**
+         * Attempts to resynchronize with the robot
+         *
+         * A byte stream that should clear the robot's communication buffers is
+         * sent when this function is called.
+         */
+        void resync();
+
+        /**
          * Indicates the current status of the robot
          */
         Status getStatus() const;

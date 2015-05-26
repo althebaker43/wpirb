@@ -65,6 +65,11 @@ class MockInputOutputBuffer : public InputBuffer, public OutputBuffer
             myStream.str("");
         }
 
+        void resync()
+        {
+            sendString("\xFF\xFF\xFF\xFF\xFF");
+        }
+
         std::istream& getInputStream()
         {
             return myStream;

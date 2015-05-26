@@ -65,6 +65,11 @@ class OutputBuffer
          * Clears the contents of this buffer
          */
         virtual void clear() = 0;
+
+        /**
+         * Sends a resynchronization sequence to the output
+         */
+        virtual void resync() = 0;
 };
 
 /**
@@ -193,6 +198,11 @@ class OutputFileBuffer : public OutputBuffer
          * Clears the contents of this buffer
          */
         void clear();
+
+        /**
+         * Sends a resynchronization sequence
+         */
+        void resync();
 
     private:
 

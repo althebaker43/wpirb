@@ -363,3 +363,14 @@ RedBot::getLastBinaryTransaction(
     sentData = myLastTransactionSentData;
     receivedData = myLastTransactionReceivedData;
 }
+
+void
+RedBot::resync()
+{
+    // Send resync sequence
+    myOutputBuffer->resync();
+
+    // Discard any incoming data
+    myInputBuffer->readPacket();
+    myInputBuffer->clear();
+}

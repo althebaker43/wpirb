@@ -260,3 +260,20 @@ TEST(RedBot, UnresponsiveTest)
     mock().checkExpectations();
     CHECK_EQUAL(RedBot::STATUS_GOOD, robot.getStatus());
 }
+
+TEST(RedBot, ResyncTest)
+{
+    IterativeRobot program;
+    RedBot robot(
+            &program,
+            myMockInputOutputBuffer,
+            myMockInputOutputBuffer
+            );
+
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\xFF\xFF\xFF\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+
+    robot.resync();
+
+    mock().checkExpectations();
+}

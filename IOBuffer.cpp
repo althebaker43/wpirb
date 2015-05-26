@@ -171,3 +171,13 @@ OutputFileBuffer::clear()
     myIsPacketComplete = false;
     myIsHeaderWritten = false;
 }
+
+void
+OutputFileBuffer::resync()
+{
+    fprintf(
+            myOutputFile,
+            "\xFF\xFF\xFF\xFF\xFF"
+           );
+    fflush(myOutputFile);
+}
