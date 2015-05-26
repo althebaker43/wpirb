@@ -81,6 +81,7 @@ InputFileBuffer::getInputStream()
 void
 InputFileBuffer::clear()
 {
+    myByteBuffer.clear();
     myByteBuffer.str("");
     myIsPacketComplete = false;
     myIsHeaderRead = false;

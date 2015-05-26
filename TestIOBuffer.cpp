@@ -84,6 +84,37 @@ TEST(IOBuffer, InputBufferMultiReadTest)
     delete packet;
 }
 
+TEST(IOBuffer, InputBufferInvalidPacketTest)
+{
+    InputFileBuffer iBuffer(packetFile);
+    Packet* packet = NULL;
+
+    fprintf(packetFile, "\xFF\x81\x0A\xFF\xFF\x82\xFF");
+    fflush(packetFile);
+    rewind(packetFile);
+
+    while (iBuffer.read() == true);
+
+    CHECK(iBuffer.isPacketComplete());
+
+    packet = Packet::Read(iBuffer.getInputStream());
+
+    CHECK_EQUAL((Packet*)NULL, packet);
+
+    iBuffer.clear();
+
+    while (iBuffer.read() == true);
+
+    CHECK(iBuffer.isPacketComplete());
+
+    packet = Packet::Read(iBuffer.getInputStream());
+
+    CHECK(NULL != packet);
+    CHECK_EQUAL(Packet::TYPE_ACK, packet->getType());
+
+    delete packet;
+}
+
 TEST(IOBuffer, OutputBufferWriteTest)
 {
     OutputFileBuffer oBuffer(packetFile);
