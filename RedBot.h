@@ -87,7 +87,7 @@ class RedBot
          *
          * This closes the serial port connected to the robot.
          */
-        ~RedBot();
+        virtual ~RedBot();
 
         /**
          * Indicates if the robot is connected and responsive
