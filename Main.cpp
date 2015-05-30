@@ -94,7 +94,7 @@ WriteIncoherentMessage(
             ++charIdx
        )
     {
-        std::cerr << std::hex << (unsigned int)invalidPacket[0] << ' ';
+        std::cerr << std::hex << "0x" << (0xFF & (unsigned int)invalidPacket[0]) << ' ';
     }
 
     std::cerr << std::endl;
