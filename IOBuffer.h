@@ -145,6 +145,11 @@ class InputFileBuffer : public InputBuffer
          * Indicates if complete packet is currently buffered
          */
         bool myIsPacketComplete;
+
+        /**
+         * Last character read from the input stream
+         */
+        char myLastReadChar;
 };
 
 /**

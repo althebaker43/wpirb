@@ -115,6 +115,40 @@ TEST(IOBuffer, InputBufferInvalidPacketTest)
     delete packet;
 }
 
+TEST(IOBuffer, InputBufferResyncTest)
+{
+    InputFileBuffer iBuffer(packetFile);
+    Packet* packet = NULL;
+
+    fprintf(packetFile, "\xFF\xFF\xFF\xFF\xFF");
+    fflush(packetFile);
+    rewind(packetFile);
+
+    CHECK_FALSE(iBuffer.readPacket());
+
+    rewind(packetFile);
+    fprintf(packetFile, "\xFF\x82\xFF");
+    fflush(packetFile);
+    rewind(packetFile);
+
+    CHECK(iBuffer.readPacket());
+    
+    packet = Packet::Read(iBuffer.getInputStream());
+
+    CHECK(NULL != packet);
+    CHECK_EQUAL(Packet::TYPE_ACK, packet->getType());
+
+    delete packet;
+    iBuffer.clear();
+
+    rewind(packetFile);
+    fprintf(packetFile, "\xFF\xFF\xFF\xFF\xFF");
+    fflush(packetFile);
+    rewind(packetFile);
+
+    CHECK_FALSE(iBuffer.readPacket());
+}
+
 TEST(IOBuffer, OutputBufferWriteTest)
 {
     OutputFileBuffer oBuffer(packetFile);

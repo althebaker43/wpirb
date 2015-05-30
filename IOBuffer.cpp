@@ -8,7 +8,8 @@ InputFileBuffer::InputFileBuffer(
         ) :
     myInputFile(inputFile),
     myIsHeaderRead(false),
-    myIsPacketComplete(false)
+    myIsPacketComplete(false),
+    myLastReadChar('\0')
 {
 }
 
@@ -32,20 +33,28 @@ InputFileBuffer::read()
         return false;
     }
 
-    struct pollfd pollInfo;
-    pollInfo.fd = fileno(myInputFile);
-    pollInfo.events = POLLIN;
-
-    int pollRetVal = poll(&pollInfo, 1, 1000);
-    if (pollRetVal <= 0)
-    {
-        return false;
-    }
-
+    // First attempt to read input
     int readVal = getc(myInputFile);
     if (readVal == EOF)
     {
-        return false;
+        // If no input available yet, wait for a certain amount of time
+
+        struct pollfd pollInfo;
+        pollInfo.fd = fileno(myInputFile);
+        pollInfo.events = POLLIN;
+
+        int pollRetVal = poll(&pollInfo, 1, 1000);
+        if (pollRetVal <= 0)
+        {
+            return false;
+        }
+
+        // Second attept to read input
+        readVal = getc(myInputFile);
+        if (readVal == EOF)
+        {
+            return false;
+        }
     }
 
     char readChar = (char)readVal;
@@ -57,11 +66,22 @@ InputFileBuffer::read()
         }
         else
         {
-            myIsPacketComplete = true;
+            if (myLastReadChar == '\xFF')
+            {
+                // If back-to-back packet boundaries are found, then clear this
+                // buffer and use the current byte as the header
+                clear();
+                myIsHeaderRead = true;
+            }
+            else
+            {
+                myIsPacketComplete = true;
+            }
         }
     }
 
     myByteBuffer << readChar;
+    myLastReadChar = readChar;
 
     return true;
 }
