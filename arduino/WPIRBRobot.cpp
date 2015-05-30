@@ -174,19 +174,43 @@ WPIRBRobot::parseMotorDrivePacket()
 
         int speed = ((speedHi - 1) << 4) | (speedLo - 1);
 
-        if (direction == 0x02)
+        switch (direction)
         {
-            speed = -1 * speed;
-        }
+            case 0x01:
+                switch (motor)
+                {
+                    case 0x01:
+                        myMotors.rightMotor(speed);
+                        break;
+                        
+                    case 0x02:
+                        myMotors.leftMotor(-1 * speed);
+                        break;
 
-        if (motor == 0x01)
-        {
-            myMotors.rightMotor(speed);
-        }
-        else
-        {
-            myMotors.leftMotor(speed);
-        }
+                    default:
+                        break;
+                };
+                break;
+
+            case 0x02:
+                switch (motor)
+                {
+                    case 0x01:
+                        myMotors.rightMotor(-1 * speed);
+                        break;
+                        
+                    case 0x02:
+                        myMotors.leftMotor(speed);
+                        break;
+
+                    default:
+                        break;
+                };
+                break;
+
+            default:
+                break;
+        };
     }
 
     acknowledge();

@@ -305,7 +305,7 @@ TEST(WPIRBRobot, MotorDrivePacketTest)
 
     mock().checkExpectations();
 
-    mock().expectOneCall("leftMotor").withParameter("speed", -50);
+    mock().expectOneCall("leftMotor").withParameter("speed", 50);
 
     SendPacket(
             MotorDrivePacket(
