@@ -2,6 +2,7 @@
 #include "Packet.h"
 #include <sstream>
 #include <vector>
+#include <math.h>
 
 
 Packet*
@@ -428,6 +429,33 @@ MotorDrivePacket::MotorDrivePacket(
 
 MotorDrivePacket::~MotorDrivePacket()
 {
+}
+
+MotorDrivePacket::MotorDrivePacket(
+        MotorDrivePacket::Motor motor,
+        double                  driveVal
+        ) :
+    myMotor(motor)
+{
+    if (driveVal > 1.0)
+    {
+        driveVal = 1.0;
+    }
+    else if (driveVal < -1.0)
+    {
+        driveVal = -1.0;
+    }
+
+    mySpeed = fabs(driveVal) * 255;
+
+    if (driveVal < 0.0)
+    {
+        myDirection = MotorDrivePacket::DIR_BACKWARD;
+    }
+    else
+    {
+        myDirection = MotorDrivePacket::DIR_FORWARD;
+    }
 }
 
 void

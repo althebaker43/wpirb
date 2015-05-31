@@ -3,7 +3,6 @@
 #include "Joystick.h"
 #include "Packet.h"
 #include <stdlib.h>
-#include <math.h>
 
 
 RobotDrive::RobotDrive(
@@ -45,18 +44,6 @@ RobotDrive::Drive(
         return;
     }
 
-    MotorDrivePacket::Direction direction = MotorDrivePacket::DIR_FORWARD;
-    if (magnitude < 0.0)
-    {
-        direction = MotorDrivePacket::DIR_BACKWARD;
-    }
-    else
-    {
-        direction = MotorDrivePacket::DIR_FORWARD;
-    }
-
-    uint8_t speed = fabs(magnitude) * 255;
-
     if (myCurrentLMotorPacket != NULL)
     {
         delete myCurrentLMotorPacket;
@@ -64,8 +51,7 @@ RobotDrive::Drive(
 
     myCurrentLMotorPacket = new MotorDrivePacket(
             MotorDrivePacket::MOTOR_LEFT,
-            speed,
-            direction
+            (magnitude + curve)
             );
 
     if (myCurrentRMotorPacket != NULL)
@@ -75,8 +61,7 @@ RobotDrive::Drive(
 
     myCurrentRMotorPacket = new MotorDrivePacket(
             MotorDrivePacket::MOTOR_RIGHT,
-            speed,
-            direction
+            (magnitude - curve)
             );
 }
 

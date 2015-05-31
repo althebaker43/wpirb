@@ -5,6 +5,17 @@
 #include "RobotDrive.h"
 
 
+void
+CheckDrive(
+        RobotDrive&             drive,
+        std::list<Packet*>&     packets,
+        double                  magnitude,
+        double                  curve,
+        const MotorDrivePacket& rightPacket,
+        const MotorDrivePacket& leftPacket
+        );
+
+
 TEST(Components, DigitalOutputTest)
 {
     DigitalOutput dOut(5);
@@ -196,4 +207,147 @@ TEST(Components, RobotDriveStraightTest)
 
     CHECK_EQUAL((MotorDrivePacket*)NULL, mDrivePacket1);
     CHECK_EQUAL((MotorDrivePacket*)NULL, mDrivePacket2);
+}
+
+TEST(Components, CurveDriveTest)
+{
+    RobotDrive drive(0, 0);
+
+    // Stationary
+    CheckDrive(
+            drive,
+            myPackets,
+            0.0,
+            0.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                0,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                0,
+                MotorDrivePacket::DIR_FORWARD
+                )
+            );
+
+    // Drive forward
+    CheckDrive(
+            drive,
+            myPackets,
+            1.0,
+            0.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                255,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                255,
+                MotorDrivePacket::DIR_FORWARD
+                )
+            );
+
+    // Drive backward
+    CheckDrive(
+            drive,
+            myPackets,
+            -1.0,
+            0.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                255,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                255,
+                MotorDrivePacket::DIR_BACKWARD
+                )
+            );
+
+    // Pivot right
+    CheckDrive(
+            drive,
+            myPackets,
+            0.0,
+            1.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                255,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                255,
+                MotorDrivePacket::DIR_FORWARD
+                )
+            );
+
+    // Pivot left
+    CheckDrive(
+            drive,
+            myPackets,
+            0.0,
+            -1.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                255,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                255,
+                MotorDrivePacket::DIR_BACKWARD
+                )
+            );
+}
+
+void
+CheckDrive(
+        RobotDrive&             drive,
+        std::list<Packet*>&     packets,
+        double                  magnitude,
+        double                  curve,
+        const MotorDrivePacket& expRightPacket,
+        const MotorDrivePacket& expLeftPacket
+        )
+{
+    drive.Drive(
+            magnitude,
+            curve
+            );
+
+    bool rightDrivePacketFound = false;
+    bool leftDrivePacketFound = false;
+
+    packets.push_back(drive.getNextPacket());
+    packets.push_back(drive.getNextPacket());
+
+    std::list<Packet*>::const_reverse_iterator packetIter = packets.rbegin();
+
+    for (int i = 0; i < 2; i++)
+    {
+        Packet* packet = *(packetIter++);
+        MotorDrivePacket* mDrivePacket = dynamic_cast<MotorDrivePacket*>(packet);
+
+        CHECK(NULL != mDrivePacket);
+
+        if (mDrivePacket->getMotor() == MotorDrivePacket::MOTOR_RIGHT)
+        {
+            rightDrivePacketFound = true;
+            CHECK_EQUAL(expRightPacket.getSpeed(), mDrivePacket->getSpeed());
+            CHECK_EQUAL(expRightPacket.getDirection(), mDrivePacket->getDirection());
+        }
+        else
+        {
+            leftDrivePacketFound = true;
+            CHECK_EQUAL(expLeftPacket.getSpeed(), mDrivePacket->getSpeed());
+            CHECK_EQUAL(expLeftPacket.getDirection(), mDrivePacket->getDirection());
+        }
+    }
+
+    CHECK(rightDrivePacketFound);
+    CHECK(leftDrivePacketFound);
 }

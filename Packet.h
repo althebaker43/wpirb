@@ -393,6 +393,17 @@ class MotorDrivePacket : public Packet
                 );
 
         /**
+         * Constructor given motor and single floating-point drive value
+         *
+         * This constructor automatically translates the given value to a valid
+         * speed and direction.
+         */
+        MotorDrivePacket(
+                Motor   motor,      /**< Motor to drive */
+                double  driveVal    /**< Signed floating-point drive value */
+                );
+
+        /**
          * Destructor
          */
         ~MotorDrivePacket();
