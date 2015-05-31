@@ -20,7 +20,7 @@ MODULES= \
 OBJS=$(MODULES:%=%.o)
 LIB=libwpirb.a
 
-LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
+LDFLAGS += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 
 TEST_MODULES= \
 	TestIterativeRobot \
@@ -54,7 +54,7 @@ $(TEST_RUNNER) : $(LIB) $(TEST_OBJS)
 	    $(CXXFLAGS) \
 	    -o $@ \
 	    AllTests.cpp $(TEST_OBJS) libwpirb.a \
-	    $(LD_LIBRARIES)
+	    $(LDFLAGS)
 
 $(LIB) : $(OBJS)
 	ar r $@ $^
