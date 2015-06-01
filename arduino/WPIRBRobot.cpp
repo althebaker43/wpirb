@@ -172,45 +172,49 @@ WPIRBRobot::parseMotorDrivePacket()
         byte speedHi = myPacketBuffer[4];
         byte speedLo = myPacketBuffer[5];
 
-        int speed = ((speedHi - 1) << 4) | (speedLo - 1);
+        unsigned int speed = ((speedHi - 1) << 4) | (speedLo - 1);
 
-        switch (direction)
+        // Do not attempt to drive at very low speeds
+        if (speed > MOTOR_SPEED_THRESHOLD)
         {
-            case 0x01:
-                switch (motor)
-                {
-                    case 0x01:
-                        myMotors.rightMotor(speed);
-                        break;
-                        
-                    case 0x02:
-                        myMotors.leftMotor(-1 * speed);
-                        break;
+            switch (direction)
+            {
+                case 0x01:
+                    switch (motor)
+                    {
+                        case 0x01:
+                            myMotors.rightMotor(speed);
+                            break;
+                            
+                        case 0x02:
+                            myMotors.leftMotor(-1 * speed);
+                            break;
 
-                    default:
-                        break;
-                };
-                break;
+                        default:
+                            break;
+                    };
+                    break;
 
-            case 0x02:
-                switch (motor)
-                {
-                    case 0x01:
-                        myMotors.rightMotor(-1 * speed);
-                        break;
-                        
-                    case 0x02:
-                        myMotors.leftMotor(speed);
-                        break;
+                case 0x02:
+                    switch (motor)
+                    {
+                        case 0x01:
+                            myMotors.rightMotor(-1 * speed);
+                            break;
+                            
+                        case 0x02:
+                            myMotors.leftMotor(speed);
+                            break;
 
-                    default:
-                        break;
-                };
-                break;
+                        default:
+                            break;
+                    };
+                    break;
 
-            default:
-                break;
-        };
+                default:
+                    break;
+            };
+        }
     }
 
     acknowledge();

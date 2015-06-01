@@ -366,3 +366,38 @@ TEST(WPIRBRobot, ResyncTest)
 
     mock().checkExpectations();
 }
+
+TEST(WPIRBRobot, MotorDriveFilterTest)
+{
+    WPIRBRobot robot;
+
+    mock().expectOneCall("begin").onObject(&Serial).withParameter("baud", 9600);
+    robot.setup();
+    mock().checkExpectations();
+
+    // Zero speed
+    SendPacket(
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                0,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            AcknowledgePacket(),
+            robot
+            );
+
+    mock().checkExpectations();
+
+    // Very low forward speed
+    SendPacket(
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                32,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            AcknowledgePacket(),
+            robot
+            );
+
+    mock().checkExpectations();
+}

@@ -40,6 +40,8 @@ class WPIRBRobot
 
         const static unsigned int PACKET_BUFSIZE = 10;
 
+        const static unsigned int MOTOR_SPEED_THRESHOLD = 32;
+
         RedBotMotors myMotors;
 
         byte myPacketBuffer[PACKET_BUFSIZE];
