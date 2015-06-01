@@ -27,6 +27,10 @@ RobotDrive::ArcadeDrive(
         Joystick& joystick
         )
 {
+    Drive(
+            joystick.GetY(),
+            joystick.GetX()
+         );
 }
 
 void
