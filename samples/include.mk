@@ -1,12 +1,13 @@
 
-CXXFLAGS=-I../..
-LDFLAGS=-lwpirb -L../..
+include ../../include.mk
+
+CPPFLAGS += -I../..
 
 RESIDUE= \
 	runRobot
 
 runRobot : Robot.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o runRobot $(SOURCE) $(LDFLAGS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o runRobot $(SOURCE) -lwpirb -L../.. $(LDFLAGS)
 
 .PHONY : clean
 clean :
