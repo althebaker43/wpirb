@@ -1,12 +1,46 @@
 #!/usr/bin/python
 
 import Tkinter
+import SocketServer
+import threading
 
 
-MODE_DISABLED = 0
-MODE_AUTO =     1
-MODE_TELEOP =   2
-MODE_TEST =     3
+class RobotMode:
+
+    MODE_UNKNOWN =  -1
+    MODE_DISABLED = 0
+    MODE_AUTO =     1
+    MODE_TELEOP =   2
+    MODE_TEST =     3
+
+    def __init__(self):
+
+        self.currentValue = RobotMode.MODE_DISABLED
+        self.lock = threading.Lock()
+
+
+    def get(self):
+
+        value = RobotMode.MODE_UNKNOWN
+
+        if (self.lock.acquire() == True):
+            value = self.currentValue
+            self.lock.release()
+
+        return value
+
+    
+    def set(self, newValue):
+
+        if (self.lock.acquire() == True):
+            self.currentValue = newValue
+            self.lock.release()
+            return True
+        else:
+            return False
+
+
+robotMode = RobotMode()
 
 
 class GUI(Tkinter.Frame):
@@ -25,13 +59,13 @@ class GUI(Tkinter.Frame):
 
     def createWidgets(self):
 
-        self.mode = Tkinter.IntVar(MODE_DISABLED)
+        self.mode = Tkinter.IntVar(RobotMode.MODE_DISABLED)
 
         self.autoSelector = Tkinter.Radiobutton(
                 self,
                 text="Autonomous",
                 variable=self.mode,
-                value=MODE_AUTO
+                value=RobotMode.MODE_AUTO
                 )
         self.autoSelector.pack(side="top")
 
@@ -39,7 +73,7 @@ class GUI(Tkinter.Frame):
                 self,
                 text="Tele-operated",
                 variable=self.mode,
-                value=MODE_TELEOP
+                value=RobotMode.MODE_TELEOP
                 )
         self.teleopSelector.pack(side="top")
 
@@ -47,7 +81,7 @@ class GUI(Tkinter.Frame):
                 self,
                 text="Test",
                 variable=self.mode,
-                value=MODE_TEST
+                value=RobotMode.MODE_TEST
                 )
         self.testSelector.pack(side="top")
 
@@ -66,14 +100,6 @@ class GUI(Tkinter.Frame):
                 )
         self.disableButton.pack(side="top")
 
-        self.QUIT = Tkinter.Button(
-                self,
-                text="QUIT",
-                fg="red",
-                command=root.destroy
-                )
-        self.QUIT.pack(side="bottom")
-
 
     def enable(self):
 
@@ -84,7 +110,8 @@ class GUI(Tkinter.Frame):
         self.teleopSelector["state"] =  Tkinter.DISABLED
         self.testSelector["state"] =    Tkinter.DISABLED
 
-        self.printMode()
+        if (robotMode.set(self.mode.get()) == False):
+            print("GUI: Could not set global mode.")
 
 
     def disable(self):
@@ -96,18 +123,57 @@ class GUI(Tkinter.Frame):
         self.teleopSelector["state"] =  Tkinter.NORMAL
         self.testSelector["state"] =    Tkinter.NORMAL
 
+        if (robotMode.set(RobotMode.MODE_DISABLED) == False):
+            print("GUI: Could not set global mode.")
+
 
     def printMode(self):
 
         modeStrings = {
-                MODE_DISABLED :     "disabled",
-                MODE_AUTO :         "autonomous",
-                MODE_TELEOP :       "teloperated",
-                MODE_TEST :         "test"
+                RobotMode.MODE_DISABLED :     "disabled",
+                RobotMode.MODE_AUTO :         "autonomous",
+                RobotMode.MODE_TELEOP :       "teloperated",
+                RobotMode.MODE_TEST :         "test"
                 }
-        print("The current mode is %s" % modeStrings[self.mode.get()])
+        print("GUI: The current mode is %s" % modeStrings[self.mode.get()])
 
 
-root = Tkinter.Tk()
-gui = GUI(master=root)
-gui.mainloop()
+class ModeRequestHandler(SocketServer.BaseRequestHandler):
+
+    def handle(self):
+
+        isConnected = True
+
+        while (isConnected):
+
+            request = self.request.recv(4096)
+            if (len(request) == 0):
+                isConnected = False
+            else:
+                mode = robotMode.get()
+                self.request.sendall("%d" % mode)
+
+
+def runGUI():
+
+    root = Tkinter.Tk()
+    gui = GUI(master=root)
+    gui.mainloop()
+
+
+def runServer():
+
+    server = SocketServer.TCPServer(
+            ("localhost", 9999),
+            ModeRequestHandler
+            )
+    server.serve_forever()
+
+
+if (__name__ == "__main__"):
+
+    guiThread = threading.Thread(target=runGUI)
+    serverThread = threading.Thread(target=runServer)
+
+    serverThread.start()
+    guiThread.start()
