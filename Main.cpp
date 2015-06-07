@@ -5,8 +5,18 @@
 #include <argp.h>
 #include <errno.h>
 #include <error.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <string.h>
+#include <unistd.h>
 
 #define MAX_ERROR_COUNT 5
+
+/**
+ * Attempts to connect to the driver station via a socket
+ */
+int ConnectToDriverStation();
 
 /**
  * Writes an error message for an invalid received packet
@@ -100,6 +110,14 @@ WPIRBMain(
             NULL
             );
 
+    std::cout << "Program: connecting to driver station." << std::endl;
+
+    int socketFD = ConnectToDriverStation();
+    if (socketFD < 0)
+    {
+        return 1;
+    }
+
     std::cout << "Program: initializing program." << std::endl;
     if (InputOutputDevicePath.empty() == false)
     {
@@ -149,12 +167,77 @@ WPIRBMain(
         return 1;
     }
 
-    robot->modeInit(FieldControlSystem::MODE_DISABLED);
+    FieldControlSystem::Mode robotMode = FieldControlSystem::MODE_DISABLED;
+    char dsResponseBuf [1024];
+
+    char dsRequestBuf [8];
+    strcpy(dsRequestBuf, "request");
+    dsRequestBuf[7] = '\0';
+
+    robot->modeInit(robotMode);
     std::cout << "Program: beginning loop." << std::endl;
     size_t errorCount = 0;
     while (errorCount < MAX_ERROR_COUNT)
     {
-        robot->modePeriodic(FieldControlSystem::MODE_DISABLED);
+        write(
+                socketFD,
+                (void*)dsRequestBuf,
+                7
+             );
+
+        ssize_t dsResponseSize = recv(
+                socketFD,
+                (void*)dsResponseBuf,
+                1024,
+                0
+                );
+        if (dsResponseSize < 0)
+        {
+            std::cerr << "Error: no response from driver station." << std::endl;
+            break;
+        }
+        else if (dsResponseSize > 0)
+        {
+            dsResponseBuf[dsResponseSize] = '\0';
+
+            std::stringstream modeStream;
+            int modeVal = 0;
+
+            modeStream << dsResponseBuf;
+            modeStream >> modeVal;
+
+            FieldControlSystem::Mode newMode = robotMode;
+
+            switch (modeVal)
+            {
+                case 0:
+                    newMode = FieldControlSystem::MODE_DISABLED;
+                    break;
+
+                case 1:
+                    newMode = FieldControlSystem::MODE_AUTO;
+                    break;
+
+                case 2:
+                    newMode = FieldControlSystem::MODE_TELEOP;
+                    break;
+
+                case 3:
+                    newMode = FieldControlSystem::MODE_TEST;
+                    break;
+
+                default:
+                    break;
+            };
+
+            if (newMode != robotMode)
+            {
+                robot->modeInit(newMode);
+                robotMode = newMode;
+            }
+        }
+
+        robot->modePeriodic(robotMode);
 
         if (robot->getStatus() != RedBot::STATUS_GOOD)
         {
@@ -223,6 +306,68 @@ ArgumentParser(
     };
 
     return status;
+}
+
+int
+ConnectToDriverStation()
+{
+    int socketFD = socket(AF_INET, SOCK_STREAM, 0);
+    if (socketFD < 0)
+    {
+        error(0, errno, "Could not open socket file");
+        return -1;
+    }
+
+    struct addrinfo getAddrHints;
+    getAddrHints.ai_flags = 0;
+    getAddrHints.ai_family = AF_INET;
+    getAddrHints.ai_socktype = SOCK_STREAM;
+    getAddrHints.ai_protocol = 0;
+    getAddrHints.ai_addrlen = 0;
+    getAddrHints.ai_addr = NULL;
+    getAddrHints.ai_canonname = NULL;
+    getAddrHints.ai_next = NULL;
+
+    struct addrinfo* getAddrResults;
+
+    int getAddrRetVal = getaddrinfo(
+            "localhost",
+            "9999",
+            &getAddrHints,
+            &getAddrResults
+            );
+    if (getAddrRetVal != 0)
+    {
+        std::cerr << "Error: could not get address information." << std::endl;
+        return -1;
+    }
+
+    bool isConnected = false;
+    for(
+            struct addrinfo* addrInfoIter = getAddrResults;
+            addrInfoIter != NULL;
+            addrInfoIter = addrInfoIter->ai_next
+       )
+    {
+        int connectRetVal = connect(
+                socketFD,
+                addrInfoIter->ai_addr,
+                addrInfoIter->ai_addrlen
+                );
+        if (connectRetVal == 0)
+        {
+            isConnected = true;
+            break;
+        }
+    }
+    freeaddrinfo(getAddrResults);
+    if (isConnected == false)
+    {
+        std::cerr << "Error: could not connect to driver station." << std::endl;
+        return -1;
+    }
+    
+    return socketFD;
 }
 
 void
