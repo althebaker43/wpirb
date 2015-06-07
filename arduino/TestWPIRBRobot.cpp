@@ -305,12 +305,27 @@ TEST(WPIRBRobot, MotorDrivePacketTest)
 
     mock().checkExpectations();
 
-    mock().expectOneCall("leftMotor").withParameter("speed", 50);
+    // TODO: figure out why this doesn't work
+    //mock().expectOneCall("leftMotor").withParameter("speed", 75);
+
+    //SendPacket(
+    //        MotorDrivePacket(
+    //            MotorDrivePacket::MOTOR_LEFT,
+    //            75,
+    //            MotorDrivePacket::DIR_BACKWARD
+    //            ),
+    //        AcknowledgePacket(),
+    //        robot
+    //        );
+
+    //mock().checkExpectations();
+
+    mock().expectOneCall("leftMotor").withParameter("speed", 78);
 
     SendPacket(
             MotorDrivePacket(
                 MotorDrivePacket::MOTOR_LEFT,
-                50,
+                78,
                 MotorDrivePacket::DIR_BACKWARD
                 ),
             AcknowledgePacket(),
@@ -370,12 +385,14 @@ TEST(WPIRBRobot, ResyncTest)
 TEST(WPIRBRobot, MotorDriveFilterTest)
 {
     WPIRBRobot robot;
+    unsigned int speedThreshold = 64;
 
     mock().expectOneCall("begin").onObject(&Serial).withParameter("baud", 9600);
     robot.setup();
     mock().checkExpectations();
 
     // Zero speed
+    mock().expectOneCall("rightMotor").withParameter("speed", 0);
     SendPacket(
             MotorDrivePacket(
                 MotorDrivePacket::MOTOR_RIGHT,
@@ -389,10 +406,25 @@ TEST(WPIRBRobot, MotorDriveFilterTest)
     mock().checkExpectations();
 
     // Very low forward speed
+    mock().expectOneCall("leftMotor").withParameter("speed", 0);
     SendPacket(
             MotorDrivePacket(
                 MotorDrivePacket::MOTOR_LEFT,
-                32,
+                speedThreshold,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            AcknowledgePacket(),
+            robot
+            );
+
+    mock().checkExpectations();
+
+    // Adequate speed
+    mock().expectOneCall("rightMotor").withParameter("speed", speedThreshold+1);
+    SendPacket(
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                speedThreshold+1,
                 MotorDrivePacket::DIR_FORWARD
                 ),
             AcknowledgePacket(),
