@@ -131,6 +131,34 @@ TEST(Packets, DigitalInputPacket)
     delete dInPacket3;
 }
 
+TEST(Packets, PinConfigPacket)
+{
+    std::ostringstream outputStream;
+    std::istringstream inputStream;
+    PinConfigPacket configPacket1(4, PinConfigPacket::DIR_INPUT);
+
+    CHECK_EQUAL(Packet::TYPE_PINCONFIG, configPacket1.getType());
+    CHECK_EQUAL(4, configPacket1.getPin());
+    CHECK_EQUAL(PinConfigPacket::DIR_INPUT, configPacket1.getDirection());
+
+    configPacket1.write(outputStream);
+
+    STRCMP_EQUAL("\xFF\x04\x04\x02\xFF", outputStream.str().c_str());
+
+    inputStream.str("\xFF\x04\x06\x01\xFF");
+    Packet* packet2 = Packet::Read(inputStream);
+
+    CHECK(NULL != packet2);
+    CHECK_EQUAL(Packet::TYPE_PINCONFIG, packet2->getType());
+
+    PinConfigPacket* configPacket2 = static_cast<PinConfigPacket*>(packet2);
+
+    CHECK_EQUAL(6, configPacket2->getPin());
+    CHECK_EQUAL(PinConfigPacket::DIR_OUTPUT, configPacket2->getDirection());
+
+    delete packet2;
+}
+
 TEST(Packets, MotorDrivePacket)
 {
     std::ostringstream outputStream;
@@ -282,6 +310,42 @@ TEST(Packets, DigitalInputPacketXML)
         "<packet>"
         "<type>DINPUT</type>"
         "<pin>4</pin>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+}
+
+TEST(Packets, PinConfigPacketXML)
+{
+    std::ostringstream packetStream;
+    std::string expectedOutput;
+
+    PinConfigPacket configPacket1(
+            3,
+            PinConfigPacket::DIR_OUTPUT
+            );
+    configPacket1.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>PINCONFIG</type>"
+        "<pin>3</pin>"
+        "<direction>OUTPUT</direction>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+
+    packetStream.str("");
+
+    PinConfigPacket configPacket2(
+            10,
+            PinConfigPacket::DIR_INPUT
+            );
+    configPacket2.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>PINCONFIG</type>"
+        "<pin>10</pin>"
+        "<direction>INPUT</direction>"
         "</packet>";
     CHECK_EQUAL(expectedOutput, packetStream.str());
 }

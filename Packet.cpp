@@ -56,6 +56,10 @@ Packet::Read(
                 packet = new DigitalInputPacket();
                 break;
 
+            case BID_PINCONFIG:
+                packet = new PinConfigPacket();
+                break;
+
             case BID_MDRIVE:
                 packet = new MotorDrivePacket();
                 break;
@@ -409,7 +413,9 @@ DigitalInputPacket::getPin() const
 }
 
 
-PinConfigPacket::PinConfigPacket()
+PinConfigPacket::PinConfigPacket() :
+    myPin(1),
+    myDirection(DIR_INPUT)
 {
 }
 
@@ -453,6 +459,31 @@ PinConfigPacket::read(
         std::istream& inputStream
         )
 {
+    myPin = inputStream.get();
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+
+    switch (inputStream.get())
+    {
+        case 1:
+            myDirection = DIR_OUTPUT;
+            break;
+
+        case 2:
+            myDirection = DIR_INPUT;
+            break;
+
+        default:
+            break;
+    };
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+
+    inputStream.get();
 }
 
 bool
