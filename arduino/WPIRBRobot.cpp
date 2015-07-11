@@ -101,6 +101,10 @@ WPIRBRobot::parsePacket()
       parseDigitalInputPacket();
       break;
 
+    case PACKET_TYPE_PINCONFIG:
+      parsePinConfigPacket();
+      break;
+
     case PACKET_TYPE_MDRIVE:
       parseMotorDrivePacket();
       break;
@@ -160,6 +164,27 @@ WPIRBRobot::parseDigitalInputPacket()
   }
   
   return;
+}
+
+void
+WPIRBRobot::parsePinConfigPacket()
+{
+    if (myPacketSize == 5)
+    {
+        unsigned int pin = myPacketBuffer[2];
+        unsigned int direction = myPacketBuffer[3];
+
+        if (pin < 13)
+        {
+            pinMode(
+                    pin,
+                    ((direction == 1) ? OUTPUT : INPUT)
+                   );
+        }
+    }
+
+    acknowledge();
+    return;
 }
 
 void

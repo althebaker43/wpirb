@@ -31,7 +31,7 @@ SendPacket(
     while (true)
     {
         unsigned char byte;
-        packetStream >> byte;
+        byte = packetStream.get();
 
         if (packetStream.good() != true)
         {
@@ -306,17 +306,17 @@ TEST(WPIRBRobot, MotorDrivePacketTest)
     mock().checkExpectations();
 
     // TODO: figure out why this doesn't work
-    //mock().expectOneCall("leftMotor").withParameter("speed", 75);
+    mock().expectOneCall("leftMotor").withParameter("speed", 75);
 
-    //SendPacket(
-    //        MotorDrivePacket(
-    //            MotorDrivePacket::MOTOR_LEFT,
-    //            75,
-    //            MotorDrivePacket::DIR_BACKWARD
-    //            ),
-    //        AcknowledgePacket(),
-    //        robot
-    //        );
+    SendPacket(
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                75,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            AcknowledgePacket(),
+            robot
+            );
 
     //mock().checkExpectations();
 
@@ -426,6 +426,39 @@ TEST(WPIRBRobot, MotorDriveFilterTest)
                 MotorDrivePacket::MOTOR_RIGHT,
                 speedThreshold+1,
                 MotorDrivePacket::DIR_FORWARD
+                ),
+            AcknowledgePacket(),
+            robot
+            );
+
+    mock().checkExpectations();
+}
+
+TEST(WPIRBRobot, PinConfigTest)
+{
+    WPIRBRobot robot;
+
+    mock().expectOneCall("begin").onObject(&Serial).withParameter("baud", 9600);
+    robot.setup();
+    mock().checkExpectations();
+
+    mock().expectOneCall("pinMode").withParameter("pin", 8).withParameter("mode", INPUT);
+    SendPacket(
+            PinConfigPacket(
+                8,
+                PinConfigPacket::DIR_INPUT
+                ),
+            AcknowledgePacket(),
+            robot
+            );
+
+    mock().checkExpectations();
+
+    mock().expectOneCall("pinMode").withParameter("pin", 12).withParameter("mode", OUTPUT);
+    SendPacket(
+            PinConfigPacket(
+                12,
+                PinConfigPacket::DIR_OUTPUT
                 ),
             AcknowledgePacket(),
             robot

@@ -20,6 +20,7 @@ class WPIRBRobot
         void parsePingPacket();
         void parseDigitalOutputPacket();
         void parseDigitalInputPacket();
+        void parsePinConfigPacket();
         void parseMotorDrivePacket();
 
         void acknowledge();
@@ -30,10 +31,11 @@ class WPIRBRobot
 
         const static byte PACKET_BOUND = 0xFF;
 
-        const static byte PACKET_TYPE_PING =    0x01;
-        const static byte PACKET_TYPE_DOUTPUT = 0x02;
-        const static byte PACKET_TYPE_DINPUT =  0x03;
-        const static byte PACKET_TYPE_MDRIVE =  0x04;
+        const static byte PACKET_TYPE_PING =        0x01;
+        const static byte PACKET_TYPE_DOUTPUT =     0x02;
+        const static byte PACKET_TYPE_DINPUT =      0x03;
+        const static byte PACKET_TYPE_PINCONFIG =   0x04;
+        const static byte PACKET_TYPE_MDRIVE =      0x05;
 
         const static byte PACKET_TYPE_ACK =     0x82;
         const static byte PACKET_TYPE_DVALUE =  0x81;
