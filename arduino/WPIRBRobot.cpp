@@ -131,7 +131,6 @@ WPIRBRobot::parseDigitalOutputPacket()
     
     if (pin <= 13)
     {
-      pinMode(pin, OUTPUT);
       digitalWrite(pin, value);
     }
   }
@@ -149,7 +148,6 @@ WPIRBRobot::parseDigitalInputPacket()
     
     if (pin < 13)
     {
-      pinMode(pin, INPUT);
       boolean value = digitalRead(pin);
       sendDigitalValue(pin, value);
     }
@@ -264,7 +262,7 @@ WPIRBRobot::sendDigitalValue(unsigned int pin, boolean value)
   Serial.write(PACKET_BOUND);
   Serial.write(PACKET_TYPE_DVALUE);
   Serial.write(byte(pin));
-  Serial.write((value == true) ? 0x02 : 0x01);
+  Serial.write((value == HIGH) ? 0x02 : 0x01);
   Serial.write(PACKET_BOUND);
   
   Serial.flush();

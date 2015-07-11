@@ -49,7 +49,7 @@ SendPacket(
     while (true)
     {
         unsigned char byte;
-        packetStream >> byte;
+        byte = packetStream.get();
 
         if (packetStream.good() != true)
         {
@@ -159,7 +159,6 @@ TEST(WPIRBRobot, DigitalWriteTest)
     mock().expectOneCall("read").onObject(&Serial).andReturnValue(0xFF);
 
     // Pin output
-    mock().expectOneCall("pinMode").withParameter("pin", 5).withParameter("mode", OUTPUT);
     mock().expectOneCall("digitalWrite").withParameter("pin", 5).withParameter("value", HIGH);
 
     // First acknowledge
@@ -193,6 +192,39 @@ TEST(WPIRBRobot, DigitalWriteTest)
     robot.loop();
     robot.loop();
     robot.loop();
+
+    mock().checkExpectations();
+}
+
+TEST(WPIRBRobot, DigitalInputTest)
+{
+    WPIRBRobot robot;
+    
+    mock().expectOneCall("begin").onObject(&Serial).withParameter("baud", 9600);
+    robot.setup();
+    mock().checkExpectations();
+
+    mock().expectOneCall("digitalRead").withParameter("pin", 12).andReturnValue(LOW);
+    SendPacket(
+            DigitalInputPacket(12),
+            DigitalValuePacket(
+                12,
+                false
+                ),
+            robot
+            );
+
+    mock().checkExpectations();
+
+    mock().expectOneCall("digitalRead").withParameter("pin", 5).andReturnValue(HIGH);
+    SendPacket(
+            DigitalInputPacket(5),
+            DigitalValuePacket(
+                5,
+                true
+                ),
+            robot
+            );
 
     mock().checkExpectations();
 }
@@ -305,9 +337,7 @@ TEST(WPIRBRobot, MotorDrivePacketTest)
 
     mock().checkExpectations();
 
-    // TODO: figure out why this doesn't work
     mock().expectOneCall("leftMotor").withParameter("speed", 75);
-
     SendPacket(
             MotorDrivePacket(
                 MotorDrivePacket::MOTOR_LEFT,
@@ -318,7 +348,7 @@ TEST(WPIRBRobot, MotorDrivePacketTest)
             robot
             );
 
-    //mock().checkExpectations();
+    mock().checkExpectations();
 
     mock().expectOneCall("leftMotor").withParameter("speed", 78);
 
