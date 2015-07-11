@@ -143,7 +143,7 @@ TEST(Packets, MotorDrivePacket)
             );
     mDrivePacket1.write(outputStream);
 
-    STRCMP_EQUAL("\xFF\x04\x01\x01\x10\x10\xFF", outputStream.str().c_str());
+    STRCMP_EQUAL("\xFF\x05\x01\x01\x10\x10\xFF", outputStream.str().c_str());
 
     outputStream.str("");
     MotorDrivePacket mDrivePacket2(
@@ -153,9 +153,9 @@ TEST(Packets, MotorDrivePacket)
             );
     mDrivePacket2.write(outputStream);
 
-    STRCMP_EQUAL("\xFF\x04\x02\x02\x09\x01\xFF", outputStream.str().c_str());
+    STRCMP_EQUAL("\xFF\x05\x02\x02\x09\x01\xFF", outputStream.str().c_str());
 
-    inputStream.str("\xFF\x04\x02\x01\x01\x01\xFF");
+    inputStream.str("\xFF\x05\x02\x01\x01\x01\xFF");
     Packet* packet3 = Packet::Read(inputStream);
 
     CHECK(NULL != packet3);

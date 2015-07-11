@@ -9,7 +9,8 @@ DigitalOutput::DigitalOutput(
         ) :
     Component(),
     myChannel(channel),
-    myCurrentPacket(NULL)
+    myCurrentPacket(NULL),
+    myIsPinConfigured(false)
 {
 }
 
@@ -36,8 +37,21 @@ DigitalOutput::Set(
 Packet*
 DigitalOutput::getNextPacket()
 {
-    Packet* packet = myCurrentPacket;
-    myCurrentPacket = NULL;
+    Packet* packet = NULL;
+
+    if (myIsPinConfigured == true)
+    {
+        packet = myCurrentPacket;
+        myCurrentPacket = NULL;
+    }
+    else
+    {
+        packet = new PinConfigPacket(
+                myChannel,
+                PinConfigPacket::DIR_OUTPUT
+                );
+        myIsPinConfigured = true;
+    }
 
     return packet;
 }

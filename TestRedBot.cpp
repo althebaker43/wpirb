@@ -68,6 +68,8 @@ TEST(RedBot, CommandTest)
     FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
     robot.modeInit(mode);
 
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x04\x04\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x02\x04\x02\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
@@ -90,6 +92,8 @@ TEST(RedBot, ResponseTest)
     FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
     robot.modeInit(mode);
 
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x04\x06\x02\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x03\x06\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x06\x02\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");

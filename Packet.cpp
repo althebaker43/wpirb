@@ -409,6 +409,85 @@ DigitalInputPacket::getPin() const
 }
 
 
+PinConfigPacket::PinConfigPacket()
+{
+}
+
+PinConfigPacket::PinConfigPacket(
+        unsigned int                pin,
+        PinConfigPacket::Direction  dir
+        ) :
+    myPin(pin),
+    myDirection(dir)
+{
+}
+
+void
+PinConfigPacket::write(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream
+        << '\xFF'
+        << (unsigned char)BID_PINCONFIG
+        << (unsigned char)myPin
+        << (unsigned char)myDirection
+        << '\xFF';
+}
+
+void
+PinConfigPacket::writeXML(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream
+        << "<packet>"
+        << "<type>PINCONFIG</type>"
+        << "<pin>" << myPin << "</pin>"
+        << "<direction>" << ((myDirection == DIR_OUTPUT) ? "OUTPUT" : "INPUT") << "</direction>"
+        << "</packet>";
+}
+
+void
+PinConfigPacket::read(
+        std::istream& inputStream
+        )
+{
+}
+
+bool
+PinConfigPacket::isValid() const
+{
+    return true;
+}
+
+bool
+PinConfigPacket::operator==(
+        const Packet& packet
+        ) const
+{
+    return true;
+}
+
+Packet::Type
+PinConfigPacket::getType() const
+{
+    return TYPE_PINCONFIG;
+}
+
+unsigned int
+PinConfigPacket::getPin() const
+{
+    return myPin;
+}
+
+PinConfigPacket::Direction
+PinConfigPacket::getDirection() const
+{
+    return myDirection;
+}
+
+
 MotorDrivePacket::MotorDrivePacket() :
     myMotor(MOTOR_RIGHT),
     mySpeed(0),

@@ -55,6 +55,11 @@ class DigitalOutput : public Component
          * Packet to send to robot
          */
         Packet* myCurrentPacket;
+
+        /**
+         * Indicates if the pin has been configured yet
+         */
+        bool myIsPinConfigured;
 };
 
 #endif /* ifndef DIGITALOUTPUT_H */

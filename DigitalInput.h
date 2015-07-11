@@ -59,6 +59,11 @@ class DigitalInput : public Component
         bool myValue;
 
         /**
+         * Indicates if the pin has been configured yet
+         */
+        bool myIsPinConfigured;
+
+        /**
          * Next packet to send to robot
          */
         DigitalInputPacket* myOutgoingPacket;

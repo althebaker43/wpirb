@@ -10,6 +10,7 @@ DigitalInput::DigitalInput(
     Component(),
     myChannel(channel),
     myValue(false),
+    myIsPinConfigured(false),
     myOutgoingPacket(new DigitalInputPacket(myChannel))
 {
 }
@@ -31,8 +32,21 @@ DigitalInput::Get()
 Packet*
 DigitalInput::getNextPacket()
 {
-    Packet* packet = myOutgoingPacket;
-    myOutgoingPacket = NULL;
+    Packet* packet = NULL;
+
+    if (myIsPinConfigured == true)
+    {
+        packet = myOutgoingPacket;
+        myOutgoingPacket = NULL;
+    }
+    else
+    {
+        packet = new PinConfigPacket(
+                myChannel,
+                PinConfigPacket::DIR_INPUT
+                );
+        myIsPinConfigured = true;
+    }
 
     return packet;
 }

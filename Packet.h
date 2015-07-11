@@ -23,6 +23,7 @@ class Packet
             TYPE_PING,      /**< Ping packet */
             TYPE_DOUTPUT,   /**< Digital output packet */
             TYPE_DINPUT,    /**< Digital input packet */
+            TYPE_PINCONFIG, /**< Pin configuration packet */
             TYPE_MDRIVE,    /**< Motor drive packet */
 
             // Response packets
@@ -41,7 +42,8 @@ class Packet
             BID_PING =      0x01,
             BID_DOUTPUT =   0x02,
             BID_DINPUT =    0x03,
-            BID_MDRIVE =    0x04,
+            BID_PINCONFIG = 0x04,
+            BID_MDRIVE =    0x05,
 
             // Response packets
             BID_ACK =       0x82,
@@ -351,6 +353,96 @@ class DigitalInputPacket : public Packet
          * Pin to read digital signal from
          */
         unsigned int myPin;
+};
+
+/**
+ * This packet requests that a pin be configured a certain way
+ */
+class PinConfigPacket : public Packet
+{
+    public:
+
+        /**
+         * Enumeration of all pin directions
+         */
+        enum Direction
+        {
+            DIR_OUTPUT = 1,
+            DIR_INPUT,
+        };
+
+        /**
+         * Default constructor
+         */
+        PinConfigPacket();
+
+        /**
+         * Constructor with pin and direction
+         */
+        PinConfigPacket(
+                unsigned int    pin,    /**< Pin to configure */
+                Direction       dir     /**< Direction to set pin to */
+                );
+
+        /**
+         * Writes serialized binary data to output stream
+         */
+        void write(
+                std::ostream&
+                ) const;
+
+        /**
+         * Generates an XML representation of this packet
+         */
+        void writeXML(
+                std::ostream&
+                ) const;
+
+        /**
+         * Reads serialized binary data from input stream
+         */
+        void read(
+                std::istream&
+                );
+
+        /**
+         * Indicates if this packet is valid or not
+         */
+        bool isValid() const;
+
+        /**
+         * Equality operator
+         */
+        bool operator==(
+                const Packet&
+                ) const;
+
+        /**
+         * Provides the type of this packet
+         */
+        Type getType() const;
+
+        /**
+         * Provides the pin to configure
+         */
+        unsigned int getPin() const;
+
+        /**
+         * Provides the direction to set the pin to
+         */
+        Direction getDirection() const;
+
+    private:
+
+        /**
+         * Pin to configure
+         */
+        unsigned int myPin;
+
+        /**
+         * Direction to configure pin to
+         */
+        Direction myDirection;
 };
 
 /**

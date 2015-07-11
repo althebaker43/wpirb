@@ -20,6 +20,17 @@ TEST(Components, DigitalOutputTest)
 {
     DigitalOutput dOut(5);
     dOut.Set(1);
+    Packet* packet0 = dOut.getNextPacket();
+    myPackets.push_back(packet0);
+
+    CHECK(packet0 != NULL);
+    CHECK_EQUAL(Packet::TYPE_PINCONFIG, packet0->getType());
+
+    PinConfigPacket* pinConfigPacket = static_cast<PinConfigPacket*>(packet0);
+
+    CHECK_EQUAL(5, pinConfigPacket->getPin());
+    CHECK_EQUAL(PinConfigPacket::DIR_OUTPUT, pinConfigPacket->getDirection());
+
     Packet* packet1 = dOut.getNextPacket();
     myPackets.push_back(packet1);
 
@@ -49,6 +60,17 @@ TEST(Components, DigitalOutputTest)
 TEST(Components, DigitalInputTest)
 {
     DigitalInput dIn(4);
+
+    Packet* packet0 = dIn.getNextPacket();
+    myPackets.push_back(packet0);
+
+    CHECK(packet0 != NULL);
+    CHECK_EQUAL(Packet::TYPE_PINCONFIG, packet0->getType());
+
+    PinConfigPacket* configPacket = static_cast<PinConfigPacket*>(packet0);
+
+    CHECK_EQUAL(4, configPacket->getPin());
+    CHECK_EQUAL(PinConfigPacket::DIR_INPUT, configPacket->getDirection());
 
     Packet* packet1 = dIn.getNextPacket();
     myPackets.push_back(packet1);
