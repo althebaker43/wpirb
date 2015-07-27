@@ -2,7 +2,6 @@
 #include "DigitalInput.h"
 #include "Packet.h"
 #include <stdlib.h>
-//#include <iostream>
 
 
 DigitalInput::DigitalInput(
@@ -76,7 +75,6 @@ DigitalInput::processPacket(
         return false;
     }
 
-    //std::cout << "Info: recieved digital value packet." << std::endl;
     const DigitalValuePacket& dValPacket = static_cast<const DigitalValuePacket&>(packet);
     myValue = dValPacket.getValue();
     myTimeoutCounter = 0;
