@@ -92,22 +92,44 @@ TEST(RedBot, ResponseTest)
     FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
     robot.modeInit(mode);
 
+    // Pin configuration and get pin value
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x04\x06\x02\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x03\x06\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x06\x02\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+
+    // Get pin value
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x03\x06\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x06\x01\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+
+    // Delayed pin value
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x03\x06\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+    //mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x06\x01\xFF");
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+
+    // Get pin value
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    //mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x03\x06\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x06\x02\xFF");
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+
+    // Get pin value
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x03\x06\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x06\x02\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
 
     robot.modePeriodic(mode);
+
+    CHECK_FALSE(program.getValue());
+
     robot.modePeriodic(mode);
 
     CHECK_TRUE(program.getValue());
@@ -115,6 +137,60 @@ TEST(RedBot, ResponseTest)
     robot.modePeriodic(mode);
 
     CHECK_FALSE(program.getValue());
+
+    robot.modePeriodic(mode);
+
+    CHECK_FALSE(program.getValue());
+
+    robot.modePeriodic(mode);
+
+    CHECK_TRUE(program.getValue());
+
+    mock().checkExpectations();
+}
+
+TEST(RedBot, ResponseTimeoutTest)
+{
+    DigitalInputRobot program;
+    RedBot robot(
+            &program,
+            myMockInputOutputBuffer,
+            myMockInputOutputBuffer
+            );
+
+    myRequestPackets.push_back(new PinConfigPacket(6, PinConfigPacket::DIR_INPUT));   // Cycle 1
+    myRequestPackets.push_back(new DigitalInputPacket(6));
+    myRequestPackets.push_back(new PingPacket());
+    myRequestPackets.push_back(new PingPacket());                                     // Cycle 2
+    myRequestPackets.push_back(new PingPacket());                                     // Cycle 3
+    myRequestPackets.push_back(new PingPacket());                                     // Cycle 4
+    myRequestPackets.push_back(new PingPacket());                                     // Cycle 5
+    myRequestPackets.push_back(new PingPacket());                                     // Cycle 6
+    myRequestPackets.push_back(new DigitalInputPacket(6));                            // Cycle 7
+    myRequestPackets.push_back(new PingPacket());
+
+    myResponsePackets.push_back(new AcknowledgePacket()); // Cycle 1
+    myResponsePackets.push_back(new AcknowledgePacket());
+    myResponsePackets.push_back(new AcknowledgePacket());
+    myResponsePackets.push_back(new AcknowledgePacket()); // Cycle 2
+    myResponsePackets.push_back(new AcknowledgePacket()); // Cycle 3
+    myResponsePackets.push_back(new AcknowledgePacket()); // Cycle 4
+    myResponsePackets.push_back(new AcknowledgePacket()); // Cycle 5
+    myResponsePackets.push_back(new AcknowledgePacket()); // Cycle 6
+    myResponsePackets.push_back(new AcknowledgePacket()); // Cycle 7
+    myResponsePackets.push_back(new AcknowledgePacket());
+
+    std::list<std::string> packetStrings;
+
+    Exchange(
+            myRequestPackets,
+            myResponsePackets,
+            packetStrings,
+            robot,
+            FieldControlSystem::MODE_DISABLED,
+            7
+            );
+
     mock().checkExpectations();
 }
 

@@ -2,6 +2,7 @@
 #include "DigitalInput.h"
 #include "Packet.h"
 #include <stdlib.h>
+//#include <iostream>
 
 
 DigitalInput::DigitalInput(
@@ -11,7 +12,8 @@ DigitalInput::DigitalInput(
     myChannel(channel),
     myValue(false),
     myIsPinConfigured(false),
-    myOutgoingPacket(new DigitalInputPacket(myChannel))
+    myOutgoingPacket(new DigitalInputPacket(myChannel)),
+    myTimeoutCounter(0)
 {
 }
 
@@ -36,6 +38,19 @@ DigitalInput::getNextPacket()
 
     if (myIsPinConfigured == true)
     {
+        if (myOutgoingPacket == NULL)
+        {
+            if (myTimeoutCounter > TIMEOUT_THRESH)
+            {
+                myOutgoingPacket = new DigitalInputPacket(myChannel);
+                myTimeoutCounter = 0;
+            }
+            else
+            {
+                ++myTimeoutCounter;
+            }
+        }
+
         packet = myOutgoingPacket;
         myOutgoingPacket = NULL;
     }
@@ -56,8 +71,15 @@ DigitalInput::processPacket(
         const Packet& packet
         )
 {
+    if (packet.getType() != Packet::TYPE_DVALUE)
+    {
+        return false;
+    }
+
+    //std::cout << "Info: recieved digital value packet." << std::endl;
     const DigitalValuePacket& dValPacket = static_cast<const DigitalValuePacket&>(packet);
     myValue = dValPacket.getValue();
+    myTimeoutCounter = 0;
 
     if (myOutgoingPacket == NULL)
     {

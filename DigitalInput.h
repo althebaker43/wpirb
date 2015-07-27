@@ -49,6 +49,11 @@ class DigitalInput : public Component
     private:
 
         /**
+         * Number of cycles to wait for reply packet before calling time-out
+         */
+        const static unsigned int TIMEOUT_THRESH = 5;
+
+        /**
          * Channel to read digital signal from
          */
         uint32_t myChannel;
@@ -67,6 +72,11 @@ class DigitalInput : public Component
          * Next packet to send to robot
          */
         DigitalInputPacket* myOutgoingPacket;
+
+        /**
+         * Counter value used to detect time-outs for packet replies
+         */
+        unsigned int myTimeoutCounter;
 };
 
 #endif /* ifndef DIGITALINPUT_H */
