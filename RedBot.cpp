@@ -226,6 +226,33 @@ RedBot::transferData()
         return;
     }
 
+    PingPacket pingPacket;
+
+    // Confirm connectivity to robot
+    unsigned int initialPingCount = 0;
+    do
+    {
+        Packet* inPacket;
+
+        exchangePackets(
+                &pingPacket,
+                inPacket
+                );
+
+        if (inPacket != NULL)
+        {
+            myIncomingPackets.push(inPacket);
+        }
+    }
+    while(
+            (myStatus != STATUS_GOOD) &&
+            ((++initialPingCount) < 5)
+         );
+    if (initialPingCount >= 5)
+    {
+        return;
+    }
+
     std::queue<Packet*> outgoingPackets;
 
     myLastTransactionSentData.clear();
@@ -278,7 +305,6 @@ RedBot::transferData()
     }
 
     // Continue pinging until no more incoming packets to process
-    PingPacket pingPacket;
     while (true)
     {
         Packet* inPacket = NULL;
