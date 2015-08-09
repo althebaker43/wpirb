@@ -2,6 +2,7 @@
 #include "TestComponents.h"
 #include "DigitalOutput.h"
 #include "DigitalInput.h"
+#include "AnalogInput.h"
 #include "RobotDrive.h"
 
 
@@ -91,6 +92,17 @@ TEST(Components, DigitalInputTest)
 
     CHECK(dIn.processPacket(dValPacket2));
     CHECK_TRUE(dIn.Get());
+}
+
+TEST(Components, AnalogInputTest)
+{
+    AnalogInput aIn(3);
+
+    Packet* packet1 = aIn.getNextPacket();
+    myPackets.push_back(packet1);
+
+    CHECK(packet1 != NULL);
+    CHECK_EQUAL(Packet::TYPE_AINPUT, packet1->getType());
 }
 
 TEST(Components, TimerTest)

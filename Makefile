@@ -9,6 +9,7 @@ MODULES= \
 	RobotDrive \
 	DigitalOutput \
 	DigitalInput \
+	AnalogInput \
 	Timer \
 	Joystick \
 	LiveWindow \
