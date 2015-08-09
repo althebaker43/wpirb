@@ -7,27 +7,13 @@
 DigitalInput::DigitalInput(
         uint32_t channel
         ) :
-    Component(),
-    myChannel(channel),
-    myValue(false),
-    myIsPinConfigured(false),
-    myOutgoingPacket(new DigitalInputPacket(myChannel)),
-    myTimeoutCounter(0)
+    Input(channel),
+    myIsPinConfigured(false)
 {
 }
 
 DigitalInput::~DigitalInput()
 {
-    if (myOutgoingPacket != NULL)
-    {
-        delete myOutgoingPacket;
-    }
-}
-
-bool
-DigitalInput::Get()
-{
-    return myValue;
 }
 
 Packet*
@@ -37,21 +23,7 @@ DigitalInput::getNextPacket()
 
     if (myIsPinConfigured == true)
     {
-        if (myOutgoingPacket == NULL)
-        {
-            if (myTimeoutCounter > TIMEOUT_THRESH)
-            {
-                myOutgoingPacket = new DigitalInputPacket(myChannel);
-                myTimeoutCounter = 0;
-            }
-            else
-            {
-                ++myTimeoutCounter;
-            }
-        }
-
-        packet = myOutgoingPacket;
-        myOutgoingPacket = NULL;
+        packet = getNextPacketIfTimedOut();
     }
     else
     {
@@ -63,26 +35,4 @@ DigitalInput::getNextPacket()
     }
 
     return packet;
-}
-
-bool
-DigitalInput::processPacket(
-        const Packet& packet
-        )
-{
-    if (packet.getType() != Packet::TYPE_DVALUE)
-    {
-        return false;
-    }
-
-    const DigitalValuePacket& dValPacket = static_cast<const DigitalValuePacket&>(packet);
-    myValue = dValPacket.getValue();
-    myTimeoutCounter = 0;
-
-    if (myOutgoingPacket == NULL)
-    {
-        myOutgoingPacket = new DigitalInputPacket(myChannel);
-    }
-
-    return true;
 }
