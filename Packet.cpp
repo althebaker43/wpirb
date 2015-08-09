@@ -999,8 +999,8 @@ AnalogValuePacket::write(
         << '\xFF'
         << (unsigned char)BID_AVALUE
         << (unsigned char)myPin
-        << (unsigned char)(((0xF0 & myValue) >> 4) + 1)
-        << (unsigned char)((0x0F & myValue) + 1)
+        << (unsigned char)(((0x3E0 & myValue) >> 5) + 1)
+        << (unsigned char)((0x01F & myValue) + 1)
         << '\xFF';
 }
 
@@ -1045,7 +1045,7 @@ AnalogValuePacket::read(
         return;
     }
 
-    myValue = (unsigned int)(((0x0F & (valueHi - 1)) << 4) | (0x0F & (valueLo - 1)));
+    myValue = (unsigned int)(((0x1F & (valueHi - 1)) << 5) | (0x1F & (valueLo - 1)));
 
     inputStream.get();
 }

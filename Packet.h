@@ -362,7 +362,7 @@ class DigitalInputPacket : public Packet
 /**
  * Analog input request class
  *
- * This packet requests an 8-bit analog value from the robot
+ * This packet requests an 10-bit analog value from the robot
  */
 class AnalogInputPacket : public Packet
 {
@@ -869,7 +869,7 @@ class AnalogValuePacket : public Packet
         unsigned int getPin() const;
 
         /**
-         * Provides the 8-bit value read from the pin
+         * Provides the 10-bit value read from the pin
          */
         unsigned int getValue() const;
 

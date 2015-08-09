@@ -303,8 +303,8 @@ WPIRBRobot::sendAnalogValue(unsigned int pin, unsigned int value)
     Serial.write(PACKET_BOUND);
     Serial.write(PACKET_TYPE_AVALUE);
     Serial.write(byte(pin));
-    Serial.write(byte(((0xF0 & value) >> 4) + 1));
-    Serial.write(byte((0x0F & value) + 1));
+    Serial.write(byte(((0x3E0 & value) >> 5) + 1));
+    Serial.write(byte((0x01F & value) + 1));
     Serial.write(PACKET_BOUND);
 
     Serial.flush();

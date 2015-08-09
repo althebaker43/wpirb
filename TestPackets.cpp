@@ -345,9 +345,9 @@ TEST(Packets, AnalogValuePacket)
 
     outputStream << aValPacket1;
 
-    BPACKET_EQUAL("\xFF\x83\x04\x03\x0E\xFF", outputStream.str().c_str());
+    BPACKET_EQUAL("\xFF\x83\x04\x02\x0E\xFF", outputStream.str().c_str());
 
-    inputStream.str("\xFF\x83\x09\x04\x05\xFF");
+    inputStream.str("\xFF\x83\x09\x02\x15\xFF");
 
     Packet* packet2 = Packet::Read(inputStream);
     myPackets.push_back(packet2);
@@ -368,7 +368,7 @@ TEST(Packets, AnalogValuePacket)
     outputStream.str("");
     outputStream << aValPacket3;
 
-    BPACKET_EQUAL("\xFF\x83\x07\x0B\x06\xFF", outputStream.str().c_str());
+    BPACKET_EQUAL("\xFF\x83\x07\x06\x06\xFF", outputStream.str().c_str());
 }
 
 TEST(Packets, AcknowledgePacket)
