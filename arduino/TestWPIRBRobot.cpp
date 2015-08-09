@@ -229,6 +229,35 @@ TEST(WPIRBRobot, DigitalInputTest)
     mock().checkExpectations();
 }
 
+TEST(WPIRBRobot, AnalogInputTest)
+{
+    WPIRBRobot robot;
+
+    mock().expectOneCall("begin").onObject(&Serial).withParameter("baud", 9600);
+    robot.setup();
+    mock().checkExpectations();
+
+    mock().expectOneCall("analogRead").withParameter("pin", 3).andReturnValue(32);
+    SendPacket(
+            AnalogInputPacket(3),
+            AnalogValuePacket(
+                3,
+                32
+                ),
+            robot
+            );
+
+    mock().checkExpectations();
+
+    SendPacket(
+            AnalogInputPacket(8),
+            AcknowledgePacket(),
+            robot
+            );
+
+    mock().checkExpectations();
+}
+
 TEST(WPIRBRobot, IncompletePacket)
 {
     WPIRBRobot robot;

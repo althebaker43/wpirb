@@ -20,6 +20,7 @@ class WPIRBRobot
         void parsePingPacket();
         void parseDigitalOutputPacket();
         void parseDigitalInputPacket();
+        void parseAnalogInputPacket();
         void parsePinConfigPacket();
         void parseMotorDrivePacket();
 
@@ -27,6 +28,10 @@ class WPIRBRobot
         void sendDigitalValue(
                 unsigned int    pin,
                 boolean         value
+                );
+        void sendAnalogValue(
+                unsigned int    pin,
+                unsigned int    value
                 );
 
         const static byte PACKET_BOUND = 0xFF;
@@ -40,6 +45,7 @@ class WPIRBRobot
 
         const static byte PACKET_TYPE_ACK =     0x82;
         const static byte PACKET_TYPE_DVALUE =  0x81;
+        const static byte PACKET_TYPE_AVALUE =  0x83;
 
         const static unsigned int PACKET_BUFSIZE = 10;
 

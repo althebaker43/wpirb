@@ -65,3 +65,11 @@ digitalRead(
 {
     return mock().actualCall("digitalRead").withParameter("pin", pin).returnUnsignedIntValue();
 }
+
+unsigned int
+analogRead(
+        unsigned int    pin
+        )
+{
+    return mock().actualCall("analogRead").withParameter("pin", pin).returnUnsignedIntValue();
+}

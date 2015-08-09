@@ -56,4 +56,9 @@ digitalRead(
         unsigned int pin
         );
 
+unsigned int
+analogRead(
+        unsigned int pin
+        );
+
 #endif /* ifndef ARDUINO_H */

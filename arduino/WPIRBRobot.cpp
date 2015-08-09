@@ -101,6 +101,10 @@ WPIRBRobot::parsePacket()
       parseDigitalInputPacket();
       break;
 
+    case PACKET_TYPE_AINPUT:
+      parseAnalogInputPacket();
+      break;
+
     case PACKET_TYPE_PINCONFIG:
       parsePinConfigPacket();
       break;
@@ -162,6 +166,31 @@ WPIRBRobot::parseDigitalInputPacket()
   }
   
   return;
+}
+
+void
+WPIRBRobot::parseAnalogInputPacket()
+{
+    if (myPacketSize == 4)
+    {
+        unsigned int pin = myPacketBuffer[2];
+
+        if (pin < 8)
+        {
+            unsigned int value = analogRead(pin);
+            sendAnalogValue(pin, value);
+        }
+        else
+        {
+            acknowledge();
+        }
+    }
+    else
+    {
+        acknowledge();
+    }
+
+    return;
 }
 
 void
@@ -266,4 +295,17 @@ WPIRBRobot::sendDigitalValue(unsigned int pin, boolean value)
   Serial.write(PACKET_BOUND);
   
   Serial.flush();
+}
+
+void
+WPIRBRobot::sendAnalogValue(unsigned int pin, unsigned int value)
+{
+    Serial.write(PACKET_BOUND);
+    Serial.write(PACKET_TYPE_AVALUE);
+    Serial.write(byte(pin));
+    Serial.write(byte(((0xF0 & value) >> 4) + 1));
+    Serial.write(byte((0x0F & value) + 1));
+    Serial.write(PACKET_BOUND);
+
+    Serial.flush();
 }
