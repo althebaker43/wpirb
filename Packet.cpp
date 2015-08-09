@@ -72,6 +72,10 @@ Packet::Read(
                 packet = new DigitalValuePacket();
                 break;
 
+            case BID_AVALUE:
+                packet = new AnalogValuePacket();
+                break;
+
             case BID_ACK:
                 packet = new AcknowledgePacket();
                 break;
@@ -966,6 +970,114 @@ DigitalValuePacket::getPin() const
 
 bool
 DigitalValuePacket::getValue() const
+{
+    return myValue;
+}
+
+
+AnalogValuePacket::AnalogValuePacket() :
+    myPin(1),
+    myValue(0)
+{
+}
+
+AnalogValuePacket::AnalogValuePacket(
+        unsigned int    pin,
+        unsigned int    value
+        ) :
+    myPin(pin),
+    myValue(value)
+{
+}
+
+void
+AnalogValuePacket::write(
+        std::ostream&   outputStream
+        ) const
+{
+    outputStream
+        << '\xFF'
+        << (unsigned char)BID_AVALUE
+        << (unsigned char)myPin
+        << (unsigned char)(((0xF0 & myValue) >> 4) + 1)
+        << (unsigned char)((0x0F & myValue) + 1)
+        << '\xFF';
+}
+
+void
+AnalogValuePacket::writeXML(
+        std::ostream&   outputStream
+        ) const
+{
+    outputStream
+        << "<packet>"
+        << "<type>AVALUE</type>"
+        << "<pin>" << myPin << "</pin>"
+        << "<value>" << myValue << "</value>"
+        << "</packet>";
+}
+
+void
+AnalogValuePacket::read(
+        std::istream&   inputStream
+        )
+{
+    int pin = -1;
+    int valueHi = -1;
+    int valueLo = -1;
+
+    pin = inputStream.get();
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+    myPin = (unsigned int)pin;
+
+    valueHi = inputStream.get();
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+
+    valueLo = inputStream.get();
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+
+    myValue = (unsigned int)(((0x0F & (valueHi - 1)) << 4) | (0x0F & (valueLo - 1)));
+
+    inputStream.get();
+}
+
+bool
+AnalogValuePacket::isValid() const
+{
+    return true;
+}
+
+bool
+AnalogValuePacket::operator==(
+        const Packet& packet
+        ) const
+{
+    return true;
+}
+
+Packet::Type
+AnalogValuePacket::getType() const
+{
+    return TYPE_AVALUE;
+}
+
+unsigned int
+AnalogValuePacket::getPin() const
+{
+    return myPin;
+}
+
+unsigned int
+AnalogValuePacket::getValue() const
 {
     return myValue;
 }

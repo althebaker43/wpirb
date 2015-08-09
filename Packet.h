@@ -30,6 +30,7 @@ class Packet
             // Response packets
             TYPE_ACK,       /**< Acknowledgement packet */
             TYPE_DVALUE,    /**< Digital value response packet */
+            TYPE_AVALUE,    /**< Analog value response packet */
         };
 
         /**
@@ -50,6 +51,7 @@ class Packet
             // Response packets
             BID_ACK =       0x82,
             BID_DVALUE =    0x81,
+            BID_AVALUE =    0x83,
         };
 
         /**
@@ -798,6 +800,90 @@ class DigitalValuePacket : public Packet
          * Raw binary data read from input stream
          */
         std::vector<int> myBinaryData;
+};
+
+/**
+ * Analog value response class
+ *
+ * This packet is a response from the robot containing an analog input value.
+ * It should be expected after sending an AnalogInputPacket.
+ */
+class AnalogValuePacket : public Packet
+{
+    public:
+
+        /**
+         * Default constructor
+         */
+        AnalogValuePacket();
+
+        /**
+         * Constructor with pin and value
+         */
+        AnalogValuePacket(
+                unsigned int    pin,    /**< Pin read from */
+                unsigned int    value   /**< Value detected on pin */
+                );
+
+        /**
+         * Writes serialized binary data to output stream
+         */
+        void write(
+                std::ostream&
+                ) const;
+
+        /**
+         * Generates an XML representation of this packet
+         */
+        void writeXML(
+                std::ostream&
+                ) const;
+
+        /**
+         * Reads serialized binary data from input stream
+         */
+        void read(
+                std::istream&
+                );
+
+        /**
+         * Indicates if this packet is valid or not
+         */
+        bool isValid() const;
+
+        /**
+         * Equality operator
+         */
+        bool operator==(
+                const Packet&
+                ) const;
+
+        /**
+         * Provides the type of this packet
+         */
+        Type getType() const;
+
+        /**
+         * Provides the pin read from
+         */
+        unsigned int getPin() const;
+
+        /**
+         * Provides the 8-bit value read from the pin
+         */
+        unsigned int getValue() const;
+
+    private:
+
+        /**
+         * Pin read from
+         */
+        unsigned int myPin;
+
+        /**
+         * Analog value read from pin
+         */
+        unsigned int myValue;
 };
 
 #endif /* ifndef PACKET_H */

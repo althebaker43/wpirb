@@ -332,6 +332,45 @@ TEST(Packets, DigitalValuePacket)
     CHECK_EQUAL(true, dValPacket3->getValue());
 }
 
+TEST(Packets, AnalogValuePacket)
+{
+    std::ostringstream outputStream;
+    std::istringstream inputStream;
+
+    AnalogValuePacket aValPacket1(4, 45);
+
+    CHECK_EQUAL(Packet::TYPE_AVALUE, aValPacket1.getType());
+    CHECK_EQUAL(4, aValPacket1.getPin());
+    CHECK_EQUAL(45, aValPacket1.getValue());
+
+    outputStream << aValPacket1;
+
+    BPACKET_EQUAL("\xFF\x83\x04\x03\x0E\xFF", outputStream.str().c_str());
+
+    inputStream.str("\xFF\x83\x09\x04\x05\xFF");
+
+    Packet* packet2 = Packet::Read(inputStream);
+    myPackets.push_back(packet2);
+
+    CHECK(packet2 != NULL);
+    CHECK_EQUAL(Packet::TYPE_AVALUE, packet2->getType());
+
+    AnalogValuePacket* aValPacket2 = static_cast<AnalogValuePacket*>(packet2);
+
+    CHECK_EQUAL(9, aValPacket2->getPin());
+    CHECK_EQUAL(52, aValPacket2->getValue());
+
+    AnalogValuePacket aValPacket3(7, 165);
+
+    CHECK_EQUAL(7, aValPacket3.getPin());
+    CHECK_EQUAL(165, aValPacket3.getValue());
+
+    outputStream.str("");
+    outputStream << aValPacket3;
+
+    BPACKET_EQUAL("\xFF\x83\x07\x0B\x06\xFF", outputStream.str().c_str());
+}
+
 TEST(Packets, AcknowledgePacket)
 {
     AcknowledgePacket ackPacket1;
@@ -536,6 +575,36 @@ TEST(Packets, DigitalValuePacketXML)
         "<type>DVALUE</type>"
         "<pin>6</pin>"
         "<value>0</value>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+}
+
+TEST(Packets, AnalogValuePacketXML)
+{
+    std::ostringstream packetStream;
+    std::string expectedOutput;
+    AnalogValuePacket aValPacket1(4, 87);
+
+    aValPacket1.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>AVALUE</type>"
+        "<pin>4</pin>"
+        "<value>87</value>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+
+    AnalogValuePacket aValPacket2(8, 243);
+
+    packetStream.str("");
+    aValPacket2.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>AVALUE</type>"
+        "<pin>8</pin>"
+        "<value>243</value>"
         "</packet>";
     CHECK_EQUAL(expectedOutput, packetStream.str());
 }
