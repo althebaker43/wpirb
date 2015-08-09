@@ -56,6 +56,10 @@ Packet::Read(
                 packet = new DigitalInputPacket();
                 break;
 
+            case BID_AINPUT:
+                packet = new AnalogInputPacket();
+                break;
+
             case BID_PINCONFIG:
                 packet = new PinConfigPacket();
                 break;
@@ -408,6 +412,86 @@ DigitalInputPacket::getType() const
 
 unsigned int
 DigitalInputPacket::getPin() const
+{
+    return myPin;
+}
+
+
+AnalogInputPacket::AnalogInputPacket() :
+    myPin(1)
+{
+}
+
+AnalogInputPacket::AnalogInputPacket(
+        unsigned int pin
+        ) :
+    myPin(pin)
+{
+}
+
+void
+AnalogInputPacket::write(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream
+        << '\xFF'
+        << (unsigned char)BID_AINPUT
+        << (unsigned char)myPin
+        << '\xFF';
+}
+
+void
+AnalogInputPacket::writeXML(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream
+        << "<packet>"
+        << "<type>AINPUT</type>"
+        << "<pin>" << myPin << "</pin>"
+        << "</packet>";
+}
+
+void
+AnalogInputPacket::read(
+        std::istream& inputStream
+        )
+{
+    int pin = -1;
+
+    pin = inputStream.get();
+    myPin = (unsigned int)pin;
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+
+    inputStream.get();
+}
+
+bool
+AnalogInputPacket::isValid() const
+{
+    return true;
+}
+
+bool
+AnalogInputPacket::operator==(
+        const Packet& packet
+        ) const
+{
+    return true;
+}
+
+Packet::Type
+AnalogInputPacket::getType() const
+{
+    return TYPE_AINPUT;
+}
+
+unsigned int
+AnalogInputPacket::getPin() const
 {
     return myPin;
 }

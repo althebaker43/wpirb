@@ -3,11 +3,14 @@
 #include "CppUTest/TestHarness.h"
 #include <sstream>
 #include <list>
+#include <cstring>
 
 
 TEST_GROUP(Packets)
 {
     std::list<Packet*> myPackets;
+
+    std::string myPacketExplanation;
 
     void teardown()
     {
@@ -22,7 +25,62 @@ TEST_GROUP(Packets)
 
         myPackets.clear();
     }
+
+
+    const char* explainDiffPackets(
+            const char* expectedString,
+            const char* actualString
+            )
+    {
+
+        std::ostringstream outputStream;
+
+        outputStream << "Packet binary strings do not match" << std::endl;
+
+        outputStream << "Expected: ";
+        WritePacketString(expectedString, outputStream);
+        outputStream << std::endl;
+
+        outputStream << "Actual: ";
+        WritePacketString(actualString, outputStream);
+        outputStream << std::endl;
+
+        myPacketExplanation = outputStream.str();
+
+        return myPacketExplanation.c_str();
+    }
+
+    static void WritePacketString(
+            const char*     str,
+            std::ostream&   outputStream
+            )
+    {
+        outputStream << std::hex;
+
+        size_t strLen = strlen(str);
+        for(
+                size_t pos = 0;
+                pos < strLen;
+                ++pos
+           )
+        {
+            if (pos > 0)
+            {
+                outputStream << ' ';
+            }
+
+            outputStream << "0x" << (0xFF & ((unsigned int)str[pos]));
+        }
+
+        outputStream << std::dec;
+    }
 };
+
+#define BPACKET_EQUAL(expectedString, actualString) \
+    CHECK_TEXT( \
+            (strcmp(expectedString, actualString) == 0), \
+            explainDiffPackets(expectedString, actualString) \
+            )
 
 TEST(Packets, PacketWriteTest)
 {
@@ -131,6 +189,41 @@ TEST(Packets, DigitalInputPacket)
     delete dInPacket3;
 }
 
+TEST(Packets, AnalogInputPacket)
+{
+    AnalogInputPacket aInPacket1(4);
+    std::ostringstream outputStream;
+    std::istringstream inputStream;
+
+    CHECK_EQUAL(Packet::TYPE_AINPUT, aInPacket1.getType());
+    CHECK_EQUAL(4, aInPacket1.getPin());
+
+    aInPacket1.write(outputStream);
+
+    STRCMP_EQUAL("\xFF\x04\x04\xFF", outputStream.str().c_str());
+
+    AnalogInputPacket aInPacket2(11);
+
+    CHECK_EQUAL(11, aInPacket2.getPin());
+
+    outputStream.str("");
+    aInPacket2.write(outputStream);
+
+    BPACKET_EQUAL("\xFF\x04\x0B\xFF", outputStream.str().c_str());
+
+    inputStream.str("\xFF\x04\x02\xFF");
+    Packet* packet3 = Packet::Read(inputStream);
+
+    CHECK(NULL != packet3);
+
+    AnalogInputPacket* aInPacket3 = static_cast<AnalogInputPacket*>(packet3);
+
+    CHECK_EQUAL(Packet::TYPE_AINPUT, aInPacket3->getType());
+    CHECK_EQUAL(2, aInPacket3->getPin());
+
+    delete aInPacket3;
+}
+
 TEST(Packets, PinConfigPacket)
 {
     std::ostringstream outputStream;
@@ -143,9 +236,9 @@ TEST(Packets, PinConfigPacket)
 
     configPacket1.write(outputStream);
 
-    STRCMP_EQUAL("\xFF\x04\x04\x02\xFF", outputStream.str().c_str());
+    STRCMP_EQUAL("\xFF\x05\x04\x02\xFF", outputStream.str().c_str());
 
-    inputStream.str("\xFF\x04\x06\x01\xFF");
+    inputStream.str("\xFF\x05\x06\x01\xFF");
     Packet* packet2 = Packet::Read(inputStream);
 
     CHECK(NULL != packet2);
@@ -171,7 +264,7 @@ TEST(Packets, MotorDrivePacket)
             );
     mDrivePacket1.write(outputStream);
 
-    STRCMP_EQUAL("\xFF\x05\x01\x01\x10\x10\xFF", outputStream.str().c_str());
+    STRCMP_EQUAL("\xFF\x06\x01\x01\x10\x10\xFF", outputStream.str().c_str());
 
     outputStream.str("");
     MotorDrivePacket mDrivePacket2(
@@ -181,9 +274,9 @@ TEST(Packets, MotorDrivePacket)
             );
     mDrivePacket2.write(outputStream);
 
-    STRCMP_EQUAL("\xFF\x05\x02\x02\x09\x01\xFF", outputStream.str().c_str());
+    STRCMP_EQUAL("\xFF\x06\x02\x02\x09\x01\xFF", outputStream.str().c_str());
 
-    inputStream.str("\xFF\x05\x02\x01\x01\x01\xFF");
+    inputStream.str("\xFF\x06\x02\x01\x01\x01\xFF");
     Packet* packet3 = Packet::Read(inputStream);
 
     CHECK(NULL != packet3);
@@ -310,6 +403,34 @@ TEST(Packets, DigitalInputPacketXML)
         "<packet>"
         "<type>DINPUT</type>"
         "<pin>4</pin>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+}
+
+TEST(Packets, AnalogInputPacketXML)
+{
+    std::ostringstream packetStream;
+    std::string expectedOutput;
+    AnalogInputPacket aInPacket1(3);
+
+    aInPacket1.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>AINPUT</type>"
+        "<pin>3</pin>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+
+    AnalogInputPacket aInPacket2(7);
+
+    packetStream.str("");
+    aInPacket2.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>AINPUT</type>"
+        "<pin>7</pin>"
         "</packet>";
     CHECK_EQUAL(expectedOutput, packetStream.str());
 }

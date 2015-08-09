@@ -23,6 +23,7 @@ class Packet
             TYPE_PING,      /**< Ping packet */
             TYPE_DOUTPUT,   /**< Digital output packet */
             TYPE_DINPUT,    /**< Digital input packet */
+            TYPE_AINPUT,    /**< Analog input packet */
             TYPE_PINCONFIG, /**< Pin configuration packet */
             TYPE_MDRIVE,    /**< Motor drive packet */
 
@@ -42,8 +43,9 @@ class Packet
             BID_PING =      0x01,
             BID_DOUTPUT =   0x02,
             BID_DINPUT =    0x03,
-            BID_PINCONFIG = 0x04,
-            BID_MDRIVE =    0x05,
+            BID_AINPUT =    0x04,
+            BID_PINCONFIG = 0x05,
+            BID_MDRIVE =    0x06,
 
             // Response packets
             BID_ACK =       0x82,
@@ -298,10 +300,10 @@ class DigitalInputPacket : public Packet
         DigitalInputPacket();
 
         /**
-         * Constructor with pin and value
+         * Constructor with pin
          */
         DigitalInputPacket(
-                unsigned int    pin     /**< Pin to output to */
+                unsigned int    pin     /**< Pin to read from */
                 );
 
         /**
@@ -351,6 +353,78 @@ class DigitalInputPacket : public Packet
 
         /**
          * Pin to read digital signal from
+         */
+        unsigned int myPin;
+};
+
+/**
+ * Analog input request class
+ *
+ * This packet requests an 8-bit analog value from the robot
+ */
+class AnalogInputPacket : public Packet
+{
+    public:
+
+        /**
+         * Default constructor
+         */
+        AnalogInputPacket();
+
+        /**
+         * Constructor with pin
+         */
+        AnalogInputPacket(
+                unsigned int    pin /**< Pin to read from */
+                );
+
+        /**
+         * Writes serialized binary data to output stream
+         */
+        void write(
+                std::ostream&
+                ) const;
+
+        /**
+         * Generates an XML representation of this packet
+         */
+        void writeXML(
+                std::ostream&
+                ) const;
+
+        /**
+         * Reads serialized binary data from input stream
+         */
+        void read(
+                std::istream&
+                );
+
+        /**
+         * Indicates if this packet is valid or not
+         */
+        bool isValid () const;
+
+        /**
+         * Equality operator
+         */
+        bool operator==(
+                const Packet&
+                ) const;
+
+        /**
+         * Provides the type of this packet
+         */
+        Type getType() const;
+
+        /**
+         * Provides the pin to read from
+         */
+        unsigned int getPin() const;
+
+    private:
+
+        /**
+         * Pin to read analog value from
          */
         unsigned int myPin;
 };
