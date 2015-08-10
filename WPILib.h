@@ -7,6 +7,7 @@
 // Components
 #include "DigitalOutput.h"
 #include "DigitalInput.h"
+#include "AnalogInput.h"
 #include "Timer.h"
 #include "RobotDrive.h"
 #include "Joystick.h"
