@@ -441,7 +441,7 @@ AnalogInputPacket::write(
     outputStream
         << '\xFF'
         << (unsigned char)BID_AINPUT
-        << (unsigned char)myPin
+        << (unsigned char)(myPin + 1)
         << '\xFF';
 }
 
@@ -465,7 +465,7 @@ AnalogInputPacket::read(
     int pin = -1;
 
     pin = inputStream.get();
-    myPin = (unsigned int)pin;
+    myPin = (unsigned int)(pin - 1);
     if (inputStream.good() == false)
     {
         return;
@@ -998,7 +998,7 @@ AnalogValuePacket::write(
     outputStream
         << '\xFF'
         << (unsigned char)BID_AVALUE
-        << (unsigned char)myPin
+        << (unsigned char)(myPin + 1)
         << (unsigned char)(((0x3E0 & myValue) >> 5) + 1)
         << (unsigned char)((0x01F & myValue) + 1)
         << '\xFF';
@@ -1031,7 +1031,7 @@ AnalogValuePacket::read(
     {
         return;
     }
-    myPin = (unsigned int)pin;
+    myPin = (unsigned int)(pin - 1);
 
     valueHi = inputStream.get();
     if (inputStream.good() == false)

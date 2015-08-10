@@ -173,7 +173,7 @@ WPIRBRobot::parseAnalogInputPacket()
 {
     if (myPacketSize == 4)
     {
-        unsigned int pin = myPacketBuffer[2];
+        unsigned int pin = (myPacketBuffer[2] - 1);
 
         if (pin < 8)
         {
@@ -302,7 +302,7 @@ WPIRBRobot::sendAnalogValue(unsigned int pin, unsigned int value)
 {
     Serial.write(PACKET_BOUND);
     Serial.write(PACKET_TYPE_AVALUE);
-    Serial.write(byte(pin));
+    Serial.write(byte(pin + 1));
     Serial.write(byte(((0x3E0 & value) >> 5) + 1));
     Serial.write(byte((0x01F & value) + 1));
     Serial.write(PACKET_BOUND);

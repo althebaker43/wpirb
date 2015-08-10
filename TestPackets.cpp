@@ -200,7 +200,7 @@ TEST(Packets, AnalogInputPacket)
 
     aInPacket1.write(outputStream);
 
-    STRCMP_EQUAL("\xFF\x04\x04\xFF", outputStream.str().c_str());
+    BPACKET_EQUAL("\xFF\x04\x05\xFF", outputStream.str().c_str());
 
     AnalogInputPacket aInPacket2(11);
 
@@ -209,9 +209,9 @@ TEST(Packets, AnalogInputPacket)
     outputStream.str("");
     aInPacket2.write(outputStream);
 
-    BPACKET_EQUAL("\xFF\x04\x0B\xFF", outputStream.str().c_str());
+    BPACKET_EQUAL("\xFF\x04\x0C\xFF", outputStream.str().c_str());
 
-    inputStream.str("\xFF\x04\x02\xFF");
+    inputStream.str("\xFF\x04\x03\xFF");
     Packet* packet3 = Packet::Read(inputStream);
 
     CHECK(NULL != packet3);
@@ -345,9 +345,9 @@ TEST(Packets, AnalogValuePacket)
 
     outputStream << aValPacket1;
 
-    BPACKET_EQUAL("\xFF\x83\x04\x02\x0E\xFF", outputStream.str().c_str());
+    BPACKET_EQUAL("\xFF\x83\x05\x02\x0E\xFF", outputStream.str().c_str());
 
-    inputStream.str("\xFF\x83\x09\x02\x15\xFF");
+    inputStream.str("\xFF\x83\x0A\x02\x15\xFF");
 
     Packet* packet2 = Packet::Read(inputStream);
     myPackets.push_back(packet2);
@@ -368,7 +368,7 @@ TEST(Packets, AnalogValuePacket)
     outputStream.str("");
     outputStream << aValPacket3;
 
-    BPACKET_EQUAL("\xFF\x83\x07\x06\x06\xFF", outputStream.str().c_str());
+    BPACKET_EQUAL("\xFF\x83\x08\x06\x06\xFF", outputStream.str().c_str());
 }
 
 TEST(Packets, AcknowledgePacket)
