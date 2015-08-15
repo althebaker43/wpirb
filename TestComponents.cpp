@@ -92,6 +92,11 @@ TEST(Components, DigitalInputTest)
 
     CHECK(dIn.processPacket(dValPacket2));
     CHECK_TRUE(dIn.Get());
+
+    DigitalValuePacket dValPacket3(5, false);
+
+    CHECK_FALSE(dIn.processPacket(dValPacket3));
+    CHECK_TRUE(dIn.Get());
 }
 
 TEST(Components, AnalogInputTest)

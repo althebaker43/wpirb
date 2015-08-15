@@ -149,6 +149,11 @@ Input<RequestType, ResponseType, ValueType>::processPacket(
         return false;
     }
 
+    if (responsePacket->getPin() != myChannel)
+    {
+        return false;
+    }
+
     myValue = responsePacket->getValue();
     myTimeoutCounter = 0;
 
