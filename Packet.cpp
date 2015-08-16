@@ -80,6 +80,10 @@ Packet::Read(
                 packet = new AcknowledgePacket();
                 break;
 
+            case BID_PINCONFIGINFO:
+                packet = new PinConfigInfoPacket();
+                break;
+
             default:
                 break;
         };
@@ -509,7 +513,7 @@ PinConfigPacket::PinConfigPacket() :
 
 PinConfigPacket::PinConfigPacket(
         unsigned int                pin,
-        PinConfigPacket::Direction  dir
+        Packet::PinDirection        dir
         ) :
     myPin(pin),
     myDirection(dir)
@@ -600,7 +604,7 @@ PinConfigPacket::getPin() const
     return myPin;
 }
 
-PinConfigPacket::Direction
+Packet::PinDirection
 PinConfigPacket::getDirection() const
 {
     return myDirection;
@@ -1080,4 +1084,105 @@ unsigned int
 AnalogValuePacket::getValue() const
 {
     return myValue;
+}
+
+
+PinConfigInfoPacket::PinConfigInfoPacket() :
+    myPin(1),
+    myDirection(DIR_INPUT)
+{
+}
+
+PinConfigInfoPacket::PinConfigInfoPacket(
+        unsigned int            pin,
+        Packet::PinDirection    dir
+        ) :
+    myPin(pin),
+    myDirection(dir)
+{
+}
+
+void
+PinConfigInfoPacket::write(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream
+        << '\xFF'
+        << (unsigned char)BID_PINCONFIGINFO
+        << (unsigned char)myPin
+        << (unsigned char)myDirection
+        << '\xFF';
+}
+
+void
+PinConfigInfoPacket::writeXML(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream
+        << "<packet>"
+        << "<type>PINCONFIGINFO</type>"
+        << "<pin>" << myPin << "</pin>"
+        << "<direction>"
+        << ((myDirection == DIR_INPUT) ? "INPUT" : "OUTPUT")
+        << "</direction>"
+        << "</packet>";
+}
+
+void
+PinConfigInfoPacket::read(
+        std::istream& inputStream
+        )
+{
+    int pin;
+    int direction;
+
+    pin = inputStream.get();
+    if (inputStream.good() != true)
+    {
+        return;
+    }
+    myPin = (unsigned int)pin;
+
+    direction = inputStream.get();
+    if (inputStream.good() != true)
+    {
+        return;
+    }
+    myDirection = ((direction == 1) ? DIR_INPUT : DIR_OUTPUT);
+
+    inputStream.get();
+}
+
+bool
+PinConfigInfoPacket::isValid() const
+{
+    return true;
+}
+
+bool
+PinConfigInfoPacket::operator==(
+        const Packet& packet
+        ) const
+{
+    return true;
+}
+
+Packet::Type
+PinConfigInfoPacket::getType() const
+{
+    return TYPE_PINCONFIGINFO;
+}
+
+unsigned int
+PinConfigInfoPacket::getPin() const
+{
+    return myPin;
+}
+
+Packet::PinDirection
+PinConfigInfoPacket::getDirection() const
+{
+    return myDirection;
 }

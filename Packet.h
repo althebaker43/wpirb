@@ -28,9 +28,10 @@ class Packet
             TYPE_MDRIVE,    /**< Motor drive packet */
 
             // Response packets
-            TYPE_ACK,       /**< Acknowledgement packet */
-            TYPE_DVALUE,    /**< Digital value response packet */
-            TYPE_AVALUE,    /**< Analog value response packet */
+            TYPE_ACK,           /**< Acknowledgement packet */
+            TYPE_DVALUE,        /**< Digital value response packet */
+            TYPE_AVALUE,        /**< Analog value response packet */
+            TYPE_PINCONFIGINFO, /**< Pin configuration info response packet */
         };
 
         /**
@@ -49,9 +50,19 @@ class Packet
             BID_MDRIVE =    0x06,
 
             // Response packets
-            BID_ACK =       0x82,
-            BID_DVALUE =    0x81,
-            BID_AVALUE =    0x83,
+            BID_ACK =           0x82,
+            BID_DVALUE =        0x81,
+            BID_AVALUE =        0x83,
+            BID_PINCONFIGINFO = 0x84,
+        };
+
+        /**
+         * Enumeration of all pin directions
+         */
+        enum PinDirection
+        {
+            DIR_OUTPUT = 1,
+            DIR_INPUT,
         };
 
         /**
@@ -439,15 +450,6 @@ class PinConfigPacket : public Packet
     public:
 
         /**
-         * Enumeration of all pin directions
-         */
-        enum Direction
-        {
-            DIR_OUTPUT = 1,
-            DIR_INPUT,
-        };
-
-        /**
          * Default constructor
          */
         PinConfigPacket();
@@ -457,7 +459,7 @@ class PinConfigPacket : public Packet
          */
         PinConfigPacket(
                 unsigned int    pin,    /**< Pin to configure */
-                Direction       dir     /**< Direction to set pin to */
+                PinDirection    dir     /**< Direction to set pin to */
                 );
 
         /**
@@ -506,7 +508,7 @@ class PinConfigPacket : public Packet
         /**
          * Provides the direction to set the pin to
          */
-        Direction getDirection() const;
+        PinDirection getDirection() const;
 
     private:
 
@@ -518,7 +520,7 @@ class PinConfigPacket : public Packet
         /**
          * Direction to configure pin to
          */
-        Direction myDirection;
+        PinDirection myDirection;
 };
 
 /**
@@ -884,6 +886,90 @@ class AnalogValuePacket : public Packet
          * Analog value read from pin
          */
         unsigned int myValue;
+};
+
+/**
+ * Pin configuration response class
+ *
+ * This packet contains configuration information about a certain pin. This
+ * packet type should be expected after sending a PinConfigPacket.
+ */
+class PinConfigInfoPacket : public Packet
+{
+    public:
+
+        /**
+         * Default constructor
+         */
+        PinConfigInfoPacket();
+
+        /**
+         * Constructor with pin and direction
+         */
+        PinConfigInfoPacket(
+                unsigned int    pin,    /**< Pin described in this packet */
+                PinDirection    dir     /**< Direction pin is set to */
+                );
+
+        /**
+         * Writes serialized binary data to output stream
+         */
+        void write(
+                std::ostream&
+                ) const;
+
+        /**
+         * Generates an XML representation of this packet
+         */
+        void writeXML(
+                std::ostream&
+                ) const;
+
+        /**
+         * Reads serialized binary data from input stream
+         */
+        void read(
+                std::istream&
+                );
+
+        /**
+         * Indicates if this packet is valid or not
+         */
+        bool isValid() const;
+
+        /**
+         * Equality operator
+         */
+        bool operator==(
+                const Packet&
+                ) const;
+
+        /**
+         * Provides the type of this packet
+         */
+        Type getType() const;
+
+        /**
+         * Provides the pin this packet describes
+         */
+        unsigned int getPin() const;
+
+        /**
+         * Provides the direction this pin is configured for
+         */
+        PinDirection getDirection() const;
+
+    private:
+
+        /**
+         * Pin this packet describes
+         */
+        unsigned int myPin;
+
+        /**
+         * Direction the pin is set to
+         */
+        PinDirection myDirection;
 };
 
 #endif /* ifndef PACKET_H */

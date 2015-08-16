@@ -371,6 +371,46 @@ TEST(Packets, AnalogValuePacket)
     BPACKET_EQUAL("\xFF\x83\x08\x06\x06\xFF", outputStream.str().c_str());
 }
 
+TEST(Packets, PinConfigInfoPacket)
+{
+    std::ostringstream outputStream;
+    std::istringstream inputStream;
+
+    PinConfigInfoPacket confInfoPacket1(5, Packet::DIR_INPUT);
+
+    CHECK_EQUAL(Packet::TYPE_PINCONFIGINFO, confInfoPacket1.getType());
+    CHECK_EQUAL(5, confInfoPacket1.getPin());
+    CHECK_EQUAL(Packet::DIR_INPUT, confInfoPacket1.getDirection());
+
+    outputStream.str("");
+    outputStream << confInfoPacket1;
+
+    BPACKET_EQUAL("\xFF\x84\x05\x02\xFF", outputStream.str().c_str());
+
+    PinConfigInfoPacket confInfoPacket2(8, Packet::DIR_OUTPUT);
+
+    CHECK_EQUAL(8, confInfoPacket2.getPin());
+    CHECK_EQUAL(Packet::DIR_OUTPUT, confInfoPacket2.getDirection());
+
+    outputStream.str("");
+    outputStream << confInfoPacket2;
+
+    BPACKET_EQUAL("\xFF\x84\x08\x01\xFF", outputStream.str().c_str());
+
+    inputStream.str("\xFF\x84\x03\x02\xFF");
+    Packet* packet3 = Packet::Read(inputStream);
+
+    CHECK(NULL != packet3);
+    CHECK_EQUAL(Packet::TYPE_PINCONFIGINFO, packet3->getType());
+
+    PinConfigInfoPacket* confInfoPacket3 = static_cast<PinConfigInfoPacket*>(packet3);
+
+    CHECK_EQUAL(3, confInfoPacket3->getPin());
+    CHECK_EQUAL(Packet::DIR_OUTPUT, confInfoPacket3->getDirection());
+
+    delete packet3;
+}
+
 TEST(Packets, AcknowledgePacket)
 {
     AcknowledgePacket ackPacket1;
@@ -605,6 +645,34 @@ TEST(Packets, AnalogValuePacketXML)
         "<type>AVALUE</type>"
         "<pin>8</pin>"
         "<value>243</value>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+}
+
+TEST(Packets, PinConfigInfoPacketXML)
+{
+    std::ostringstream packetStream;
+    std::string expectedOutput;
+    PinConfigInfoPacket confInfoPacket1(5, Packet::DIR_INPUT);
+    confInfoPacket1.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>PINCONFIGINFO</type>"
+        "<pin>5</pin>"
+        "<direction>INPUT</direction>"
+        "</packet>";
+    CHECK_EQUAL(expectedOutput, packetStream.str());
+
+    PinConfigInfoPacket confInfoPacket2(6, Packet::DIR_OUTPUT);
+    packetStream.str("");
+    confInfoPacket2.writeXML(packetStream);
+
+    expectedOutput =
+        "<packet>"
+        "<type>PINCONFIGINFO</type>"
+        "<pin>6</pin>"
+        "<direction>OUTPUT</direction>"
         "</packet>";
     CHECK_EQUAL(expectedOutput, packetStream.str());
 }
