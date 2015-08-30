@@ -1,7 +1,221 @@
 
 #include "DigitalInput.h"
-#include "Packet.h"
+#include "PinConfigPacket.h"
 #include <stdlib.h>
+
+
+DigitalInputPacket::DigitalInputPacket() :
+    myPin(0)
+{
+}
+
+DigitalInputPacket::DigitalInputPacket(
+        unsigned int pin
+        ) :
+    myPin(pin)
+{
+}
+
+void
+DigitalInputPacket::write(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream << '\xFF';
+    outputStream << (unsigned char)BID_DINPUT;
+    outputStream << (unsigned char)myPin;
+    outputStream << '\xFF';
+}
+
+void
+DigitalInputPacket::writeXML(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream
+        << "<packet>"
+        << "<type>DINPUT</type>"
+        << "<pin>" << myPin << "</pin>"
+        << "</packet>";
+}
+
+void
+DigitalInputPacket::read(
+        std::istream& inputStream
+        )
+{
+    int pin = -1;
+
+    pin = inputStream.get();
+    myPin = (unsigned int)pin;
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+
+    inputStream.get();
+}
+
+bool
+DigitalInputPacket::isValid() const
+{
+    return true;
+}
+
+bool
+DigitalInputPacket::operator==(
+        const Packet& packet
+        ) const
+{
+    return true;
+}
+
+RedBotPacket::Type
+DigitalInputPacket::getType() const
+{
+    return TYPE_DINPUT;
+}
+
+unsigned int
+DigitalInputPacket::getPin() const
+{
+    return myPin;
+}
+
+
+DigitalValuePacket::DigitalValuePacket() :
+    myPin(0),
+    myValue(false),
+    myIsValid(false)
+{
+}
+
+DigitalValuePacket::DigitalValuePacket(
+        unsigned int    pin,
+        bool            value
+        ) :
+    myPin(pin),
+    myValue(value),
+    myIsValid(true)
+{
+}
+
+void
+DigitalValuePacket::write(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream << '\xFF';
+    outputStream << (unsigned char)BID_DVALUE;
+
+    if (isValid() == true)
+    {
+        outputStream << (unsigned char)myPin;
+        outputStream << ((myValue == true) ? '\x02' : '\x01');
+        outputStream << '\xFF';
+    }
+    else
+    {
+        // Dump raw data read from input stream
+        for(
+                size_t byteIdx = 0;
+                byteIdx < myBinaryData.size();
+                ++byteIdx
+           )
+        {
+            outputStream << (unsigned char)myBinaryData[byteIdx];
+        }
+    }
+}
+
+void
+DigitalValuePacket::writeXML(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream
+        << "<packet>"
+        << "<type>DVALUE</type>"
+        << "<pin>" << myPin << "</pin>"
+        << "<value>" << ((myValue == true) ? "1" : "0") << "</value>"
+        << "</packet>";
+}
+
+void
+DigitalValuePacket::read(
+        std::istream& inputStream
+        )
+{
+    int pin = -1;
+    int value = -1;
+    int trailer;
+
+    myBinaryData.clear();
+    myIsValid = false;
+
+    pin = inputStream.get();
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+    myBinaryData.push_back(pin);
+    myPin = (unsigned int)pin;
+
+    value = inputStream.get();
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+    myBinaryData.push_back(value);
+    myValue = (value == 0x02);
+
+    // Read out trailer
+    trailer = inputStream.get();
+    if (inputStream.good() == false)
+    {
+        return;
+    }
+    myBinaryData.push_back(trailer);
+    if (trailer != 0xFF)
+    {
+        return;
+    }
+
+    myBinaryData.clear();
+    myIsValid = true;
+}
+
+bool
+DigitalValuePacket::isValid() const
+{
+    return myIsValid;
+}
+
+bool
+DigitalValuePacket::operator==(
+        const Packet& packet
+        ) const
+{
+    return true;
+}
+
+RedBotPacket::Type
+DigitalValuePacket::getType() const
+{
+    return TYPE_DVALUE;
+}
+
+unsigned int
+DigitalValuePacket::getPin() const
+{
+    return myPin;
+}
+
+bool
+DigitalValuePacket::getValue() const
+{
+    return myValue;
+}
 
 
 DigitalInput::DigitalInput(
@@ -36,3 +250,4 @@ DigitalInput::getNextPacket()
 
     return packet;
 }
+

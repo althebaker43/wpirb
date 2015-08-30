@@ -1,9 +1,7 @@
 
 #include "TestComponents.h"
-#include "DigitalOutput.h"
-#include "DigitalInput.h"
-#include "AnalogInput.h"
-#include "RobotDrive.h"
+#include "RedBotComponent.h"
+#include "PinConfigPacket.h"
 
 
 void

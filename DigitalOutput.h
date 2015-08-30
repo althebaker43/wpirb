@@ -3,6 +3,90 @@
 
 #include <stdint.h>
 #include "Component.h"
+#include "RedBotPacket.h"
+
+/**
+ * Digital output command class
+ *
+ * This packet directs the robot to output a digital value to a pin
+ */
+class DigitalOutputPacket : public RedBotPacket
+{
+    public:
+
+        /**
+         * Default constructor
+         */
+        DigitalOutputPacket();
+
+        /**
+         * Constructor with pin and value
+         */
+        DigitalOutputPacket(
+                unsigned int    pin,    /**< Pin to output to */
+                bool            value   /**< Value to output */
+                );
+
+        /**
+         * Writes serialized binary data to output stream
+         */
+        void write(
+                std::ostream&
+                ) const;
+
+        /**
+         * Generates an XML representation of this packet
+         */
+        void writeXML(
+                std::ostream&
+                ) const;
+
+        /**
+         * Reads serialized binary data from input stream
+         */
+        void read(
+                std::istream&
+                );
+
+        /**
+         * Indicates if this packet is valid or not
+         */
+        bool isValid() const;
+
+        /**
+         * Equality operator
+         */
+        bool operator==(
+                const Packet&
+                ) const;
+
+        /**
+         * Provides the type of this packet
+         */
+        Type getType() const;
+
+        /**
+         * Provides the number of the pin to output to
+         */
+        unsigned int getPin() const;
+
+        /**
+         * Provides the value to output
+         */
+        bool getValue() const;
+
+    private:
+
+        /**
+         * Pin to output to
+         */
+        unsigned int myPin;
+
+        /**
+         * Digital value to output to pin
+         */
+        bool myValue;
+};
 
 /**
  * Digital output class

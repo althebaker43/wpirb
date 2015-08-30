@@ -1,7 +1,7 @@
 
 #include "TestRedBot.h"
-#include "Packet.h"
 #include "RedBot.h"
+#include "PinConfigPacket.h"
 
 
 void

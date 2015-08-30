@@ -1,5 +1,7 @@
 
 #include "RedBotPacket.h"
+#include "PinConfigPacket.h"
+#include "RedBotComponent.h"
 #include "CppUTest/TestHarness.h"
 #include <sstream>
 #include <list>

@@ -17,6 +17,7 @@ MODULES= \
 	IOBuffer \
 	Packet \
 	RedBotPacket \
+	PinConfigPacket \
 	Component \
 	Main
 OBJS=$(MODULES:%=%.o)

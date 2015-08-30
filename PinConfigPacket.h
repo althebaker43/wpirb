@@ -1,29 +1,26 @@
-#ifndef DIGITALINPUT_H
-#define DIGITALINPUT_H
+#ifndef PINCONFIG_H
+#define PINCONFIG_H
 
-#include "Input.h"
 #include "RedBotPacket.h"
-#include <stdint.h>
 
 /**
- * Digital input request class
- *
- * This packet requests a digital value from the robot
+ * This packet requests that a pin be configured a certain way
  */
-class DigitalInputPacket : public RedBotPacket
+class PinConfigPacket : public RedBotPacket
 {
     public:
 
         /**
          * Default constructor
          */
-        DigitalInputPacket();
+        PinConfigPacket();
 
         /**
-         * Constructor with pin
+         * Constructor with pin and direction
          */
-        DigitalInputPacket(
-                unsigned int    pin     /**< Pin to read from */
+        PinConfigPacket(
+                unsigned int    pin,    /**< Pin to configure */
+                PinDirection    dir     /**< Direction to set pin to */
                 );
 
         /**
@@ -65,39 +62,49 @@ class DigitalInputPacket : public RedBotPacket
         Type getType() const;
 
         /**
-         * Provides the pin to read from
+         * Provides the pin to configure
          */
         unsigned int getPin() const;
+
+        /**
+         * Provides the direction to set the pin to
+         */
+        PinDirection getDirection() const;
 
     private:
 
         /**
-         * Pin to read digital signal from
+         * Pin to configure
          */
         unsigned int myPin;
+
+        /**
+         * Direction to configure pin to
+         */
+        PinDirection myDirection;
 };
 
 /**
- * Digital value response class
+ * Pin configuration response class
  *
- * This packet is a response from the robot containing a digital input value.
- * It should be expected after sending a DigitalInputPacket.
+ * This packet contains configuration information about a certain pin. This
+ * packet type should be expected after sending a PinConfigPacket.
  */
-class DigitalValuePacket : public RedBotPacket
+class PinConfigInfoPacket : public RedBotPacket
 {
     public:
 
         /**
          * Default constructor
          */
-        DigitalValuePacket();
+        PinConfigInfoPacket();
 
         /**
-         * Constructor with pin and value
+         * Constructor with pin and direction
          */
-        DigitalValuePacket(
-                unsigned int    pin,    /**< Pin read from */
-                bool            value   /**< Value detected on pin */
+        PinConfigInfoPacket(
+                unsigned int    pin,    /**< Pin described in this packet */
+                PinDirection    dir     /**< Direction pin is set to */
                 );
 
         /**
@@ -139,68 +146,26 @@ class DigitalValuePacket : public RedBotPacket
         Type getType() const;
 
         /**
-         * Provides the pin read from
+         * Provides the pin this packet describes
          */
         unsigned int getPin() const;
 
         /**
-         * Provides the value read from the pin
+         * Provides the direction this pin is configured for
          */
-        bool getValue() const;
+        PinDirection getDirection() const;
 
     private:
 
         /**
-         * Pin read from
+         * Pin this packet describes
          */
         unsigned int myPin;
 
         /**
-         * Value read from pin
+         * Direction the pin is set to
          */
-        bool myValue;
-
-        /**
-         * Indicates that this packet is valid
-         */
-        bool myIsValid;
-
-        /**
-         * Raw binary data read from input stream
-         */
-        std::vector<int> myBinaryData;
+        PinDirection myDirection;
 };
 
-/**
- * Digital input class
- */
-class DigitalInput : public Input<DigitalInputPacket, DigitalValuePacket, bool>
-{
-    public:
-
-        /**
-         * Constructor given digital channel
-         */
-        DigitalInput(
-                uint32_t channel
-                );
-
-        /**
-         * Destructor
-         */
-        ~DigitalInput();
-
-        /**
-         * Provides the next available packet to send
-         */
-        Packet* getNextPacket();
-
-    private:
-
-        /**
-         * Indicates if the pin has been configured yet
-         */
-        bool myIsPinConfigured;
-};
-
-#endif /* ifndef DIGITALINPUT_H */
+#endif /* ifndef PINCONFIG_H */
