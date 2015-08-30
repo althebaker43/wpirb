@@ -12,6 +12,8 @@ TEST_GROUP(Packets)
 
     std::string myPacketExplanation;
 
+    RedBotPacketGenerator myPacketGen;
+
     void teardown()
     {
         for(
@@ -26,6 +28,12 @@ TEST_GROUP(Packets)
         myPackets.clear();
     }
 
+    Packet* readPacket(
+            std::istream& inputStream
+            )
+    {
+        return Packet::Read(inputStream, myPacketGen);
+    }
 
     const char* explainDiffPackets(
             const char* expectedString,
@@ -122,7 +130,7 @@ TEST(Packets, PacketReadTest)
     inputStream.str("\xFF\x01\xFF");
     PingPacket expectedPacket;
 
-    Packet* packet = Packet::Read(inputStream);
+    Packet* packet = readPacket(inputStream);
 
     CHECK_EQUAL(expectedPacket, *packet);
 
@@ -137,7 +145,7 @@ TEST(Packets, PacketParameterReadTest)
     DigitalOutputPacket expectedPacket2(4, false);
 
     inputStream.str("\xFF\x02\x07\x02\xFF");
-    actualPacket = Packet::Read(inputStream);
+    actualPacket = readPacket(inputStream);
 
     CHECK(actualPacket != NULL);
     CHECK_EQUAL(expectedPacket1, *actualPacket);
@@ -146,7 +154,7 @@ TEST(Packets, PacketParameterReadTest)
     delete actualPacket;
 
     inputStream.str("\xFF\x02\x04\x01\xFF");
-    actualPacket = Packet::Read(inputStream);
+    actualPacket = readPacket(inputStream);
 
     CHECK(actualPacket != NULL);
     CHECK_EQUAL(expectedPacket2, *actualPacket);
@@ -177,7 +185,7 @@ TEST(Packets, DigitalInputPacket)
     STRCMP_EQUAL("\xFF\x03\x0C\xFF", outputStream.str().c_str());
 
     inputStream.str("\xFF\x03\x01\xFF");
-    Packet* packet3 = Packet::Read(inputStream);
+    Packet* packet3 = readPacket(inputStream);
 
     CHECK(NULL != packet3);
     CHECK_EQUAL(Packet::TYPE_DINPUT, packet3->getType());
@@ -212,7 +220,7 @@ TEST(Packets, AnalogInputPacket)
     BPACKET_EQUAL("\xFF\x04\x0C\xFF", outputStream.str().c_str());
 
     inputStream.str("\xFF\x04\x03\xFF");
-    Packet* packet3 = Packet::Read(inputStream);
+    Packet* packet3 = readPacket(inputStream);
 
     CHECK(NULL != packet3);
 
@@ -239,7 +247,7 @@ TEST(Packets, PinConfigPacket)
     STRCMP_EQUAL("\xFF\x05\x04\x02\xFF", outputStream.str().c_str());
 
     inputStream.str("\xFF\x05\x06\x01\xFF");
-    Packet* packet2 = Packet::Read(inputStream);
+    Packet* packet2 = readPacket(inputStream);
 
     CHECK(NULL != packet2);
     CHECK_EQUAL(Packet::TYPE_PINCONFIG, packet2->getType());
@@ -277,7 +285,7 @@ TEST(Packets, MotorDrivePacket)
     STRCMP_EQUAL("\xFF\x06\x02\x02\x09\x01\xFF", outputStream.str().c_str());
 
     inputStream.str("\xFF\x06\x02\x01\x01\x01\xFF");
-    Packet* packet3 = Packet::Read(inputStream);
+    Packet* packet3 = readPacket(inputStream);
 
     CHECK(NULL != packet3);
     CHECK_EQUAL(Packet::TYPE_MDRIVE, packet3->getType());
@@ -307,7 +315,7 @@ TEST(Packets, DigitalValuePacket)
     std::istringstream inputStream;
     inputStream.str("\xFF\x81\x0A\x01\xFF");
 
-    Packet* packet2 = Packet::Read(inputStream);
+    Packet* packet2 = readPacket(inputStream);
     myPackets.push_back(packet2);
 
     CHECK(packet2 != NULL);
@@ -320,7 +328,7 @@ TEST(Packets, DigitalValuePacket)
 
     inputStream.str("\xFF\x81\x0F\x02\xFF");
 
-    Packet* packet3 = Packet::Read(inputStream);
+    Packet* packet3 = readPacket(inputStream);
     myPackets.push_back(packet3);
 
     CHECK(packet3 != NULL);
@@ -349,7 +357,7 @@ TEST(Packets, AnalogValuePacket)
 
     inputStream.str("\xFF\x83\x0A\x02\x15\xFF");
 
-    Packet* packet2 = Packet::Read(inputStream);
+    Packet* packet2 = readPacket(inputStream);
     myPackets.push_back(packet2);
 
     CHECK(packet2 != NULL);
@@ -398,7 +406,7 @@ TEST(Packets, PinConfigInfoPacket)
     BPACKET_EQUAL("\xFF\x84\x08\x01\xFF", outputStream.str().c_str());
 
     inputStream.str("\xFF\x84\x03\x02\xFF");
-    Packet* packet3 = Packet::Read(inputStream);
+    Packet* packet3 = readPacket(inputStream);
 
     CHECK(NULL != packet3);
     CHECK_EQUAL(Packet::TYPE_PINCONFIGINFO, packet3->getType());
@@ -420,7 +428,7 @@ TEST(Packets, AcknowledgePacket)
 
     STRCMP_EQUAL("\xFF\x82\xFF", packetStream.str().c_str());
 
-    Packet* packet2 = Packet::Read(packetStream);
+    Packet* packet2 = readPacket(packetStream);
 
     CHECK(NULL != packet2);
     CHECK_EQUAL(Packet::TYPE_ACK, packet2->getType());

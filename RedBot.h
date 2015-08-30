@@ -12,6 +12,7 @@
 class IterativeRobot;
 class Component;
 class Packet;
+class PacketGenerator;
 
 /**
  * Handler for all communications with a robot
@@ -217,6 +218,11 @@ class RedBot
          * Binary data of packets received in last transaction
          */
         std::list<std::string> myLastTransactionReceivedData;
+
+        /**
+         * Packet generator used to generate packets from binary data stream
+         */
+        PacketGenerator* myPacketGenerator;
 };
 
 #endif /* ifndef REDBOT_H */

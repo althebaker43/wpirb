@@ -5,6 +5,10 @@
 #include <stdint.h>
 #include <vector>
 
+// Forward declarations
+class PacketGenerator;
+
+
 /**
  * Packet base class definition
  */
@@ -72,8 +76,9 @@ class Packet
          * Callers are responsible for freeing the consumed memory afterwards.
          */
         static Packet* Read(
-                std::istream&   inputStream,
-                std::string*    readData = NULL /**< Optional buffer to dump read binary data to */
+                std::istream&       inputStream,
+                PacketGenerator&    packetGen,      /**< Packet generator to use to create new packets */
+                std::string*        readData = NULL /**< Optional buffer to dump read binary data to */
                 );
 
         /**

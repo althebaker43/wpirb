@@ -8,6 +8,8 @@ TEST_GROUP(IOBuffer)
 {
     FILE* packetFile;
 
+    RedBotPacketGenerator myPacketGen;
+
     void setup()
     {
         packetFile = tmpfile();
@@ -16,6 +18,13 @@ TEST_GROUP(IOBuffer)
     void teardown()
     {
         fclose(packetFile);
+    }
+
+    Packet* readPacket(
+            std::istream& inputStream
+            )
+    {
+        return Packet::Read(inputStream, myPacketGen);
     }
 };
 
@@ -37,7 +46,7 @@ TEST(IOBuffer, InputBufferReadTest)
     CHECK(iBuffer.isPacketComplete() == true);
     CHECK(iBuffer.read() == false);
 
-    Packet* packet = Packet::Read(iBuffer.getInputStream());
+    Packet* packet = readPacket(iBuffer.getInputStream());
 
     CHECK(packet != NULL);
 
@@ -62,7 +71,7 @@ TEST(IOBuffer, InputBufferMultiReadTest)
 
     CHECK(iBuffer.isPacketComplete());
 
-    packet = Packet::Read(iBuffer.getInputStream());
+    packet = readPacket(iBuffer.getInputStream());
 
     CHECK(packet != NULL);
     CHECK_EQUAL(expectedPacket, *packet);
@@ -76,7 +85,7 @@ TEST(IOBuffer, InputBufferMultiReadTest)
 
     CHECK(iBuffer.isPacketComplete());
 
-    packet = Packet::Read(iBuffer.getInputStream());
+    packet = readPacket(iBuffer.getInputStream());
 
     CHECK(packet != NULL);
     CHECK_EQUAL(expectedPacket, *packet);
@@ -97,7 +106,7 @@ TEST(IOBuffer, InputBufferInvalidPacketTest)
 
     CHECK(iBuffer.isPacketComplete());
 
-    packet = Packet::Read(iBuffer.getInputStream());
+    packet = readPacket(iBuffer.getInputStream());
 
     CHECK_EQUAL((Packet*)NULL, packet);
 
@@ -107,7 +116,7 @@ TEST(IOBuffer, InputBufferInvalidPacketTest)
 
     CHECK(iBuffer.isPacketComplete());
 
-    packet = Packet::Read(iBuffer.getInputStream());
+    packet = readPacket(iBuffer.getInputStream());
 
     CHECK(NULL != packet);
     CHECK_EQUAL(Packet::TYPE_ACK, packet->getType());
@@ -133,7 +142,7 @@ TEST(IOBuffer, InputBufferResyncTest)
 
     CHECK(iBuffer.readPacket());
     
-    packet = Packet::Read(iBuffer.getInputStream());
+    packet = readPacket(iBuffer.getInputStream());
 
     CHECK(NULL != packet);
     CHECK_EQUAL(Packet::TYPE_ACK, packet->getType());
@@ -220,7 +229,7 @@ TEST(IOBuffer, IOBufferPacketIntegrityTest)
     rewind(packetFile);
 
     while (iBuffer.read() == true);
-    Packet* inputPacket = Packet::Read(iBuffer.getInputStream());
+    Packet* inputPacket = readPacket(iBuffer.getInputStream());
 
     CHECK(inputPacket != NULL);
     CHECK_EQUAL(outputPacket, *inputPacket);

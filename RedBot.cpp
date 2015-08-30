@@ -38,7 +38,8 @@ RedBot::RedBot(
     myIsUsingExternalBuffers(false),
     myDevice(NULL),
     myInputBuffer(NULL),
-    myOutputBuffer(NULL)
+    myOutputBuffer(NULL),
+    myPacketGenerator(new RedBotPacketGenerator())
 {
     // Move all newly registered components to my own collection
     myComponents = ourCurrentComponents;
@@ -70,7 +71,8 @@ RedBot::RedBot(
     myIsUsingExternalBuffers(false),
     myDevice(device),
     myInputBuffer(new InputFileBuffer(device)),
-    myOutputBuffer(new OutputFileBuffer(device))
+    myOutputBuffer(new OutputFileBuffer(device)),
+    myPacketGenerator(new RedBotPacketGenerator())
 {
     // Move all newly registered components to my own collection
     myComponents = ourCurrentComponents;
@@ -87,7 +89,8 @@ RedBot::RedBot(
     myIsUsingExternalBuffers(true),
     myDevice(NULL),
     myInputBuffer(inputBuffer),
-    myOutputBuffer(outputBuffer)
+    myOutputBuffer(outputBuffer),
+    myPacketGenerator(new RedBotPacketGenerator())
 {
     // Move all newly registered components to my own collection
     myComponents = ourCurrentComponents;
@@ -114,6 +117,8 @@ RedBot::~RedBot()
         delete myInputBuffer;
         delete myOutputBuffer;
     }
+
+    delete myPacketGenerator;
 }
 
 bool
@@ -351,6 +356,7 @@ RedBot::exchangePackets(
     myInputBuffer->readPacket();
     responsePacket = Packet::Read(
             myInputBuffer->getInputStream(),
+            *myPacketGenerator,
             &incomingPacketData // Record received data
             );
 

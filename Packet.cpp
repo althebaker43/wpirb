@@ -7,8 +7,9 @@
 
 Packet*
 Packet::Read(
-        std::istream&   inputStream,
-        std::string*    readData
+        std::istream&       inputStream,
+        PacketGenerator&    packetGen,
+        std::string*        readData
         )
 {
     if (inputStream.good() == false)
@@ -41,52 +42,8 @@ Packet::Read(
             return NULL;
         }
         tmpDataBuf.push_back(packetType);
-        
-        switch ((unsigned char)packetType)
-        {
-            case BID_PING:
-                packet = new PingPacket();
-                break;
 
-            case BID_DOUTPUT:
-                packet = new DigitalOutputPacket();
-                break;
-
-            case BID_DINPUT:
-                packet = new DigitalInputPacket();
-                break;
-
-            case BID_AINPUT:
-                packet = new AnalogInputPacket();
-                break;
-
-            case BID_PINCONFIG:
-                packet = new PinConfigPacket();
-                break;
-
-            case BID_MDRIVE:
-                packet = new MotorDrivePacket();
-                break;
-
-            case BID_DVALUE:
-                packet = new DigitalValuePacket();
-                break;
-
-            case BID_AVALUE:
-                packet = new AnalogValuePacket();
-                break;
-
-            case BID_ACK:
-                packet = new AcknowledgePacket();
-                break;
-
-            case BID_PINCONFIGINFO:
-                packet = new PinConfigInfoPacket();
-                break;
-
-            default:
-                break;
-        };
+        packet = packetGen.createPacket((unsigned char)packetType);
 
         if (packet != NULL)
         {
