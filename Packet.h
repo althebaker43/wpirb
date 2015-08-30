@@ -16,59 +16,6 @@ class Packet
     public:
 
         /**
-         * Packet type enumerations
-         */
-        enum Type
-        {
-            TYPE_UNKNOWN = 0,
-
-            // Request packets
-            TYPE_PING,      /**< Ping packet */
-            TYPE_DOUTPUT,   /**< Digital output packet */
-            TYPE_DINPUT,    /**< Digital input packet */
-            TYPE_AINPUT,    /**< Analog input packet */
-            TYPE_PINCONFIG, /**< Pin configuration packet */
-            TYPE_MDRIVE,    /**< Motor drive packet */
-
-            // Response packets
-            TYPE_ACK,           /**< Acknowledgement packet */
-            TYPE_DVALUE,        /**< Digital value response packet */
-            TYPE_AVALUE,        /**< Analog value response packet */
-            TYPE_PINCONFIGINFO, /**< Pin configuration info response packet */
-        };
-
-        /**
-         * Packet binary ID enumerations
-         *
-         * These IDs are encoded into the serialized data stream.
-         */
-        enum BinaryID
-        {
-            // Request packets
-            BID_PING =      0x01,
-            BID_DOUTPUT =   0x02,
-            BID_DINPUT =    0x03,
-            BID_AINPUT =    0x04,
-            BID_PINCONFIG = 0x05,
-            BID_MDRIVE =    0x06,
-
-            // Response packets
-            BID_ACK =           0x82,
-            BID_DVALUE =        0x81,
-            BID_AVALUE =        0x83,
-            BID_PINCONFIGINFO = 0x84,
-        };
-
-        /**
-         * Enumeration of all pin directions
-         */
-        enum PinDirection
-        {
-            DIR_OUTPUT = 1,
-            DIR_INPUT,
-        };
-
-        /**
          * Reads a packet from the given input stream
          *
          * A new packet is allocated on the heap and a pointer to it is returned.
@@ -119,6 +66,11 @@ class Packet
         virtual bool isValid() const = 0;
 
         /**
+         * Indicates if this packet is an acknowledge packet
+         */
+        virtual bool isAcknowledge() const = 0;
+
+        /**
          * Equality operator
          */
         virtual bool operator==(
@@ -131,11 +83,6 @@ class Packet
         virtual bool operator!=(
                 const Packet&
                 ) const = 0;
-
-        /**
-         * Provides the type of packet
-         */
-        virtual Type getType() const = 0;
 
         /**
          * String conversion operator

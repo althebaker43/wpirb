@@ -188,7 +188,7 @@ TEST(Packets, DigitalInputPacket)
     Packet* packet3 = readPacket(inputStream);
 
     CHECK(NULL != packet3);
-    CHECK_EQUAL(Packet::TYPE_DINPUT, packet3->getType());
+    CHECK(NULL != dynamic_cast<DigitalInputPacket*>(packet3));
 
     DigitalInputPacket* dInPacket3 = static_cast<DigitalInputPacket*>(packet3);
 
@@ -203,7 +203,7 @@ TEST(Packets, AnalogInputPacket)
     std::ostringstream outputStream;
     std::istringstream inputStream;
 
-    CHECK_EQUAL(Packet::TYPE_AINPUT, aInPacket1.getType());
+    CHECK_EQUAL(RedBotPacket::TYPE_AINPUT, aInPacket1.getType());
     CHECK_EQUAL(4, aInPacket1.getPin());
 
     aInPacket1.write(outputStream);
@@ -226,7 +226,7 @@ TEST(Packets, AnalogInputPacket)
 
     AnalogInputPacket* aInPacket3 = static_cast<AnalogInputPacket*>(packet3);
 
-    CHECK_EQUAL(Packet::TYPE_AINPUT, aInPacket3->getType());
+    CHECK_EQUAL(RedBotPacket::TYPE_AINPUT, aInPacket3->getType());
     CHECK_EQUAL(2, aInPacket3->getPin());
 
     delete aInPacket3;
@@ -238,7 +238,7 @@ TEST(Packets, PinConfigPacket)
     std::istringstream inputStream;
     PinConfigPacket configPacket1(4, PinConfigPacket::DIR_INPUT);
 
-    CHECK_EQUAL(Packet::TYPE_PINCONFIG, configPacket1.getType());
+    CHECK_EQUAL(RedBotPacket::TYPE_PINCONFIG, configPacket1.getType());
     CHECK_EQUAL(4, configPacket1.getPin());
     CHECK_EQUAL(PinConfigPacket::DIR_INPUT, configPacket1.getDirection());
 
@@ -250,7 +250,7 @@ TEST(Packets, PinConfigPacket)
     Packet* packet2 = readPacket(inputStream);
 
     CHECK(NULL != packet2);
-    CHECK_EQUAL(Packet::TYPE_PINCONFIG, packet2->getType());
+    CHECK(NULL != dynamic_cast<PinConfigPacket*>(packet2));
 
     PinConfigPacket* configPacket2 = static_cast<PinConfigPacket*>(packet2);
 
@@ -288,7 +288,7 @@ TEST(Packets, MotorDrivePacket)
     Packet* packet3 = readPacket(inputStream);
 
     CHECK(NULL != packet3);
-    CHECK_EQUAL(Packet::TYPE_MDRIVE, packet3->getType());
+    CHECK(NULL != dynamic_cast<MotorDrivePacket*>(packet3));
 
     MotorDrivePacket* mDrivePacket3 = static_cast<MotorDrivePacket*>(packet3);
 
@@ -303,7 +303,7 @@ TEST(Packets, DigitalValuePacket)
 {
     DigitalValuePacket dValPacket1(2, true);
 
-    CHECK_EQUAL(Packet::TYPE_DVALUE, dValPacket1.getType());
+    CHECK_EQUAL(RedBotPacket::TYPE_DVALUE, dValPacket1.getType());
     CHECK_EQUAL(2, dValPacket1.getPin());
     CHECK_EQUAL(true, dValPacket1.getValue());
 
@@ -319,7 +319,7 @@ TEST(Packets, DigitalValuePacket)
     myPackets.push_back(packet2);
 
     CHECK(packet2 != NULL);
-    CHECK_EQUAL(Packet::TYPE_DVALUE, packet2->getType());
+    CHECK(NULL != dynamic_cast<DigitalValuePacket*>(packet2));
 
     DigitalValuePacket* dValPacket2 = static_cast<DigitalValuePacket*>(packet2);
 
@@ -332,7 +332,7 @@ TEST(Packets, DigitalValuePacket)
     myPackets.push_back(packet3);
 
     CHECK(packet3 != NULL);
-    CHECK_EQUAL(Packet::TYPE_DVALUE, packet2->getType());
+    CHECK(NULL != dynamic_cast<DigitalValuePacket*>(packet2));
 
     DigitalValuePacket* dValPacket3 = static_cast<DigitalValuePacket*>(packet3);
 
@@ -347,7 +347,7 @@ TEST(Packets, AnalogValuePacket)
 
     AnalogValuePacket aValPacket1(4, 45);
 
-    CHECK_EQUAL(Packet::TYPE_AVALUE, aValPacket1.getType());
+    CHECK_EQUAL(RedBotPacket::TYPE_AVALUE, aValPacket1.getType());
     CHECK_EQUAL(4, aValPacket1.getPin());
     CHECK_EQUAL(45, aValPacket1.getValue());
 
@@ -361,7 +361,7 @@ TEST(Packets, AnalogValuePacket)
     myPackets.push_back(packet2);
 
     CHECK(packet2 != NULL);
-    CHECK_EQUAL(Packet::TYPE_AVALUE, packet2->getType());
+    CHECK(NULL != dynamic_cast<AnalogValuePacket*>(packet2));
 
     AnalogValuePacket* aValPacket2 = static_cast<AnalogValuePacket*>(packet2);
 
@@ -384,21 +384,21 @@ TEST(Packets, PinConfigInfoPacket)
     std::ostringstream outputStream;
     std::istringstream inputStream;
 
-    PinConfigInfoPacket confInfoPacket1(5, Packet::DIR_INPUT);
+    PinConfigInfoPacket confInfoPacket1(5, RedBotPacket::DIR_INPUT);
 
-    CHECK_EQUAL(Packet::TYPE_PINCONFIGINFO, confInfoPacket1.getType());
+    CHECK_EQUAL(RedBotPacket::TYPE_PINCONFIGINFO, confInfoPacket1.getType());
     CHECK_EQUAL(5, confInfoPacket1.getPin());
-    CHECK_EQUAL(Packet::DIR_INPUT, confInfoPacket1.getDirection());
+    CHECK_EQUAL(RedBotPacket::DIR_INPUT, confInfoPacket1.getDirection());
 
     outputStream.str("");
     outputStream << confInfoPacket1;
 
     BPACKET_EQUAL("\xFF\x84\x05\x02\xFF", outputStream.str().c_str());
 
-    PinConfigInfoPacket confInfoPacket2(8, Packet::DIR_OUTPUT);
+    PinConfigInfoPacket confInfoPacket2(8, RedBotPacket::DIR_OUTPUT);
 
     CHECK_EQUAL(8, confInfoPacket2.getPin());
-    CHECK_EQUAL(Packet::DIR_OUTPUT, confInfoPacket2.getDirection());
+    CHECK_EQUAL(RedBotPacket::DIR_OUTPUT, confInfoPacket2.getDirection());
 
     outputStream.str("");
     outputStream << confInfoPacket2;
@@ -409,12 +409,12 @@ TEST(Packets, PinConfigInfoPacket)
     Packet* packet3 = readPacket(inputStream);
 
     CHECK(NULL != packet3);
-    CHECK_EQUAL(Packet::TYPE_PINCONFIGINFO, packet3->getType());
+    CHECK(NULL != dynamic_cast<PinConfigInfoPacket*>(packet3));
 
     PinConfigInfoPacket* confInfoPacket3 = static_cast<PinConfigInfoPacket*>(packet3);
 
     CHECK_EQUAL(3, confInfoPacket3->getPin());
-    CHECK_EQUAL(Packet::DIR_OUTPUT, confInfoPacket3->getDirection());
+    CHECK_EQUAL(RedBotPacket::DIR_OUTPUT, confInfoPacket3->getDirection());
 
     delete packet3;
 }
@@ -431,7 +431,7 @@ TEST(Packets, AcknowledgePacket)
     Packet* packet2 = readPacket(packetStream);
 
     CHECK(NULL != packet2);
-    CHECK_EQUAL(Packet::TYPE_ACK, packet2->getType());
+    CHECK(NULL != dynamic_cast<AcknowledgePacket*>(packet2));
 
     delete packet2;
 }
@@ -661,7 +661,7 @@ TEST(Packets, PinConfigInfoPacketXML)
 {
     std::ostringstream packetStream;
     std::string expectedOutput;
-    PinConfigInfoPacket confInfoPacket1(5, Packet::DIR_INPUT);
+    PinConfigInfoPacket confInfoPacket1(5, RedBotPacket::DIR_INPUT);
     confInfoPacket1.writeXML(packetStream);
 
     expectedOutput =
@@ -672,7 +672,7 @@ TEST(Packets, PinConfigInfoPacketXML)
         "</packet>";
     CHECK_EQUAL(expectedOutput, packetStream.str());
 
-    PinConfigInfoPacket confInfoPacket2(6, Packet::DIR_OUTPUT);
+    PinConfigInfoPacket confInfoPacket2(6, RedBotPacket::DIR_OUTPUT);
     packetStream.str("");
     confInfoPacket2.writeXML(packetStream);
 
@@ -748,50 +748,50 @@ TEST(RedBotPacketGenerator, InvalidType)
 
 TEST(RedBotPacketGenerator, Ping)
 {
-    CHECK_PACKETGEN(Packet::BID_PING, PingPacket);
+    CHECK_PACKETGEN(RedBotPacket::BID_PING, PingPacket);
 }
 
 TEST(RedBotPacketGenerator, Acknowledge)
 {
-    CHECK_PACKETGEN(Packet::BID_ACK, AcknowledgePacket);
+    CHECK_PACKETGEN(RedBotPacket::BID_ACK, AcknowledgePacket);
 }
 
 TEST(RedBotPacketGenerator, PinConfig)
 {
-    CHECK_PACKETGEN(Packet::BID_PINCONFIG, PinConfigPacket);
+    CHECK_PACKETGEN(RedBotPacket::BID_PINCONFIG, PinConfigPacket);
 }
 
 TEST(RedBotPacketGenerator, PinConfigInfo)
 {
-    CHECK_PACKETGEN(Packet::BID_PINCONFIGINFO, PinConfigInfoPacket);
+    CHECK_PACKETGEN(RedBotPacket::BID_PINCONFIGINFO, PinConfigInfoPacket);
 }
 
 TEST(RedBotPacketGenerator, DigitalInput)
 {
-    CHECK_PACKETGEN(Packet::BID_DINPUT, DigitalInputPacket);
+    CHECK_PACKETGEN(RedBotPacket::BID_DINPUT, DigitalInputPacket);
 }
 
 TEST(RedBotPacketGenerator, DigitalOutput)
 {
-    CHECK_PACKETGEN(Packet::BID_DOUTPUT, DigitalOutputPacket);
+    CHECK_PACKETGEN(RedBotPacket::BID_DOUTPUT, DigitalOutputPacket);
 }
 
 TEST(RedBotPacketGenerator, DigitalValue)
 {
-    CHECK_PACKETGEN(Packet::BID_DVALUE, DigitalValuePacket);
+    CHECK_PACKETGEN(RedBotPacket::BID_DVALUE, DigitalValuePacket);
 }
 
 TEST(RedBotPacketGenerator, AnalogInput)
 {
-    CHECK_PACKETGEN(Packet::BID_AINPUT, AnalogInputPacket);
+    CHECK_PACKETGEN(RedBotPacket::BID_AINPUT, AnalogInputPacket);
 }
 
 TEST(RedBotPacketGenerator, AnalogValue)
 {
-    CHECK_PACKETGEN(Packet::BID_AVALUE, AnalogValuePacket);
+    CHECK_PACKETGEN(RedBotPacket::BID_AVALUE, AnalogValuePacket);
 }
 
 TEST(RedBotPacketGenerator, MotorDrive)
 {
-    CHECK_PACKETGEN(Packet::BID_MDRIVE, MotorDrivePacket);
+    CHECK_PACKETGEN(RedBotPacket::BID_MDRIVE, MotorDrivePacket);
 }

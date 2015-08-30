@@ -6,6 +6,12 @@
 
 
 bool
+RedBotPacket::isAcknowledge() const
+{
+    return (getType() == TYPE_ACK);
+}
+
+bool
 RedBotPacket::operator!=(
         const Packet&   packet
         ) const
@@ -28,16 +34,16 @@ RedBotPacketGenerator::createPacket(
 {
     switch (type)
     {
-        case Packet::BID_PING:          return createPingPacket(); break;
-        case Packet::BID_PINCONFIG:     return new PinConfigPacket(); break;
-        case Packet::BID_PINCONFIGINFO: return new PinConfigInfoPacket(); break;
-        case Packet::BID_DINPUT:        return new DigitalInputPacket(); break;
-        case Packet::BID_DOUTPUT:       return new DigitalOutputPacket(); break;
-        case Packet::BID_DVALUE:        return new DigitalValuePacket(); break;
-        case Packet::BID_AINPUT:        return new AnalogInputPacket(); break;
-        case Packet::BID_AVALUE:        return new AnalogValuePacket(); break;
-        case Packet::BID_MDRIVE:        return new MotorDrivePacket(); break;
-        case Packet::BID_ACK:           return new AcknowledgePacket(); break;
+        case RedBotPacket::BID_PING:          return createPingPacket(); break;
+        case RedBotPacket::BID_PINCONFIG:     return new PinConfigPacket(); break;
+        case RedBotPacket::BID_PINCONFIGINFO: return new PinConfigInfoPacket(); break;
+        case RedBotPacket::BID_DINPUT:        return new DigitalInputPacket(); break;
+        case RedBotPacket::BID_DOUTPUT:       return new DigitalOutputPacket(); break;
+        case RedBotPacket::BID_DVALUE:        return new DigitalValuePacket(); break;
+        case RedBotPacket::BID_AINPUT:        return new AnalogInputPacket(); break;
+        case RedBotPacket::BID_AVALUE:        return new AnalogValuePacket(); break;
+        case RedBotPacket::BID_MDRIVE:        return new MotorDrivePacket(); break;
+        case RedBotPacket::BID_ACK:           return new AcknowledgePacket(); break;
         default: return NULL; break;
     };
 
@@ -102,7 +108,7 @@ PingPacket::operator==(
         const Packet&   packet
         ) const
 {
-    if (getType() == packet.getType())
+    if (NULL != dynamic_cast<const PingPacket*>(&packet))
     {
         return true;
     }
@@ -112,7 +118,7 @@ PingPacket::operator==(
     }
 }
 
-Packet::Type
+RedBotPacket::Type
 PingPacket::getType() const
 {
     return TYPE_PING;
@@ -196,7 +202,7 @@ DigitalOutputPacket::operator==(
         const Packet& packet
         ) const
 {
-    if (getType() == packet.getType())
+    if (NULL != dynamic_cast<const DigitalOutputPacket*>(&packet))
     {
         const DigitalOutputPacket& dOutPacket = static_cast<const DigitalOutputPacket&>(packet);
 
@@ -218,7 +224,7 @@ DigitalOutputPacket::operator==(
     }
 }
 
-Packet::Type
+RedBotPacket::Type
 DigitalOutputPacket::getType() const
 {
     return TYPE_DOUTPUT;
@@ -303,7 +309,7 @@ DigitalInputPacket::operator==(
     return true;
 }
 
-Packet::Type
+RedBotPacket::Type
 DigitalInputPacket::getType() const
 {
     return TYPE_DINPUT;
@@ -383,7 +389,7 @@ AnalogInputPacket::operator==(
     return true;
 }
 
-Packet::Type
+RedBotPacket::Type
 AnalogInputPacket::getType() const
 {
     return TYPE_AINPUT;
@@ -404,7 +410,7 @@ PinConfigPacket::PinConfigPacket() :
 
 PinConfigPacket::PinConfigPacket(
         unsigned int                pin,
-        Packet::PinDirection        dir
+        RedBotPacket::PinDirection  dir
         ) :
     myPin(pin),
     myDirection(dir)
@@ -483,7 +489,7 @@ PinConfigPacket::operator==(
     return true;
 }
 
-Packet::Type
+RedBotPacket::Type
 PinConfigPacket::getType() const
 {
     return TYPE_PINCONFIG;
@@ -495,7 +501,7 @@ PinConfigPacket::getPin() const
     return myPin;
 }
 
-Packet::PinDirection
+RedBotPacket::PinDirection
 PinConfigPacket::getDirection() const
 {
     return myDirection;
@@ -621,7 +627,7 @@ MotorDrivePacket::operator==(
         const Packet& packet
         ) const
 {
-    if (packet.getType() != TYPE_MDRIVE)
+    if (NULL == dynamic_cast<const MotorDrivePacket*>(&packet))
     {
         return false;
     }
@@ -642,7 +648,7 @@ MotorDrivePacket::operator==(
     }
 }
 
-Packet::Type
+RedBotPacket::Type
 MotorDrivePacket::getType() const
 {
     return TYPE_MDRIVE;
@@ -718,7 +724,7 @@ AcknowledgePacket::operator==(
         const Packet& packet
         ) const
 {
-    if (packet.getType() == TYPE_ACK)
+    if (packet.isAcknowledge() == true)
     {
         return true;
     }
@@ -728,7 +734,7 @@ AcknowledgePacket::operator==(
     }
 }
 
-Packet::Type
+RedBotPacket::Type
 AcknowledgePacket::getType() const
 {
     return TYPE_ACK;
@@ -851,7 +857,7 @@ DigitalValuePacket::operator==(
     return true;
 }
 
-Packet::Type
+RedBotPacket::Type
 DigitalValuePacket::getType() const
 {
     return TYPE_DVALUE;
@@ -959,7 +965,7 @@ AnalogValuePacket::operator==(
     return true;
 }
 
-Packet::Type
+RedBotPacket::Type
 AnalogValuePacket::getType() const
 {
     return TYPE_AVALUE;
@@ -985,8 +991,8 @@ PinConfigInfoPacket::PinConfigInfoPacket() :
 }
 
 PinConfigInfoPacket::PinConfigInfoPacket(
-        unsigned int            pin,
-        Packet::PinDirection    dir
+        unsigned int                pin,
+        RedBotPacket::PinDirection  dir
         ) :
     myPin(pin),
     myDirection(dir)
@@ -1060,7 +1066,7 @@ PinConfigInfoPacket::operator==(
     return true;
 }
 
-Packet::Type
+RedBotPacket::Type
 PinConfigInfoPacket::getType() const
 {
     return TYPE_PINCONFIGINFO;
@@ -1072,7 +1078,7 @@ PinConfigInfoPacket::getPin() const
     return myPin;
 }
 
-Packet::PinDirection
+RedBotPacket::PinDirection
 PinConfigInfoPacket::getDirection() const
 {
     return myDirection;

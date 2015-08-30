@@ -25,7 +25,7 @@ TEST(Components, DigitalOutputTest)
     myPackets.push_back(packet0);
 
     CHECK(packet0 != NULL);
-    CHECK_EQUAL(Packet::TYPE_PINCONFIG, packet0->getType());
+    CHECK(NULL != dynamic_cast<PinConfigPacket*>(packet0));
 
     PinConfigPacket* pinConfigPacket = static_cast<PinConfigPacket*>(packet0);
 
@@ -36,7 +36,7 @@ TEST(Components, DigitalOutputTest)
     myPackets.push_back(packet1);
 
     CHECK(packet1 != NULL);
-    CHECK_EQUAL(Packet::TYPE_DOUTPUT, packet1->getType());
+    CHECK(NULL != dynamic_cast<DigitalOutputPacket*>(packet1));
 
     DigitalOutputPacket* dOutPacket1 = static_cast<DigitalOutputPacket*>(packet1);
 
@@ -50,7 +50,7 @@ TEST(Components, DigitalOutputTest)
     myPackets.push_back(packet2);
 
     CHECK(packet2 != NULL);
-    CHECK_EQUAL(Packet::TYPE_DOUTPUT, packet2->getType());
+    CHECK(NULL != dynamic_cast<DigitalOutputPacket*>(packet2));
 
     DigitalOutputPacket* dOutPacket2 = static_cast<DigitalOutputPacket*>(packet2);
 
@@ -66,7 +66,7 @@ TEST(Components, DigitalInputTest)
     myPackets.push_back(packet0);
 
     CHECK(packet0 != NULL);
-    CHECK_EQUAL(Packet::TYPE_PINCONFIG, packet0->getType());
+    CHECK(NULL != dynamic_cast<PinConfigPacket*>(packet0));
 
     PinConfigPacket* configPacket = static_cast<PinConfigPacket*>(packet0);
 
@@ -77,7 +77,7 @@ TEST(Components, DigitalInputTest)
     myPackets.push_back(packet1);
 
     CHECK(packet1 != NULL);
-    CHECK_EQUAL(Packet::TYPE_DINPUT, packet1->getType());
+    CHECK(NULL != dynamic_cast<DigitalInputPacket*>(packet1));
 
     DigitalInputPacket* dInPacket1 = static_cast<DigitalInputPacket*>(packet1);
 
@@ -107,7 +107,7 @@ TEST(Components, AnalogInputTest)
     myPackets.push_back(packet1);
 
     CHECK(packet1 != NULL);
-    CHECK_EQUAL(Packet::TYPE_AINPUT, packet1->getType());
+    CHECK(NULL != dynamic_cast<AnalogInputPacket*>(packet1));
 }
 
 TEST(Components, TimerTest)
@@ -158,7 +158,7 @@ TEST(Components, RobotDriveSimpleTest)
     myPackets.push_back(drive.getNextPacket());
 
     CHECK(NULL != myPackets.back());
-    CHECK_EQUAL(Packet::TYPE_MDRIVE, myPackets.back()->getType());
+    CHECK(NULL != dynamic_cast<MotorDrivePacket*>(myPackets.back()));
 
     MotorDrivePacket* mDrivePacket1 = static_cast<MotorDrivePacket*>(myPackets.back());
 
@@ -168,7 +168,7 @@ TEST(Components, RobotDriveSimpleTest)
     myPackets.push_back(drive.getNextPacket());
 
     CHECK(NULL != myPackets.back());
-    CHECK_EQUAL(Packet::TYPE_MDRIVE, myPackets.back()->getType());
+    CHECK(NULL != dynamic_cast<MotorDrivePacket*>(myPackets.back()));
 
     MotorDrivePacket* mDrivePacket2 = static_cast<MotorDrivePacket*>(myPackets.back());
 

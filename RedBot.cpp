@@ -330,7 +330,7 @@ RedBot::transferData()
             break;
         }
 
-        if (inPacket->getType() == Packet::TYPE_ACK)
+        if (inPacket->isAcknowledge() == true)
         {
             delete inPacket;
             break;

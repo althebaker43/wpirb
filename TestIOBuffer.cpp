@@ -119,7 +119,7 @@ TEST(IOBuffer, InputBufferInvalidPacketTest)
     packet = readPacket(iBuffer.getInputStream());
 
     CHECK(NULL != packet);
-    CHECK_EQUAL(Packet::TYPE_ACK, packet->getType());
+    CHECK(NULL != dynamic_cast<AcknowledgePacket*>(packet));
 
     delete packet;
 }
@@ -145,7 +145,7 @@ TEST(IOBuffer, InputBufferResyncTest)
     packet = readPacket(iBuffer.getInputStream());
 
     CHECK(NULL != packet);
-    CHECK_EQUAL(Packet::TYPE_ACK, packet->getType());
+    CHECK(NULL != dynamic_cast<AcknowledgePacket*>(packet));
 
     delete packet;
     iBuffer.clear();
