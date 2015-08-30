@@ -16,6 +16,11 @@ class Packet
     public:
 
         /**
+         * Starting and ending bound byte for binary representation
+         */
+        const static unsigned char BINARY_BOUND = '\xFF';
+
+        /**
          * Reads a packet from the given input stream
          *
          * A new packet is allocated on the heap and a pointer to it is returned.

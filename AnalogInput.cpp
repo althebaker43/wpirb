@@ -4,6 +4,7 @@
 
 
 AnalogInputPacket::AnalogInputPacket() :
+    RedBotPacket(BID_AINPUT),
     myPin(1)
 {
 }
@@ -11,20 +12,17 @@ AnalogInputPacket::AnalogInputPacket() :
 AnalogInputPacket::AnalogInputPacket(
         unsigned int pin
         ) :
+    RedBotPacket(BID_AINPUT),
     myPin(pin)
 {
 }
 
 void
-AnalogInputPacket::write(
+AnalogInputPacket::writeContents(
         std::ostream& outputStream
         ) const
 {
-    outputStream
-        << '\xFF'
-        << (unsigned char)BID_AINPUT
-        << (unsigned char)(myPin + 1)
-        << '\xFF';
+    outputStream << (unsigned char)(myPin + 1);
 }
 
 void
@@ -84,6 +82,7 @@ AnalogInputPacket::getPin() const
 
 
 AnalogValuePacket::AnalogValuePacket() :
+    RedBotPacket(BID_AVALUE),
     myPin(1),
     myValue(0)
 {
@@ -93,23 +92,21 @@ AnalogValuePacket::AnalogValuePacket(
         unsigned int    pin,
         unsigned int    value
         ) :
+    RedBotPacket(BID_AVALUE),
     myPin(pin),
     myValue(value)
 {
 }
 
 void
-AnalogValuePacket::write(
+AnalogValuePacket::writeContents(
         std::ostream&   outputStream
         ) const
 {
     outputStream
-        << '\xFF'
-        << (unsigned char)BID_AVALUE
         << (unsigned char)(myPin + 1)
         << (unsigned char)(((0x3E0 & myValue) >> 5) + 1)
-        << (unsigned char)((0x01F & myValue) + 1)
-        << '\xFF';
+        << (unsigned char)((0x01F & myValue) + 1);
 }
 
 void

@@ -27,13 +27,6 @@ class DigitalInputPacket : public RedBotPacket
                 );
 
         /**
-         * Writes serialized binary data to output stream
-         */
-        void write(
-                std::ostream&
-                ) const;
-
-        /**
          * Generates an XML representation of this packet
          */
         void writeXML(
@@ -72,6 +65,13 @@ class DigitalInputPacket : public RedBotPacket
     private:
 
         /**
+         * Writes binary packet contents to output stream
+         */
+        void writeContents(
+                std::ostream&
+                ) const;
+
+        /**
          * Pin to read digital signal from
          */
         unsigned int myPin;
@@ -99,13 +99,6 @@ class DigitalValuePacket : public RedBotPacket
                 unsigned int    pin,    /**< Pin read from */
                 bool            value   /**< Value detected on pin */
                 );
-
-        /**
-         * Writes serialized binary data to output stream
-         */
-        void write(
-                std::ostream&
-                ) const;
 
         /**
          * Generates an XML representation of this packet
@@ -149,6 +142,13 @@ class DigitalValuePacket : public RedBotPacket
         bool getValue() const;
 
     private:
+
+        /**
+         * Writes binary packet contents to output stream
+         */
+        void writeContents(
+                std::ostream&
+                ) const;
 
         /**
          * Pin read from

@@ -64,13 +64,6 @@ class MotorDrivePacket : public RedBotPacket
         ~MotorDrivePacket();
 
         /**
-         * Writes serialized binary data to output stream
-         */
-        void write(
-                std::ostream&
-                ) const;
-
-        /**
          * Generates an XML representation of this packet
          */
         void writeXML(
@@ -120,6 +113,13 @@ class MotorDrivePacket : public RedBotPacket
         Direction getDirection() const;
 
     private:
+
+        /**
+         * Writes binary packet contents to output stream
+         */
+        void writeContents(
+                std::ostream&
+                ) const;
 
         /**
          * Motor to drive

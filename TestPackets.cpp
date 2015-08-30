@@ -2,17 +2,14 @@
 #include "RedBotPacket.h"
 #include "PinConfigPacket.h"
 #include "RedBotComponent.h"
-#include "CppUTest/TestHarness.h"
+#include "TestUtils.h"
 #include <sstream>
 #include <list>
-#include <cstring>
 
 
 TEST_GROUP(Packets)
 {
     std::list<Packet*> myPackets;
-
-    std::string myPacketExplanation;
 
     RedBotPacketGenerator myPacketGen;
 
@@ -36,61 +33,7 @@ TEST_GROUP(Packets)
     {
         return Packet::Read(inputStream, myPacketGen);
     }
-
-    const char* explainDiffPackets(
-            const char* expectedString,
-            const char* actualString
-            )
-    {
-
-        std::ostringstream outputStream;
-
-        outputStream << "Packet binary strings do not match" << std::endl;
-
-        outputStream << "Expected: ";
-        WritePacketString(expectedString, outputStream);
-        outputStream << std::endl;
-
-        outputStream << "Actual: ";
-        WritePacketString(actualString, outputStream);
-        outputStream << std::endl;
-
-        myPacketExplanation = outputStream.str();
-
-        return myPacketExplanation.c_str();
-    }
-
-    static void WritePacketString(
-            const char*     str,
-            std::ostream&   outputStream
-            )
-    {
-        outputStream << std::hex;
-
-        size_t strLen = strlen(str);
-        for(
-                size_t pos = 0;
-                pos < strLen;
-                ++pos
-           )
-        {
-            if (pos > 0)
-            {
-                outputStream << ' ';
-            }
-
-            outputStream << "0x" << (0xFF & ((unsigned int)str[pos]));
-        }
-
-        outputStream << std::dec;
-    }
 };
-
-#define BPACKET_EQUAL(expectedString, actualString) \
-    CHECK_TEXT( \
-            (strcmp(expectedString, actualString) == 0), \
-            explainDiffPackets(expectedString, actualString) \
-            )
 
 TEST(Packets, PacketWriteTest)
 {
@@ -175,7 +118,7 @@ TEST(Packets, DigitalInputPacket)
 
     dInPacket1.write(outputStream);
 
-    STRCMP_EQUAL("\xFF\x03\x03\xFF", outputStream.str().c_str());
+    BPACKET_EQUAL("\xFF\x03\x03\xFF", outputStream.str().c_str());
 
     DigitalInputPacket dInPacket2(12);
 
@@ -687,7 +630,7 @@ TEST(Packets, PinConfigInfoPacketXML)
     CHECK_EQUAL(expectedOutput, packetStream.str());
 }
 
-TEST(Packets, InvalidReadPacket)
+IGNORE_TEST(Packets, InvalidReadPacket)
 {
     std::istringstream inputStream;
     std::ostringstream outputStream;
@@ -696,7 +639,7 @@ TEST(Packets, InvalidReadPacket)
 
     outputStream << dValPacket;
 
-    STRCMP_EQUAL("\xFF\x81", outputStream.str().c_str());
+    BPACKET_EQUAL("\xFF\x81", outputStream.str().c_str());
 
     inputStream.str("\x0A\xFF");
     inputStream >> dValPacket;

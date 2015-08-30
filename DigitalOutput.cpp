@@ -5,6 +5,7 @@
 
 
 DigitalOutputPacket::DigitalOutputPacket() :
+    RedBotPacket(BID_DOUTPUT),
     myPin(13),
     myValue(false)
 {
@@ -14,21 +15,19 @@ DigitalOutputPacket::DigitalOutputPacket(
         unsigned int    pin,
         bool            value
         ) :
+    RedBotPacket(BID_DOUTPUT),
     myPin(pin),
     myValue(value)
 {
 }
 
 void
-DigitalOutputPacket::write(
+DigitalOutputPacket::writeContents(
         std::ostream& outputStream
         ) const
 {
-    outputStream << '\xFF';
-    outputStream << (unsigned char)BID_DOUTPUT;
     outputStream << (unsigned char)myPin;
     outputStream << (myValue ? '\x02' : '\x01');
-    outputStream << '\xFF';
 }
 
 void

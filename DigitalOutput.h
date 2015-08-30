@@ -28,13 +28,6 @@ class DigitalOutputPacket : public RedBotPacket
                 );
 
         /**
-         * Writes serialized binary data to output stream
-         */
-        void write(
-                std::ostream&
-                ) const;
-
-        /**
          * Generates an XML representation of this packet
          */
         void writeXML(
@@ -76,6 +69,13 @@ class DigitalOutputPacket : public RedBotPacket
         bool getValue() const;
 
     private:
+
+        /**
+         * Writes binary packet contents to output stream
+         */
+        void writeContents(
+                std::ostream&
+                ) const;
 
         /**
          * Pin to output to

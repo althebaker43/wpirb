@@ -8,7 +8,7 @@
 #include "IOBuffer.h"
 #include "Packet.h"
 #include "FieldControlSystem.h"
-#include "CppUTest/TestHarness.h"
+#include "TestUtils.h"
 #include "CppUTestExt/MockSupport.h"
 #include <stdio.h>
 #include <vector>

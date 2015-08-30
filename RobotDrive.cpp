@@ -5,6 +5,7 @@
 
 
 MotorDrivePacket::MotorDrivePacket() :
+    RedBotPacket(BID_MDRIVE),
     myMotor(MOTOR_RIGHT),
     mySpeed(0),
     myDirection(DIR_FORWARD)
@@ -16,6 +17,7 @@ MotorDrivePacket::MotorDrivePacket(
         uint8_t                     speed,
         MotorDrivePacket::Direction direction
         ) :
+    RedBotPacket(BID_MDRIVE),
     myMotor(motor),
     mySpeed(speed),
     myDirection(direction)
@@ -30,6 +32,7 @@ MotorDrivePacket::MotorDrivePacket(
         MotorDrivePacket::Motor motor,
         double                  driveVal
         ) :
+    RedBotPacket(BID_MDRIVE),
     myMotor(motor)
 {
     if (driveVal > 1.0)
@@ -54,17 +57,14 @@ MotorDrivePacket::MotorDrivePacket(
 }
 
 void
-MotorDrivePacket::write(
+MotorDrivePacket::writeContents(
         std::ostream& outputStream
         ) const
 {
-    outputStream << '\xFF';
-    outputStream << (unsigned char)BID_MDRIVE;
     outputStream << ((myMotor == MOTOR_LEFT) ? '\x02' : '\x01');
     outputStream << ((myDirection == DIR_FORWARD) ? '\x01' : '\x02');
     outputStream << (unsigned char)(((mySpeed & 0xF0) >> 4) + 1);
     outputStream << (unsigned char)((mySpeed & 0x0F) + 1);
-    outputStream << '\xFF';
 }
 
 void

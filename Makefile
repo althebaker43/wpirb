@@ -26,6 +26,7 @@ LIB=libwpirb.a
 LDFLAGS += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 
 TEST_MODULES= \
+	TestUtils \
 	TestIterativeRobot \
 	TestRedBot \
 	TestPackets \

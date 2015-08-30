@@ -3,6 +3,7 @@
 
 
 PinConfigPacket::PinConfigPacket() :
+    RedBotPacket(BID_PINCONFIG),
     myPin(1),
     myDirection(DIR_INPUT)
 {
@@ -12,22 +13,20 @@ PinConfigPacket::PinConfigPacket(
         unsigned int                pin,
         RedBotPacket::PinDirection  dir
         ) :
+    RedBotPacket(BID_PINCONFIG),
     myPin(pin),
     myDirection(dir)
 {
 }
 
 void
-PinConfigPacket::write(
+PinConfigPacket::writeContents(
         std::ostream& outputStream
         ) const
 {
     outputStream
-        << '\xFF'
-        << (unsigned char)BID_PINCONFIG
         << (unsigned char)myPin
-        << (unsigned char)myDirection
-        << '\xFF';
+        << (unsigned char)myDirection;
 }
 
 void
@@ -109,6 +108,7 @@ PinConfigPacket::getDirection() const
 
 
 PinConfigInfoPacket::PinConfigInfoPacket() :
+    RedBotPacket(BID_PINCONFIGINFO),
     myPin(1),
     myDirection(DIR_INPUT)
 {
@@ -118,22 +118,20 @@ PinConfigInfoPacket::PinConfigInfoPacket(
         unsigned int                pin,
         RedBotPacket::PinDirection  dir
         ) :
+    RedBotPacket(BID_PINCONFIGINFO),
     myPin(pin),
     myDirection(dir)
 {
 }
 
 void
-PinConfigInfoPacket::write(
+PinConfigInfoPacket::writeContents(
         std::ostream& outputStream
         ) const
 {
     outputStream
-        << '\xFF'
-        << (unsigned char)BID_PINCONFIGINFO
         << (unsigned char)myPin
-        << (unsigned char)myDirection
-        << '\xFF';
+        << (unsigned char)myDirection;
 }
 
 void

@@ -22,15 +22,15 @@ Packet::Read(
 
     std::string tmpDataBuf;
 
-    char header;
-    inputStream.get(header);
+    unsigned char header;
+    inputStream.get((char&)header);
     if (inputStream.good() == false)
     {
         return NULL;
     }
     tmpDataBuf.push_back(header);
 
-    if (header == '\xFF')
+    if (header == BINARY_BOUND)
     {
         Packet* packet = NULL;
         char packetType = '\0';

@@ -5,6 +5,7 @@
 
 
 DigitalInputPacket::DigitalInputPacket() :
+    RedBotPacket(BID_DINPUT),
     myPin(0)
 {
 }
@@ -12,19 +13,17 @@ DigitalInputPacket::DigitalInputPacket() :
 DigitalInputPacket::DigitalInputPacket(
         unsigned int pin
         ) :
+    RedBotPacket(BID_DINPUT),
     myPin(pin)
 {
 }
 
 void
-DigitalInputPacket::write(
+DigitalInputPacket::writeContents(
         std::ostream& outputStream
         ) const
 {
-    outputStream << '\xFF';
-    outputStream << (unsigned char)BID_DINPUT;
     outputStream << (unsigned char)myPin;
-    outputStream << '\xFF';
 }
 
 void
@@ -84,6 +83,7 @@ DigitalInputPacket::getPin() const
 
 
 DigitalValuePacket::DigitalValuePacket() :
+    RedBotPacket(BID_DVALUE),
     myPin(0),
     myValue(false),
     myIsValid(false)
@@ -94,6 +94,7 @@ DigitalValuePacket::DigitalValuePacket(
         unsigned int    pin,
         bool            value
         ) :
+    RedBotPacket(BID_DVALUE),
     myPin(pin),
     myValue(value),
     myIsValid(true)
@@ -101,18 +102,14 @@ DigitalValuePacket::DigitalValuePacket(
 }
 
 void
-DigitalValuePacket::write(
+DigitalValuePacket::writeContents(
         std::ostream& outputStream
         ) const
 {
-    outputStream << '\xFF';
-    outputStream << (unsigned char)BID_DVALUE;
-
     if (isValid() == true)
     {
         outputStream << (unsigned char)myPin;
         outputStream << ((myValue == true) ? '\x02' : '\x01');
-        outputStream << '\xFF';
     }
     else
     {

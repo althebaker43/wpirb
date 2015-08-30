@@ -7,6 +7,27 @@
 #include <math.h>
 
 
+RedBotPacket::RedBotPacket(
+        BinaryID binID
+        ) :
+    myBinaryID(binID)
+{
+}
+
+void
+RedBotPacket::write(
+        std::ostream& outputStream
+        ) const
+{
+    outputStream
+        << BINARY_BOUND
+        << (unsigned char)myBinaryID;
+
+    writeContents(outputStream);
+
+    outputStream << BINARY_BOUND;
+}
+
 bool
 RedBotPacket::isAcknowledge() const
 {
@@ -60,18 +81,16 @@ RedBotPacketGenerator::createPingPacket()
 
 
 PingPacket::PingPacket() :
+    RedBotPacket(BID_PING),
     myIsValid(true)
 {
 }
 
 void
-PingPacket::write(
+PingPacket::writeContents(
         std::ostream& outputStream
         ) const
 {
-    outputStream << '\xFF';
-    outputStream << (unsigned char)BID_PING;
-    outputStream << '\xFF';
 }
 
 void
@@ -128,18 +147,16 @@ PingPacket::getType() const
 
 
 AcknowledgePacket::AcknowledgePacket() :
+    RedBotPacket(BID_ACK),
     myIsValid(true)
 {
 }
 
 void
-AcknowledgePacket::write(
+AcknowledgePacket::writeContents(
         std::ostream& outputStream
         ) const
 {
-    outputStream << '\xFF';
-    outputStream << (unsigned char)BID_ACK;
-    outputStream << '\xFF';
 }
 
 void

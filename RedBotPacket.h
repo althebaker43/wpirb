@@ -64,9 +64,26 @@ class RedBotPacket : public Packet
         };
 
         /**
+         * Constructor given binary ID
+         */
+        RedBotPacket(
+                BinaryID binID
+                );
+
+        /**
          * Destructor
          */
         virtual ~RedBotPacket(){}
+
+        /**
+         * Writes serialized binary data to output stream
+         *
+         * This writes the boundary and type bytes before deferring to the
+         * subclass's writing method.
+         */
+        void write(
+                std::ostream& outputStream
+                ) const;
 
         /**
          * Provides the type of packet
@@ -89,6 +106,27 @@ class RedBotPacket : public Packet
          * String conversion operator
          */
         virtual operator std::string() const;
+
+    protected:
+
+        /**
+         * Writes the binary contents to the output stream
+         *
+         * This does not write the boundary or type bytes.
+         */
+        virtual void writeContents(
+                std::ostream& outputStream
+                ) const = 0;
+
+    private:
+
+        /**
+         * The binary ID for this packet
+         *
+         * The binary ID is the second byte in all binary packets that is used
+         * to marshal them into objects.
+         */
+        const BinaryID myBinaryID;
 };
 
 /**
@@ -124,13 +162,6 @@ class PingPacket : public RedBotPacket
         PingPacket();
 
         /**
-         * Writes serialized binary data to output stream
-         */
-        void write(
-                std::ostream&
-                ) const;
-
-        /**
          * Generates an XML representation of this packet
          */
         void writeXML(
@@ -164,6 +195,13 @@ class PingPacket : public RedBotPacket
     private:
 
         /**
+         * Writes binary packet contents to output stream
+         */
+        void writeContents(
+                std::ostream&
+                ) const;
+
+        /**
          * Indicates if this packet is valid or not
          */
         bool myIsValid;
@@ -180,13 +218,6 @@ class AcknowledgePacket : public RedBotPacket
          * Default constructor
          */
         AcknowledgePacket();
-
-        /**
-         * Writes serialized binary data to output stream
-         */
-        void write(
-                std::ostream&
-                ) const;
 
         /**
          * Generates an XML representation of this packet
@@ -220,6 +251,13 @@ class AcknowledgePacket : public RedBotPacket
         Type getType() const;
 
     private:
+
+        /**
+         * Writes binary packet contents to output stream
+         */
+        void writeContents(
+                std::ostream&
+                ) const;
 
         /**
          * Indicates if this packet is valid or not
