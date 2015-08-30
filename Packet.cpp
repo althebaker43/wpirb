@@ -160,6 +160,30 @@ operator>>(
 }
 
 
+Packet*
+RedBotPacketGenerator::createPacket(
+        unsigned char type
+        )
+{
+    switch (type)
+    {
+        case Packet::BID_PING:          return new PingPacket(); break;
+        case Packet::BID_PINCONFIG:     return new PinConfigPacket(); break;
+        case Packet::BID_PINCONFIGINFO: return new PinConfigInfoPacket(); break;
+        case Packet::BID_DINPUT:        return new DigitalInputPacket(); break;
+        case Packet::BID_DOUTPUT:       return new DigitalOutputPacket(); break;
+        case Packet::BID_DVALUE:        return new DigitalValuePacket(); break;
+        case Packet::BID_AINPUT:        return new AnalogInputPacket(); break;
+        case Packet::BID_AVALUE:        return new AnalogValuePacket(); break;
+        case Packet::BID_MDRIVE:        return new MotorDrivePacket(); break;
+        case Packet::BID_ACK:           return new AcknowledgePacket(); break;
+        default: return NULL; break;
+    };
+
+    return NULL;
+}
+
+
 PingPacket::PingPacket() :
     myIsValid(true)
 {

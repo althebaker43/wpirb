@@ -699,3 +699,91 @@ TEST(Packets, InvalidReadPacket)
 
     STRCMP_EQUAL("\xFF\x81\x0A\xFF", dValPacketData.c_str());
 }
+
+
+TEST_GROUP(RedBotPacketGenerator)
+{
+    RedBotPacketGenerator myPacketGen;
+
+    std::list<Packet*> myPackets;
+
+    void teardown()
+    {
+        for(
+                std::list<Packet*>::const_iterator packetIter = myPackets.begin();
+                packetIter != myPackets.end();
+                ++packetIter
+           )
+        {
+            delete (*packetIter);
+        }
+    }
+
+    Packet* createPacket(
+            char type
+            )
+    {
+        Packet* packet = myPacketGen.createPacket(type);
+        myPackets.push_back(packet);
+        return packet;
+    }
+};
+
+#define CHECK_PACKETGEN(bid, type) (CHECK(NULL != dynamic_cast<type*>(createPacket(bid))));
+
+TEST(RedBotPacketGenerator, InvalidType)
+{
+    Packet* packet = createPacket(0);
+
+    CHECK_EQUAL((Packet*)NULL, packet);
+}
+
+TEST(RedBotPacketGenerator, Ping)
+{
+    CHECK_PACKETGEN(Packet::BID_PING, PingPacket);
+}
+
+TEST(RedBotPacketGenerator, Acknowledge)
+{
+    CHECK_PACKETGEN(Packet::BID_ACK, AcknowledgePacket);
+}
+
+TEST(RedBotPacketGenerator, PinConfig)
+{
+    CHECK_PACKETGEN(Packet::BID_PINCONFIG, PinConfigPacket);
+}
+
+TEST(RedBotPacketGenerator, PinConfigInfo)
+{
+    CHECK_PACKETGEN(Packet::BID_PINCONFIGINFO, PinConfigInfoPacket);
+}
+
+TEST(RedBotPacketGenerator, DigitalInput)
+{
+    CHECK_PACKETGEN(Packet::BID_DINPUT, DigitalInputPacket);
+}
+
+TEST(RedBotPacketGenerator, DigitalOutput)
+{
+    CHECK_PACKETGEN(Packet::BID_DOUTPUT, DigitalOutputPacket);
+}
+
+TEST(RedBotPacketGenerator, DigitalValue)
+{
+    CHECK_PACKETGEN(Packet::BID_DVALUE, DigitalValuePacket);
+}
+
+TEST(RedBotPacketGenerator, AnalogInput)
+{
+    CHECK_PACKETGEN(Packet::BID_AINPUT, AnalogInputPacket);
+}
+
+TEST(RedBotPacketGenerator, AnalogValue)
+{
+    CHECK_PACKETGEN(Packet::BID_AVALUE, AnalogValuePacket);
+}
+
+TEST(RedBotPacketGenerator, MotorDrive)
+{
+    CHECK_PACKETGEN(Packet::BID_MDRIVE, MotorDrivePacket);
+}

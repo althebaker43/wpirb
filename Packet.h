@@ -158,6 +158,46 @@ operator>>(
         );
 
 /**
+ * Packet generator interface
+ *
+ * Classes with this interface provide blank packets according to the type
+ * field extracted from a binary packet stream.
+ */
+class PacketGenerator
+{
+    public:
+
+        /**
+         * Destructor
+         */
+        virtual ~PacketGenerator(){}
+
+        /**
+         * Creates a new blank packet given a packet type byte
+         *
+         * \return Pointer to new packet if given type is valid, NULL otherwise
+         */
+        virtual Packet* createPacket(
+                unsigned char type
+                ) = 0;
+};
+
+/**
+ * RedBot packet generator class
+ */
+class RedBotPacketGenerator : public PacketGenerator
+{
+    public:
+
+        /**
+         * Creates a new blank packet given a packet type byte
+         */
+        Packet* createPacket(
+                unsigned char type
+                );
+};
+
+/**
  * Ping packet class
  */
 class PingPacket : public Packet
