@@ -57,8 +57,9 @@ class RedBot
          * communication with the robot.
          */
         RedBot(
-                IterativeRobot* program,
-                const char*     deviceName
+                IterativeRobot*     program,
+                const char*         deviceName,
+                PacketGenerator*    packetGen
               );
 
         /**
@@ -68,8 +69,9 @@ class RedBot
          * I/O.
          */
         RedBot(
-                IterativeRobot* program,
-                FILE*           device
+                IterativeRobot*     program,
+                FILE*               device,
+                PacketGenerator*    packetGen
               );
 
         /**
@@ -78,9 +80,10 @@ class RedBot
          * This makes this robot object use the given buffers for packet I/O.
          */
         RedBot(
-                IterativeRobot* program,
-                InputBuffer*    inputBuffer,
-                OutputBuffer*   outputBuffer
+                IterativeRobot*     program,
+                InputBuffer*        inputBuffer,
+                OutputBuffer*       outputBuffer,
+                PacketGenerator*    packetGen
               );
 
         /**

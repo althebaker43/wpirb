@@ -4,7 +4,7 @@
 #include "Input.h"
 #include <stdint.h>
 
-#include "Packet.h"
+#include "RedBotPacket.h"
 
 /**
  * Digital input class

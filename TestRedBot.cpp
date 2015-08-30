@@ -62,7 +62,8 @@ TEST(RedBot, CommandTest)
     RedBot robot(
             &program,
             myMockInputOutputBuffer,
-            myMockInputOutputBuffer
+            myMockInputOutputBuffer,
+            new RedBotPacketGenerator()
             );
 
     FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
@@ -88,7 +89,8 @@ TEST(RedBot, ResponseTest)
     RedBot robot(
             &program,
             myMockInputOutputBuffer,
-            myMockInputOutputBuffer
+            myMockInputOutputBuffer,
+            new RedBotPacketGenerator()
             );
 
     FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
@@ -165,7 +167,8 @@ TEST(RedBot, ResponseTimeoutTest)
     RedBot robot(
             &program,
             myMockInputOutputBuffer,
-            myMockInputOutputBuffer
+            myMockInputOutputBuffer,
+            new RedBotPacketGenerator()
             );
 
     myRequestPackets.push_back(new PingPacket());                                   // Cycle 1
@@ -224,7 +227,8 @@ TEST(RedBot, DriveTest)
     RedBot robot(
             &program,
             myMockInputOutputBuffer,
-            myMockInputOutputBuffer
+            myMockInputOutputBuffer,
+            new RedBotPacketGenerator()
             );
 
     FieldControlSystem::Mode mode = FieldControlSystem::MODE_TELEOP;
@@ -267,7 +271,8 @@ TEST(RedBot, UnrecognizedPacketTest)
     RedBot robot(
             &program,
             myMockInputOutputBuffer,
-            myMockInputOutputBuffer
+            myMockInputOutputBuffer,
+            new RedBotPacketGenerator()
             );
     std::list<std::string> sentStrings;
     std::list<std::string> receivedStrings;
@@ -352,7 +357,8 @@ TEST(RedBot, UnresponsiveTest)
     RedBot robot(
             &program,
             myMockInputOutputBuffer,
-            myMockInputOutputBuffer
+            myMockInputOutputBuffer,
+            new RedBotPacketGenerator()
             );
 
     FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
@@ -386,7 +392,8 @@ TEST(RedBot, ResyncTest)
     RedBot robot(
             &program,
             myMockInputOutputBuffer,
-            myMockInputOutputBuffer
+            myMockInputOutputBuffer,
+            new RedBotPacketGenerator()
             );
 
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\xFF\xFF\xFF\xFF");

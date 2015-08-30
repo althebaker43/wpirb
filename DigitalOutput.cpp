@@ -1,6 +1,6 @@
 
 #include "DigitalOutput.h"
-#include "Packet.h"
+#include "RedBotPacket.h"
 #include <stdlib.h>
 
 

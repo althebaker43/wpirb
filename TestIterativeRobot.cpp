@@ -1,6 +1,7 @@
 
 #include "IterativeRobot.h"
 #include "RedBot.h"
+#include "RedBotPacket.h"
 #include "FieldControlSystem.h"
 #include "CppUTest/TestHarness.h"
 
@@ -63,7 +64,8 @@ class MockRedBot : public RedBot
                 ) :
             RedBot(
                     program,
-                    (const char*)NULL // Do not attempt to establish serial link
+                    (const char*)NULL, // Do not attempt to establish serial link
+                    new RedBotPacketGenerator()
                   )
         {
         }

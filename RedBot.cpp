@@ -30,8 +30,9 @@ RedBot::ClearRegisteredComponents()
 }
 
 RedBot::RedBot(
-        IterativeRobot* program,
-        const char*     deviceName
+        IterativeRobot*     program,
+        const char*         deviceName,
+        PacketGenerator*    packetGen
         ) :
     myProgram(program),
     myStatus(STATUS_DISCONNECTED),
@@ -39,7 +40,7 @@ RedBot::RedBot(
     myDevice(NULL),
     myInputBuffer(NULL),
     myOutputBuffer(NULL),
-    myPacketGenerator(new RedBotPacketGenerator())
+    myPacketGenerator(packetGen)
 {
     // Move all newly registered components to my own collection
     myComponents = ourCurrentComponents;
@@ -63,8 +64,9 @@ RedBot::RedBot(
 }
 
 RedBot::RedBot(
-        IterativeRobot* program,
-        FILE*           device
+        IterativeRobot*     program,
+        FILE*               device,
+        PacketGenerator*    packetGen
         ) :
     myProgram(program),
     myStatus(STATUS_GOOD),
@@ -72,7 +74,7 @@ RedBot::RedBot(
     myDevice(device),
     myInputBuffer(new InputFileBuffer(device)),
     myOutputBuffer(new OutputFileBuffer(device)),
-    myPacketGenerator(new RedBotPacketGenerator())
+    myPacketGenerator(packetGen)
 {
     // Move all newly registered components to my own collection
     myComponents = ourCurrentComponents;
@@ -80,9 +82,10 @@ RedBot::RedBot(
 }
 
 RedBot::RedBot(
-        IterativeRobot* program,
-        InputBuffer*    inputBuffer,
-        OutputBuffer*   outputBuffer
+        IterativeRobot*     program,
+        InputBuffer*        inputBuffer,
+        OutputBuffer*       outputBuffer,
+        PacketGenerator*    packetGen
         ) :
     myProgram(program),
     myStatus(STATUS_GOOD),
@@ -90,7 +93,7 @@ RedBot::RedBot(
     myDevice(NULL),
     myInputBuffer(inputBuffer),
     myOutputBuffer(outputBuffer),
-    myPacketGenerator(new RedBotPacketGenerator())
+    myPacketGenerator(packetGen)
 {
     // Move all newly registered components to my own collection
     myComponents = ourCurrentComponents;
@@ -231,7 +234,7 @@ RedBot::transferData()
         return;
     }
 
-    PingPacket pingPacket;
+    Packet* pingPacket = myPacketGenerator->createPingPacket();
 
     // Confirm connectivity to robot
     unsigned int initialPingCount = 0;
@@ -240,7 +243,7 @@ RedBot::transferData()
         Packet* inPacket;
 
         exchangePackets(
-                &pingPacket,
+                pingPacket,
                 inPacket
                 );
 
@@ -253,6 +256,9 @@ RedBot::transferData()
             (myStatus != STATUS_GOOD) &&
             ((++initialPingCount) < 5)
          );
+
+    delete pingPacket;
+
     if (initialPingCount >= 5)
     {
         return;
@@ -310,12 +316,13 @@ RedBot::transferData()
     }
 
     // Continue pinging until no more incoming packets to process
+    pingPacket = myPacketGenerator->createPingPacket();
     while (true)
     {
         Packet* inPacket = NULL;
 
         exchangePackets(
-                &pingPacket,
+                pingPacket,
                 inPacket
                 );
         if (inPacket == NULL)
@@ -333,6 +340,7 @@ RedBot::transferData()
             myIncomingPackets.push(inPacket);
         }
     }
+    delete pingPacket;
 }
 
 void

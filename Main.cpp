@@ -1,6 +1,7 @@
 
 #include "FieldControlSystem.h"
 #include "RedBot.h"
+#include "RedBotPacket.h"
 #include <iostream>
 #include <argp.h>
 #include <errno.h>
@@ -123,7 +124,8 @@ WPIRBMain(
     {
         robot = new RedBot(
                 &program,
-                InputOutputDevicePath.c_str()
+                InputOutputDevicePath.c_str(),
+                new RedBotPacketGenerator()
                 );
     }
     else if(
@@ -158,7 +160,8 @@ WPIRBMain(
         robot = new RedBot(
                 &program,
                 inputBuffer,
-                outputBuffer
+                outputBuffer,
+                new RedBotPacketGenerator()
                 );
     }
     else

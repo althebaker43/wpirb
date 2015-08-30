@@ -16,6 +16,7 @@ MODULES= \
 	RedBot \
 	IOBuffer \
 	Packet \
+	RedBotPacket \
 	Component \
 	Main
 OBJS=$(MODULES:%=%.o)
