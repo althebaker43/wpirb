@@ -150,33 +150,45 @@ DigitalValuePacket::read(
     myBinaryData.clear();
     myIsValid = false;
 
-    pin = inputStream.get();
-    if (inputStream.good() == false)
+    for(
+            size_t byteIdx = 2;
+            byteIdx <= 4;
+            ++byteIdx
+       )
+    {
+        int curByte = inputStream.get();
+        if (inputStream.good() == false)
+        {
+            break;
+        }
+
+        if (curByte == BINARY_BOUND)
+        {
+            trailer = curByte;
+            break;
+        }
+
+        myBinaryData.push_back(curByte);
+
+        switch (byteIdx)
+        {
+            case 2: pin = curByte; break;
+            case 3: value = curByte; break;
+            default: break;
+        };
+    }
+
+    if(
+            (pin == -1) ||
+            (value == -1) ||
+            (trailer != BINARY_BOUND)
+      )
     {
         return;
     }
-    myBinaryData.push_back(pin);
+
     myPin = (unsigned int)pin;
-
-    value = inputStream.get();
-    if (inputStream.good() == false)
-    {
-        return;
-    }
-    myBinaryData.push_back(value);
     myValue = (value == 0x02);
-
-    // Read out trailer
-    trailer = inputStream.get();
-    if (inputStream.good() == false)
-    {
-        return;
-    }
-    myBinaryData.push_back(trailer);
-    if (trailer != 0xFF)
-    {
-        return;
-    }
 
     myBinaryData.clear();
     myIsValid = true;

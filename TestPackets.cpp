@@ -630,7 +630,7 @@ TEST(Packets, PinConfigInfoPacketXML)
     CHECK_EQUAL(expectedOutput, packetStream.str());
 }
 
-IGNORE_TEST(Packets, InvalidReadPacket)
+TEST(Packets, InvalidReadPacket)
 {
     std::istringstream inputStream;
     std::ostringstream outputStream;
@@ -639,7 +639,7 @@ IGNORE_TEST(Packets, InvalidReadPacket)
 
     outputStream << dValPacket;
 
-    BPACKET_EQUAL("\xFF\x81", outputStream.str().c_str());
+    BPACKET_EQUAL("\xFF\x81\xFF", outputStream.str().c_str());
 
     inputStream.str("\x0A\xFF");
     inputStream >> dValPacket;
@@ -650,7 +650,7 @@ IGNORE_TEST(Packets, InvalidReadPacket)
     outputStream << dValPacket;
     std::string dValPacketData = outputStream.str();
 
-    STRCMP_EQUAL("\xFF\x81\x0A\xFF", dValPacketData.c_str());
+    BPACKET_EQUAL("\xFF\x81\x0A\xFF", dValPacketData.c_str());
 }
 
 

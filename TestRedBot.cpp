@@ -316,23 +316,22 @@ TEST(RedBot, UnrecognizedPacketTest)
     STRCMP_EQUAL("\xFF\x01\xFF", sentStrings.front().c_str());
     STRCMP_EQUAL("\xFF\x8F", receivedStrings.front().c_str());
 
-    // TODO: debug
-    //mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
-    //mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
-    //mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
-    //mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x0A\xFF");
-    //robot.modePeriodic(mode);
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x0A\xFF");
+    robot.modePeriodic(mode);
 
-    //mock().checkExpectations();
-    //CHECK_EQUAL(RedBot::STATUS_INCOHERENT, robot.getStatus());
+    mock().checkExpectations();
+    CHECK_EQUAL(RedBot::STATUS_INCOHERENT, robot.getStatus());
 
-    //robot.getLastBinaryTransaction(
-    //        sentStrings,
-    //        receivedStrings
-    //        );
+    robot.getLastBinaryTransaction(
+            sentStrings,
+            receivedStrings
+            );
 
-    //STRCMP_EQUAL("\xFF\x01\xFF", sentStrings.front().c_str());
-    //BPACKET_EQUAL("\xFF\x81\x0A\xFF", receivedStrings.front().c_str());
+    STRCMP_EQUAL("\xFF\x01\xFF", sentStrings.front().c_str());
+    BPACKET_EQUAL("\xFF\x81\x0A\xFF", receivedStrings.front().c_str());
 
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
