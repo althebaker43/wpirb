@@ -8,8 +8,10 @@
 
 
 RedBotPacket::RedBotPacket(
-        BinaryID binID
+        Type        type,
+        BinaryID    binID
         ) :
+    myType(type),
     myBinaryID(binID)
 {
 }
@@ -26,6 +28,12 @@ RedBotPacket::write(
     writeContents(outputStream);
 
     outputStream << BINARY_BOUND;
+}
+
+RedBotPacket::Type
+RedBotPacket::getType() const
+{
+    return myType;
 }
 
 bool
@@ -81,7 +89,7 @@ RedBotPacketGenerator::createPingPacket()
 
 
 PingPacket::PingPacket() :
-    RedBotPacket(BID_PING),
+    RedBotPacket(TYPE_PING, BID_PING),
     myIsValid(true)
 {
 }
@@ -139,15 +147,9 @@ PingPacket::operator==(
     }
 }
 
-RedBotPacket::Type
-PingPacket::getType() const
-{
-    return TYPE_PING;
-}
-
 
 AcknowledgePacket::AcknowledgePacket() :
-    RedBotPacket(BID_ACK),
+    RedBotPacket(TYPE_ACK, BID_ACK),
     myIsValid(true)
 {
 }
@@ -203,11 +205,5 @@ AcknowledgePacket::operator==(
     {
         return false;
     }
-}
-
-RedBotPacket::Type
-AcknowledgePacket::getType() const
-{
-    return TYPE_ACK;
 }
 

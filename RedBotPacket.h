@@ -64,10 +64,11 @@ class RedBotPacket : public Packet
         };
 
         /**
-         * Constructor given binary ID
+         * Constructor given type and binary ID
          */
         RedBotPacket(
-                BinaryID binID
+                Type        type,
+                BinaryID    binID
                 );
 
         /**
@@ -88,7 +89,7 @@ class RedBotPacket : public Packet
         /**
          * Provides the type of packet
          */
-        virtual Type getType() const = 0;
+        Type getType() const;
 
         /**
          * Indicates if this packet is an acknowledgement packet
@@ -119,6 +120,11 @@ class RedBotPacket : public Packet
                 ) const = 0;
 
     private:
+
+        /**
+         * The type of this packet
+         */
+        const Type myType;
 
         /**
          * The binary ID for this packet
@@ -187,11 +193,6 @@ class PingPacket : public RedBotPacket
                 const Packet&
                 ) const;
 
-        /**
-         * Provides the type of this packet
-         */
-        Type getType() const;
-
     private:
 
         /**
@@ -244,11 +245,6 @@ class AcknowledgePacket : public RedBotPacket
         bool operator==(
                 const Packet&
                 ) const;
-
-        /**
-         * Provides the type of packet
-         */
-        Type getType() const;
 
     private:
 

@@ -5,7 +5,7 @@
 
 
 DigitalInputPacket::DigitalInputPacket() :
-    RedBotPacket(BID_DINPUT),
+    RedBotPacket(TYPE_DINPUT, BID_DINPUT),
     myPin(0)
 {
 }
@@ -13,7 +13,7 @@ DigitalInputPacket::DigitalInputPacket() :
 DigitalInputPacket::DigitalInputPacket(
         unsigned int pin
         ) :
-    RedBotPacket(BID_DINPUT),
+    RedBotPacket(TYPE_DINPUT, BID_DINPUT),
     myPin(pin)
 {
 }
@@ -69,12 +69,6 @@ DigitalInputPacket::operator==(
     return true;
 }
 
-RedBotPacket::Type
-DigitalInputPacket::getType() const
-{
-    return TYPE_DINPUT;
-}
-
 unsigned int
 DigitalInputPacket::getPin() const
 {
@@ -83,7 +77,7 @@ DigitalInputPacket::getPin() const
 
 
 DigitalValuePacket::DigitalValuePacket() :
-    RedBotPacket(BID_DVALUE),
+    RedBotPacket(TYPE_DVALUE, BID_DVALUE),
     myPin(0),
     myValue(false),
     myIsValid(false)
@@ -94,7 +88,7 @@ DigitalValuePacket::DigitalValuePacket(
         unsigned int    pin,
         bool            value
         ) :
-    RedBotPacket(BID_DVALUE),
+    RedBotPacket(TYPE_DVALUE, BID_DVALUE),
     myPin(pin),
     myValue(value),
     myIsValid(true)
@@ -206,12 +200,6 @@ DigitalValuePacket::operator==(
         ) const
 {
     return true;
-}
-
-RedBotPacket::Type
-DigitalValuePacket::getType() const
-{
-    return TYPE_DVALUE;
 }
 
 unsigned int

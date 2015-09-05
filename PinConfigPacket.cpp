@@ -3,7 +3,7 @@
 
 
 PinConfigPacket::PinConfigPacket() :
-    RedBotPacket(BID_PINCONFIG),
+    RedBotPacket(TYPE_PINCONFIG, BID_PINCONFIG),
     myPin(1),
     myDirection(DIR_INPUT)
 {
@@ -13,7 +13,7 @@ PinConfigPacket::PinConfigPacket(
         unsigned int                pin,
         RedBotPacket::PinDirection  dir
         ) :
-    RedBotPacket(BID_PINCONFIG),
+    RedBotPacket(TYPE_PINCONFIG, BID_PINCONFIG),
     myPin(pin),
     myDirection(dir)
 {
@@ -88,12 +88,6 @@ PinConfigPacket::operator==(
     return true;
 }
 
-RedBotPacket::Type
-PinConfigPacket::getType() const
-{
-    return TYPE_PINCONFIG;
-}
-
 unsigned int
 PinConfigPacket::getPin() const
 {
@@ -108,7 +102,7 @@ PinConfigPacket::getDirection() const
 
 
 PinConfigInfoPacket::PinConfigInfoPacket() :
-    RedBotPacket(BID_PINCONFIGINFO),
+    RedBotPacket(TYPE_PINCONFIGINFO, BID_PINCONFIGINFO),
     myPin(1),
     myDirection(DIR_INPUT)
 {
@@ -118,7 +112,7 @@ PinConfigInfoPacket::PinConfigInfoPacket(
         unsigned int                pin,
         RedBotPacket::PinDirection  dir
         ) :
-    RedBotPacket(BID_PINCONFIGINFO),
+    RedBotPacket(TYPE_PINCONFIGINFO, BID_PINCONFIGINFO),
     myPin(pin),
     myDirection(dir)
 {
@@ -186,12 +180,6 @@ PinConfigInfoPacket::operator==(
         ) const
 {
     return true;
-}
-
-RedBotPacket::Type
-PinConfigInfoPacket::getType() const
-{
-    return TYPE_PINCONFIGINFO;
 }
 
 unsigned int

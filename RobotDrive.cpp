@@ -5,7 +5,7 @@
 
 
 MotorDrivePacket::MotorDrivePacket() :
-    RedBotPacket(BID_MDRIVE),
+    RedBotPacket(TYPE_MDRIVE, BID_MDRIVE),
     myMotor(MOTOR_RIGHT),
     mySpeed(0),
     myDirection(DIR_FORWARD)
@@ -17,7 +17,7 @@ MotorDrivePacket::MotorDrivePacket(
         uint8_t                     speed,
         MotorDrivePacket::Direction direction
         ) :
-    RedBotPacket(BID_MDRIVE),
+    RedBotPacket(TYPE_MDRIVE, BID_MDRIVE),
     myMotor(motor),
     mySpeed(speed),
     myDirection(direction)
@@ -32,7 +32,7 @@ MotorDrivePacket::MotorDrivePacket(
         MotorDrivePacket::Motor motor,
         double                  driveVal
         ) :
-    RedBotPacket(BID_MDRIVE),
+    RedBotPacket(TYPE_MDRIVE, BID_MDRIVE),
     myMotor(motor)
 {
     if (driveVal > 1.0)
@@ -142,12 +142,6 @@ MotorDrivePacket::operator==(
     {
         return false;
     }
-}
-
-RedBotPacket::Type
-MotorDrivePacket::getType() const
-{
-    return TYPE_MDRIVE;
 }
 
 MotorDrivePacket::Motor

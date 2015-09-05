@@ -93,11 +93,6 @@ class MotorDrivePacket : public RedBotPacket
                 ) const;
 
         /**
-         * Provides the type of packet
-         */
-        Type getType() const;
-
-        /**
          * Indicates which motor to drive
          */
         Motor getMotor() const;

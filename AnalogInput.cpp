@@ -4,7 +4,7 @@
 
 
 AnalogInputPacket::AnalogInputPacket() :
-    RedBotPacket(BID_AINPUT),
+    RedBotPacket(TYPE_AINPUT, BID_AINPUT),
     myPin(1)
 {
 }
@@ -12,7 +12,7 @@ AnalogInputPacket::AnalogInputPacket() :
 AnalogInputPacket::AnalogInputPacket(
         unsigned int pin
         ) :
-    RedBotPacket(BID_AINPUT),
+    RedBotPacket(TYPE_AINPUT, BID_AINPUT),
     myPin(pin)
 {
 }
@@ -68,12 +68,6 @@ AnalogInputPacket::operator==(
     return true;
 }
 
-RedBotPacket::Type
-AnalogInputPacket::getType() const
-{
-    return TYPE_AINPUT;
-}
-
 unsigned int
 AnalogInputPacket::getPin() const
 {
@@ -82,7 +76,7 @@ AnalogInputPacket::getPin() const
 
 
 AnalogValuePacket::AnalogValuePacket() :
-    RedBotPacket(BID_AVALUE),
+    RedBotPacket(TYPE_AVALUE, BID_AVALUE),
     myPin(1),
     myValue(0)
 {
@@ -92,7 +86,7 @@ AnalogValuePacket::AnalogValuePacket(
         unsigned int    pin,
         unsigned int    value
         ) :
-    RedBotPacket(BID_AVALUE),
+    RedBotPacket(TYPE_AVALUE, BID_AVALUE),
     myPin(pin),
     myValue(value)
 {
@@ -167,12 +161,6 @@ AnalogValuePacket::operator==(
         ) const
 {
     return true;
-}
-
-RedBotPacket::Type
-AnalogValuePacket::getType() const
-{
-    return TYPE_AVALUE;
 }
 
 unsigned int

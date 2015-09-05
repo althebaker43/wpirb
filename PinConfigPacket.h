@@ -50,11 +50,6 @@ class PinConfigPacket : public RedBotPacket
                 ) const;
 
         /**
-         * Provides the type of this packet
-         */
-        Type getType() const;
-
-        /**
          * Provides the pin to configure
          */
         unsigned int getPin() const;
@@ -132,11 +127,6 @@ class PinConfigInfoPacket : public RedBotPacket
         bool operator==(
                 const Packet&
                 ) const;
-
-        /**
-         * Provides the type of this packet
-         */
-        Type getType() const;
 
         /**
          * Provides the pin this packet describes

@@ -53,11 +53,6 @@ class DigitalInputPacket : public RedBotPacket
                 ) const;
 
         /**
-         * Provides the type of this packet
-         */
-        Type getType() const;
-
-        /**
          * Provides the pin to read from
          */
         unsigned int getPin() const;
@@ -125,11 +120,6 @@ class DigitalValuePacket : public RedBotPacket
         bool operator==(
                 const Packet&
                 ) const;
-
-        /**
-         * Provides the type of this packet
-         */
-        Type getType() const;
 
         /**
          * Provides the pin read from

@@ -54,11 +54,6 @@ class DigitalOutputPacket : public RedBotPacket
                 ) const;
 
         /**
-         * Provides the type of this packet
-         */
-        Type getType() const;
-
-        /**
          * Provides the number of the pin to output to
          */
         unsigned int getPin() const;

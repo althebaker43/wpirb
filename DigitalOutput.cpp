@@ -5,7 +5,7 @@
 
 
 DigitalOutputPacket::DigitalOutputPacket() :
-    RedBotPacket(BID_DOUTPUT),
+    RedBotPacket(TYPE_DOUTPUT, BID_DOUTPUT),
     myPin(13),
     myValue(false)
 {
@@ -15,7 +15,7 @@ DigitalOutputPacket::DigitalOutputPacket(
         unsigned int    pin,
         bool            value
         ) :
-    RedBotPacket(BID_DOUTPUT),
+    RedBotPacket(TYPE_DOUTPUT, BID_DOUTPUT),
     myPin(pin),
     myValue(value)
 {
@@ -100,12 +100,6 @@ DigitalOutputPacket::operator==(
     {
         return false;
     }
-}
-
-RedBotPacket::Type
-DigitalOutputPacket::getType() const
-{
-    return TYPE_DOUTPUT;
 }
 
 unsigned int
