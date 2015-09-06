@@ -226,7 +226,8 @@ DigitalInput::DigitalInput(
         uint32_t channel
         ) :
     Input(channel),
-    myIsPinConfigured(false)
+    myIsPinConfigured(false),
+    myConfigPacket(NULL)
 {
 }
 
@@ -245,13 +246,52 @@ DigitalInput::getNextPacket()
     }
     else
     {
-        packet = new PinConfigPacket(
-                myChannel,
-                PinConfigPacket::DIR_INPUT
-                );
-        myIsPinConfigured = true;
+        // Only send one configuration packet per cycle
+        if (myConfigPacket == NULL)
+        {
+            myConfigPacket = new PinConfigPacket(
+                    myChannel,
+                    PinConfigPacket::DIR_INPUT
+                    );
+            packet = myConfigPacket;
+        }
+        else
+        {
+            myConfigPacket = NULL;
+        }
     }
 
     return packet;
+}
+
+bool
+DigitalInput::processPacket(
+        const Packet& packet
+        )
+{
+    if (myIsPinConfigured == true)
+    {
+        return processDataPacket(packet);
+    }
+    else
+    {
+        const PinConfigInfoPacket* configInfoPacket = dynamic_cast<const PinConfigInfoPacket*>(&packet);
+        if (configInfoPacket == NULL)
+        {
+            return false;
+        }
+
+        if (configInfoPacket->getPin() != myChannel)
+        {
+            return false;
+        }
+
+        if (configInfoPacket->getDirection() == PinConfigInfoPacket::DIR_INPUT)
+        {
+            myIsPinConfigured = true;
+        }
+
+        return true;
+    }
 }
 

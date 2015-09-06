@@ -205,3 +205,11 @@ AnalogInput::getNextPacket()
 {
     return (Packet*)getNextPacketIfTimedOut();
 }
+
+bool
+AnalogInput::processPacket(
+        const Packet& packet
+        )
+{
+    return processDataPacket(packet);
+}

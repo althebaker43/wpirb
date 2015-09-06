@@ -36,13 +36,6 @@ class Input : public Component
          */
         ValueType Get();
 
-        /**
-         * Examines and processes a packet if needed
-         */
-        bool processPacket(
-                const Packet& packet
-                );
-
     protected:
 
         /**
@@ -55,7 +48,17 @@ class Input : public Component
         RequestType* getNextPacketIfTimedOut();
 
         /**
-         * Channel to read digital signal from
+         * Examines and processes a data packet if needed
+         *
+         * \return True if this packet contains signal value for this input,
+         * false otherwise
+         */
+        bool processDataPacket(
+                const Packet& packet
+                );
+
+        /**
+         * Channel to read input signal from
          */
         uint32_t myChannel;
 
@@ -139,7 +142,7 @@ Input<RequestType, ResponseType, ValueType>::getNextPacketIfTimedOut()
 
 template <class RequestType, class ResponseType, class ValueType>
 bool
-Input<RequestType, ResponseType, ValueType>::processPacket(
+Input<RequestType, ResponseType, ValueType>::processDataPacket(
         const Packet& packet
         )
 {

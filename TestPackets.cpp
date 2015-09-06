@@ -350,7 +350,7 @@ TEST(Packets, PinConfigInfoPacket)
 
     BPACKET_EQUAL("\xFF\x84\x08\x01\xFF", outputStream.str().c_str());
 
-    inputStream.str("\xFF\x84\x03\x02\xFF");
+    inputStream.str("\xFF\x84\x03\x01\xFF");
     Packet* packet3 = readPacket(inputStream);
 
     CHECK(NULL != packet3);

@@ -182,6 +182,13 @@ class AnalogInput : public Input<AnalogInputPacket, AnalogValuePacket, uint16_t>
          * Provides the next available packet to send
          */
         Packet* getNextPacket();
+
+        /**
+         * Examines the given packet and processes it if appropriate
+         */
+        bool processPacket(
+                const Packet& packet
+                );
 };
 
 #endif /* ifndef ANALOGINPUT_H */

@@ -5,6 +5,9 @@
 #include "RedBotPacket.h"
 #include <stdint.h>
 
+// Forward declarations
+class PinConfigPacket;
+
 /**
  * Digital input request class
  *
@@ -185,12 +188,24 @@ class DigitalInput : public Input<DigitalInputPacket, DigitalValuePacket, bool>
          */
         Packet* getNextPacket();
 
+        /**
+         * Examines the packet and processes it if appropriate
+         */
+        bool processPacket(
+                const Packet& packet
+                );
+
     private:
 
         /**
          * Indicates if the pin has been configured yet
          */
         bool myIsPinConfigured;
+
+        /**
+         * Pin configuration packet sent for this cycle
+         */
+        PinConfigPacket* myConfigPacket;
 };
 
 #endif /* ifndef DIGITALINPUT_H */

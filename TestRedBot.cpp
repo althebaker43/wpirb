@@ -96,13 +96,19 @@ TEST(RedBot, ResponseTest)
     FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
     robot.modeInit(mode);
 
-    // Pin configuration and get pin value
+    // Pin configuration
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x05\x06\x02\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x84\x06\x02\xFF");
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+
+    // Get pin value
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x03\x06\xFF");
-    mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x06\x02\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x81\x06\x01\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
 
@@ -144,7 +150,11 @@ TEST(RedBot, ResponseTest)
 
     robot.modePeriodic(mode);
 
-    CHECK_TRUE(program.getValue());
+    CHECK_FALSE(program.getValue());
+
+    robot.modePeriodic(mode);
+
+    CHECK_FALSE(program.getValue());
 
     robot.modePeriodic(mode);
 
@@ -173,9 +183,9 @@ TEST(RedBot, ResponseTimeoutTest)
 
     myRequestPackets.push_back(new PingPacket());                                   // Cycle 1
     myRequestPackets.push_back(new PinConfigPacket(6, PinConfigPacket::DIR_INPUT));
-    myRequestPackets.push_back(new DigitalInputPacket(6));
     myRequestPackets.push_back(new PingPacket());
     myRequestPackets.push_back(new PingPacket());                                     // Cycle 2
+    myRequestPackets.push_back(new DigitalInputPacket(6));
     myRequestPackets.push_back(new PingPacket());
     myRequestPackets.push_back(new PingPacket());                                     // Cycle 3
     myRequestPackets.push_back(new PingPacket());
@@ -186,14 +196,16 @@ TEST(RedBot, ResponseTimeoutTest)
     myRequestPackets.push_back(new PingPacket());                                     // Cycle 6
     myRequestPackets.push_back(new PingPacket());
     myRequestPackets.push_back(new PingPacket());                                     // Cycle 7
+    myRequestPackets.push_back(new PingPacket());
+    myRequestPackets.push_back(new PingPacket());                                     // Cycle 8
     myRequestPackets.push_back(new DigitalInputPacket(6));
     myRequestPackets.push_back(new PingPacket());
 
     myResponsePackets.push_back(new AcknowledgePacket()); // Cycle 1
-    myResponsePackets.push_back(new AcknowledgePacket());
-    myResponsePackets.push_back(new AcknowledgePacket());
+    myResponsePackets.push_back(new PinConfigInfoPacket(6, PinConfigInfoPacket::DIR_INPUT));
     myResponsePackets.push_back(new AcknowledgePacket());
     myResponsePackets.push_back(new AcknowledgePacket()); // Cycle 2
+    myResponsePackets.push_back(new AcknowledgePacket());
     myResponsePackets.push_back(new AcknowledgePacket());
     myResponsePackets.push_back(new AcknowledgePacket()); // Cycle 3
     myResponsePackets.push_back(new AcknowledgePacket());
@@ -205,6 +217,8 @@ TEST(RedBot, ResponseTimeoutTest)
     myResponsePackets.push_back(new AcknowledgePacket());
     myResponsePackets.push_back(new AcknowledgePacket()); // Cycle 7
     myResponsePackets.push_back(new AcknowledgePacket());
+    myResponsePackets.push_back(new AcknowledgePacket()); // Cycle 8
+    myResponsePackets.push_back(new AcknowledgePacket());
     myResponsePackets.push_back(new AcknowledgePacket());
 
     std::list<std::string> packetStrings;
@@ -215,7 +229,7 @@ TEST(RedBot, ResponseTimeoutTest)
             packetStrings,
             robot,
             FieldControlSystem::MODE_DISABLED,
-            7
+            8
             );
 
     mock().checkExpectations();

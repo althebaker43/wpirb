@@ -56,6 +56,76 @@ TEST(Components, DigitalOutputTest)
     CHECK_EQUAL(true, dOutPacket2->getValue());
 }
 
+TEST(Components, DigitalInputConfigTest)
+{
+    DigitalInput dIn(9);
+    Packet* requestPacket;
+
+    // cycle 1: no response
+
+    requestPacket = dIn.getNextPacket();
+    myPackets.push_back(requestPacket);
+
+    CHECK(NULL != requestPacket);
+    CHECK(NULL != dynamic_cast<PinConfigPacket*>(requestPacket));
+
+    requestPacket = dIn.getNextPacket();
+    myPackets.push_back(requestPacket);
+
+    POINTERS_EQUAL(NULL, requestPacket);
+
+    // cycle 2: no response
+
+    requestPacket = dIn.getNextPacket();
+    myPackets.push_back(requestPacket);
+
+    CHECK(NULL != requestPacket);
+    CHECK(NULL != dynamic_cast<PinConfigPacket*>(requestPacket));
+
+    requestPacket = dIn.getNextPacket();
+    myPackets.push_back(requestPacket);
+
+    POINTERS_EQUAL(NULL, requestPacket);
+
+    // cycle 3: bad responses
+
+    PinConfigInfoPacket configInfoPacket1(4, PinConfigInfoPacket::DIR_INPUT);
+
+    CHECK_FALSE(dIn.processPacket(configInfoPacket1));
+
+    PinConfigInfoPacket configInfoPacket2(9, PinConfigInfoPacket::DIR_OUTPUT);
+
+    CHECK(dIn.processPacket(configInfoPacket2));
+
+    requestPacket = dIn.getNextPacket();
+    myPackets.push_back(requestPacket);
+
+    CHECK(NULL != requestPacket);
+    CHECK(NULL != dynamic_cast<PinConfigPacket*>(requestPacket));
+
+    requestPacket = dIn.getNextPacket();
+    myPackets.push_back(requestPacket);
+
+    POINTERS_EQUAL(NULL, requestPacket);
+
+    // cycle 4: good response
+
+    PinConfigInfoPacket configInfoPacket3(9, PinConfigInfoPacket::DIR_INPUT);
+
+    CHECK(dIn.processPacket(configInfoPacket3));
+
+    requestPacket = dIn.getNextPacket();
+    myPackets.push_back(requestPacket);
+
+    CHECK(NULL != requestPacket);
+    CHECK(NULL != dynamic_cast<DigitalInputPacket*>(requestPacket));
+
+    requestPacket = dIn.getNextPacket();
+    myPackets.push_back(requestPacket);
+
+    POINTERS_EQUAL(NULL, requestPacket);
+}
+
 TEST(Components, DigitalInputTest)
 {
     DigitalInput dIn(4);
@@ -70,6 +140,8 @@ TEST(Components, DigitalInputTest)
 
     CHECK_EQUAL(4, configPacket->getPin());
     CHECK_EQUAL(PinConfigPacket::DIR_INPUT, configPacket->getDirection());
+
+    dIn.processPacket(PinConfigInfoPacket(4, PinConfigInfoPacket::DIR_INPUT));
 
     Packet* packet1 = dIn.getNextPacket();
     myPackets.push_back(packet1);

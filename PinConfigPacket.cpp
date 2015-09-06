@@ -173,7 +173,7 @@ PinConfigInfoPacket::read(
     {
         return;
     }
-    myDirection = ((direction == 1) ? DIR_INPUT : DIR_OUTPUT);
+    myDirection = ((direction == 1) ? DIR_OUTPUT : DIR_INPUT);
 
     inputStream.get();
 }
