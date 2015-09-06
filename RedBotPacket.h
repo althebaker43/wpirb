@@ -2,6 +2,7 @@
 #define REDBOTPACKET_H
 
 #include "Packet.h"
+#include "XMLElement.h"
 
 /**
  * Common base class for all packets used for RedBot communication
@@ -68,6 +69,7 @@ class RedBotPacket : public Packet
          */
         RedBotPacket(
                 Type        type,
+                const char* typeName,   /**< String representation of type */
                 BinaryID    binID
                 );
 
@@ -83,6 +85,13 @@ class RedBotPacket : public Packet
          * subclass's writing method.
          */
         void write(
+                std::ostream& outputStream
+                ) const;
+
+        /**
+         * Generates an XML representation of this packet
+         */
+        void writeXML(
                 std::ostream& outputStream
                 ) const;
 
@@ -119,12 +128,24 @@ class RedBotPacket : public Packet
                 std::ostream& outputStream
                 ) const = 0;
 
+        /**
+         * Provides a list of elements to include in the XML representation
+         */
+        virtual void getXMLElements(
+                XMLElements& elements /**< Container to store elements in */
+                ) const = 0;
+
     private:
 
         /**
          * The type of this packet
          */
         const Type myType;
+
+        /**
+         * String representation of the type of this packet
+         */
+        const std::string myTypeName;
 
         /**
          * The binary ID for this packet
@@ -168,13 +189,6 @@ class PingPacket : public RedBotPacket
         PingPacket();
 
         /**
-         * Generates an XML representation of this packet
-         */
-        void writeXML(
-                std::ostream&
-                ) const;
-
-        /**
          * Reads serialized binary data from input stream
          */
         void read(
@@ -200,6 +214,13 @@ class PingPacket : public RedBotPacket
          */
         void writeContents(
                 std::ostream&
+                ) const;
+
+        /**
+         * Provides elements to include in the XML representation
+         */
+        void getXMLElements(
+                XMLElements& elements
                 ) const;
 
         /**
@@ -221,13 +242,6 @@ class AcknowledgePacket : public RedBotPacket
         AcknowledgePacket();
 
         /**
-         * Generates an XML representation of this packet
-         */
-        void writeXML(
-                std::ostream&
-                ) const;
-
-        /**
          * Reads serialized binary data from input stream
          */
         void read(
@@ -253,6 +267,13 @@ class AcknowledgePacket : public RedBotPacket
          */
         void writeContents(
                 std::ostream&
+                ) const;
+
+        /**
+         * Provides elements to include in the XML representation
+         */
+        void getXMLElements(
+                XMLElements& elements
                 ) const;
 
         /**

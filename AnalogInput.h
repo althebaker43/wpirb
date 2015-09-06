@@ -27,13 +27,6 @@ class AnalogInputPacket : public RedBotPacket
                 );
 
         /**
-         * Generates an XML representation of this packet
-         */
-        void writeXML(
-                std::ostream&
-                ) const;
-
-        /**
          * Reads serialized binary data from input stream
          */
         void read(
@@ -67,6 +60,13 @@ class AnalogInputPacket : public RedBotPacket
                 ) const;
 
         /**
+         * Provides elements to include in the XML representation
+         */
+        void getXMLElements(
+                XMLElements& elements
+                ) const;
+
+        /**
          * Pin to read analog value from
          */
         unsigned int myPin;
@@ -94,13 +94,6 @@ class AnalogValuePacket : public RedBotPacket
                 unsigned int    pin,    /**< Pin read from */
                 unsigned int    value   /**< Value detected on pin */
                 );
-
-        /**
-         * Generates an XML representation of this packet
-         */
-        void writeXML(
-                std::ostream&
-                ) const;
 
         /**
          * Reads serialized binary data from input stream
@@ -138,6 +131,13 @@ class AnalogValuePacket : public RedBotPacket
          */
         void writeContents(
                 std::ostream&
+                ) const;
+
+        /**
+         * Provides elements to include in the XML representation
+         */
+        void getXMLElements(
+                XMLElements& elements
                 ) const;
 
         /**

@@ -5,7 +5,7 @@
 
 
 DigitalInputPacket::DigitalInputPacket() :
-    RedBotPacket(TYPE_DINPUT, BID_DINPUT),
+    RedBotPacket(TYPE_DINPUT, "DINPUT", BID_DINPUT),
     myPin(0)
 {
 }
@@ -13,7 +13,7 @@ DigitalInputPacket::DigitalInputPacket() :
 DigitalInputPacket::DigitalInputPacket(
         unsigned int pin
         ) :
-    RedBotPacket(TYPE_DINPUT, BID_DINPUT),
+    RedBotPacket(TYPE_DINPUT, "DINPUT", BID_DINPUT),
     myPin(pin)
 {
 }
@@ -27,15 +27,16 @@ DigitalInputPacket::writeContents(
 }
 
 void
-DigitalInputPacket::writeXML(
-        std::ostream& outputStream
+DigitalInputPacket::getXMLElements(
+        XMLElements& elements
         ) const
 {
-    outputStream
-        << "<packet>"
-        << "<type>DINPUT</type>"
-        << "<pin>" << myPin << "</pin>"
-        << "</packet>";
+    elements.add(
+            new XMLDataElement<unsigned int>(
+                "pin",
+                myPin
+                )
+            );
 }
 
 void
@@ -77,7 +78,7 @@ DigitalInputPacket::getPin() const
 
 
 DigitalValuePacket::DigitalValuePacket() :
-    RedBotPacket(TYPE_DVALUE, BID_DVALUE),
+    RedBotPacket(TYPE_DVALUE, "DVALUE", BID_DVALUE),
     myPin(0),
     myValue(false),
     myIsValid(false)
@@ -88,7 +89,7 @@ DigitalValuePacket::DigitalValuePacket(
         unsigned int    pin,
         bool            value
         ) :
-    RedBotPacket(TYPE_DVALUE, BID_DVALUE),
+    RedBotPacket(TYPE_DVALUE, "DVALUE", BID_DVALUE),
     myPin(pin),
     myValue(value),
     myIsValid(true)
@@ -120,16 +121,22 @@ DigitalValuePacket::writeContents(
 }
 
 void
-DigitalValuePacket::writeXML(
-        std::ostream& outputStream
+DigitalValuePacket::getXMLElements(
+        XMLElements& elements
         ) const
 {
-    outputStream
-        << "<packet>"
-        << "<type>DVALUE</type>"
-        << "<pin>" << myPin << "</pin>"
-        << "<value>" << ((myValue == true) ? "1" : "0") << "</value>"
-        << "</packet>";
+    elements.add(
+            new XMLDataElement<unsigned int>(
+                "pin",
+                myPin
+                )
+            );
+    elements.add(
+            new XMLDataElement<std::string>(
+                "value",
+                ((myValue == true) ? "1" : "0")
+                )
+            );
 }
 
 void

@@ -24,13 +24,6 @@ class PinConfigPacket : public RedBotPacket
                 );
 
         /**
-         * Generates an XML representation of this packet
-         */
-        void writeXML(
-                std::ostream&
-                ) const;
-
-        /**
          * Reads serialized binary data from input stream
          */
         void read(
@@ -69,6 +62,13 @@ class PinConfigPacket : public RedBotPacket
                 ) const;
 
         /**
+         * Provides elements to include in the XML representation
+         */
+        void getXMLElements(
+                XMLElements& elements
+                ) const;
+
+        /**
          * Pin to configure
          */
         unsigned int myPin;
@@ -101,13 +101,6 @@ class PinConfigInfoPacket : public RedBotPacket
                 unsigned int    pin,    /**< Pin described in this packet */
                 PinDirection    dir     /**< Direction pin is set to */
                 );
-
-        /**
-         * Generates an XML representation of this packet
-         */
-        void writeXML(
-                std::ostream&
-                ) const;
 
         /**
          * Reads serialized binary data from input stream
@@ -145,6 +138,13 @@ class PinConfigInfoPacket : public RedBotPacket
          */
         void writeContents(
                 std::ostream&
+                ) const;
+
+        /**
+         * Provides elements to include in the XML representation
+         */
+        void getXMLElements(
+                XMLElements& elements
                 ) const;
 
         /**

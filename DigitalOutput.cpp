@@ -5,7 +5,7 @@
 
 
 DigitalOutputPacket::DigitalOutputPacket() :
-    RedBotPacket(TYPE_DOUTPUT, BID_DOUTPUT),
+    RedBotPacket(TYPE_DOUTPUT, "DOUTPUT", BID_DOUTPUT),
     myPin(13),
     myValue(false)
 {
@@ -15,7 +15,7 @@ DigitalOutputPacket::DigitalOutputPacket(
         unsigned int    pin,
         bool            value
         ) :
-    RedBotPacket(TYPE_DOUTPUT, BID_DOUTPUT),
+    RedBotPacket(TYPE_DOUTPUT, "DOUTPUT", BID_DOUTPUT),
     myPin(pin),
     myValue(value)
 {
@@ -31,16 +31,22 @@ DigitalOutputPacket::writeContents(
 }
 
 void
-DigitalOutputPacket::writeXML(
-        std::ostream& outputStream
+DigitalOutputPacket::getXMLElements(
+        XMLElements& elements
         ) const
 {
-    outputStream
-        << "<packet>"
-        << "<type>DOUTPUT</type>"
-        << "<pin>" << myPin << "</pin>"
-        << "<value>" << ((myValue == true) ? "1" : "0") << "</value>"
-        << "</packet>";
+    elements.add(
+            new XMLDataElement<unsigned int>(
+                "pin",
+                myPin
+                )
+            );
+    elements.add(
+            new XMLDataElement<std::string>(
+                "value",
+                ((myValue == true) ? "1" : "0")
+                )
+            );
 }
 
 void

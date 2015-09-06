@@ -9,9 +9,11 @@
 
 RedBotPacket::RedBotPacket(
         Type        type,
+        const char* typeName,
         BinaryID    binID
         ) :
     myType(type),
+    myTypeName(typeName),
     myBinaryID(binID)
 {
 }
@@ -28,6 +30,21 @@ RedBotPacket::write(
     writeContents(outputStream);
 
     outputStream << BINARY_BOUND;
+}
+
+void
+RedBotPacket::writeXML(
+        std::ostream& outputStream
+        ) const
+{
+    XMLElements elements;
+    getXMLElements(elements);
+
+    outputStream
+        << "<packet>"
+        << "<type>" << myTypeName << "</type>"
+        << elements
+        << "</packet>";
 }
 
 RedBotPacket::Type
@@ -56,7 +73,6 @@ RedBotPacket::operator std::string() const
     write(stringStream);
     return stringStream.str();
 }
-
 
 Packet*
 RedBotPacketGenerator::createPacket(
@@ -89,7 +105,7 @@ RedBotPacketGenerator::createPingPacket()
 
 
 PingPacket::PingPacket() :
-    RedBotPacket(TYPE_PING, BID_PING),
+    RedBotPacket(TYPE_PING, "PING", BID_PING),
     myIsValid(true)
 {
 }
@@ -102,8 +118,8 @@ PingPacket::writeContents(
 }
 
 void
-PingPacket::writeXML(
-        std::ostream& outputStream
+PingPacket::getXMLElements(
+        XMLElements& elements
         ) const
 {
 }
@@ -149,7 +165,7 @@ PingPacket::operator==(
 
 
 AcknowledgePacket::AcknowledgePacket() :
-    RedBotPacket(TYPE_ACK, BID_ACK),
+    RedBotPacket(TYPE_ACK, "ACK", BID_ACK),
     myIsValid(true)
 {
 }
@@ -162,8 +178,8 @@ AcknowledgePacket::writeContents(
 }
 
 void
-AcknowledgePacket::writeXML(
-        std::ostream& outputStream
+AcknowledgePacket::getXMLElements(
+        XMLElements& elements
         ) const
 {
 }

@@ -64,13 +64,6 @@ class MotorDrivePacket : public RedBotPacket
         ~MotorDrivePacket();
 
         /**
-         * Generates an XML representation of this packet
-         */
-        void writeXML(
-                std::ostream&
-                ) const;
-
-        /**
          * Reads serialized binary data from input stream
          */
         void read(
@@ -114,6 +107,13 @@ class MotorDrivePacket : public RedBotPacket
          */
         void writeContents(
                 std::ostream&
+                ) const;
+
+        /**
+         * Provides elements to include in the XML representation
+         */
+        void getXMLElements(
+                XMLElements& elements
                 ) const;
 
         /**

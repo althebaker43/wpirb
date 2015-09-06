@@ -19,7 +19,8 @@ MODULES= \
 	RedBotPacket \
 	PinConfigPacket \
 	Component \
-	Main
+	Main \
+	XMLElement
 OBJS=$(MODULES:%=%.o)
 LIB=libwpirb.a
 

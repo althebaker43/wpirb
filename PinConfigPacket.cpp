@@ -3,7 +3,7 @@
 
 
 PinConfigPacket::PinConfigPacket() :
-    RedBotPacket(TYPE_PINCONFIG, BID_PINCONFIG),
+    RedBotPacket(TYPE_PINCONFIG, "PINCONFIG", BID_PINCONFIG),
     myPin(1),
     myDirection(DIR_INPUT)
 {
@@ -13,7 +13,7 @@ PinConfigPacket::PinConfigPacket(
         unsigned int                pin,
         RedBotPacket::PinDirection  dir
         ) :
-    RedBotPacket(TYPE_PINCONFIG, BID_PINCONFIG),
+    RedBotPacket(TYPE_PINCONFIG, "PINCONFIG", BID_PINCONFIG),
     myPin(pin),
     myDirection(dir)
 {
@@ -30,16 +30,22 @@ PinConfigPacket::writeContents(
 }
 
 void
-PinConfigPacket::writeXML(
-        std::ostream& outputStream
+PinConfigPacket::getXMLElements(
+        XMLElements& elements
         ) const
 {
-    outputStream
-        << "<packet>"
-        << "<type>PINCONFIG</type>"
-        << "<pin>" << myPin << "</pin>"
-        << "<direction>" << ((myDirection == DIR_OUTPUT) ? "OUTPUT" : "INPUT") << "</direction>"
-        << "</packet>";
+    elements.add(
+            new XMLDataElement<unsigned int>(
+                "pin",
+                myPin
+                )
+            );
+    elements.add(
+            new XMLDataElement<std::string>(
+                "direction",
+                ((myDirection == DIR_OUTPUT) ? "OUTPUT" : "INPUT")
+                )
+            );
 }
 
 void
@@ -102,7 +108,7 @@ PinConfigPacket::getDirection() const
 
 
 PinConfigInfoPacket::PinConfigInfoPacket() :
-    RedBotPacket(TYPE_PINCONFIGINFO, BID_PINCONFIGINFO),
+    RedBotPacket(TYPE_PINCONFIGINFO, "PINCONFIGINFO", BID_PINCONFIGINFO),
     myPin(1),
     myDirection(DIR_INPUT)
 {
@@ -112,7 +118,7 @@ PinConfigInfoPacket::PinConfigInfoPacket(
         unsigned int                pin,
         RedBotPacket::PinDirection  dir
         ) :
-    RedBotPacket(TYPE_PINCONFIGINFO, BID_PINCONFIGINFO),
+    RedBotPacket(TYPE_PINCONFIGINFO, "PINCONFIGINFO", BID_PINCONFIGINFO),
     myPin(pin),
     myDirection(dir)
 {
@@ -129,18 +135,22 @@ PinConfigInfoPacket::writeContents(
 }
 
 void
-PinConfigInfoPacket::writeXML(
-        std::ostream& outputStream
+PinConfigInfoPacket::getXMLElements(
+        XMLElements& elements
         ) const
 {
-    outputStream
-        << "<packet>"
-        << "<type>PINCONFIGINFO</type>"
-        << "<pin>" << myPin << "</pin>"
-        << "<direction>"
-        << ((myDirection == DIR_INPUT) ? "INPUT" : "OUTPUT")
-        << "</direction>"
-        << "</packet>";
+    elements.add(
+            new XMLDataElement<unsigned int>(
+                "pin",
+                myPin
+                )
+            );
+    elements.add(
+            new XMLDataElement<std::string>(
+                "direction",
+                ((myDirection == DIR_INPUT) ? "INPUT" : "OUTPUT")
+                )
+            );
 }
 
 void

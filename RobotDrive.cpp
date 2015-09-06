@@ -5,7 +5,7 @@
 
 
 MotorDrivePacket::MotorDrivePacket() :
-    RedBotPacket(TYPE_MDRIVE, BID_MDRIVE),
+    RedBotPacket(TYPE_MDRIVE, "MDRIVE", BID_MDRIVE),
     myMotor(MOTOR_RIGHT),
     mySpeed(0),
     myDirection(DIR_FORWARD)
@@ -17,7 +17,7 @@ MotorDrivePacket::MotorDrivePacket(
         uint8_t                     speed,
         MotorDrivePacket::Direction direction
         ) :
-    RedBotPacket(TYPE_MDRIVE, BID_MDRIVE),
+    RedBotPacket(TYPE_MDRIVE, "MDRIVE", BID_MDRIVE),
     myMotor(motor),
     mySpeed(speed),
     myDirection(direction)
@@ -32,7 +32,7 @@ MotorDrivePacket::MotorDrivePacket(
         MotorDrivePacket::Motor motor,
         double                  driveVal
         ) :
-    RedBotPacket(TYPE_MDRIVE, BID_MDRIVE),
+    RedBotPacket(TYPE_MDRIVE, "MDRIVE", BID_MDRIVE),
     myMotor(motor)
 {
     if (driveVal > 1.0)
@@ -68,17 +68,28 @@ MotorDrivePacket::writeContents(
 }
 
 void
-MotorDrivePacket::writeXML(
-        std::ostream& outputStream
+MotorDrivePacket::getXMLElements(
+        XMLElements& elements
         ) const
 {
-    outputStream
-        << "<packet>"
-        << "<type>MDRIVE</type>"
-        << "<motor>" << ((myMotor == MOTOR_RIGHT) ? "right" : "left") << "</motor>"
-        << "<speed>" << (unsigned int)mySpeed << "</speed>"
-        << "<direction>" << ((myDirection == DIR_FORWARD) ? "forward" : "backward") << "</direction>"
-        << "</packet>";
+    elements.add(
+            new XMLDataElement<std::string>(
+                "motor",
+                ((myMotor == MOTOR_RIGHT) ? "right" : "left")
+                )
+            );
+    elements.add(
+            new XMLDataElement<unsigned int>(
+                "speed",
+                (unsigned int)mySpeed
+                )
+            );
+    elements.add(
+            new XMLDataElement<std::string>(
+                "direction",
+                ((myDirection == DIR_FORWARD) ? "forward" : "backward")
+                )
+            );
 }
 
 void

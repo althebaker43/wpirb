@@ -4,7 +4,7 @@
 
 
 AnalogInputPacket::AnalogInputPacket() :
-    RedBotPacket(TYPE_AINPUT, BID_AINPUT),
+    RedBotPacket(TYPE_AINPUT, "AINPUT", BID_AINPUT),
     myPin(1)
 {
 }
@@ -12,7 +12,7 @@ AnalogInputPacket::AnalogInputPacket() :
 AnalogInputPacket::AnalogInputPacket(
         unsigned int pin
         ) :
-    RedBotPacket(TYPE_AINPUT, BID_AINPUT),
+    RedBotPacket(TYPE_AINPUT, "AINPUT", BID_AINPUT),
     myPin(pin)
 {
 }
@@ -26,15 +26,16 @@ AnalogInputPacket::writeContents(
 }
 
 void
-AnalogInputPacket::writeXML(
-        std::ostream& outputStream
+AnalogInputPacket::getXMLElements(
+        XMLElements& elements
         ) const
 {
-    outputStream
-        << "<packet>"
-        << "<type>AINPUT</type>"
-        << "<pin>" << myPin << "</pin>"
-        << "</packet>";
+    elements.add(
+            new XMLDataElement<unsigned int>(
+                "pin",
+                myPin
+                )
+            );
 }
 
 void
@@ -76,7 +77,7 @@ AnalogInputPacket::getPin() const
 
 
 AnalogValuePacket::AnalogValuePacket() :
-    RedBotPacket(TYPE_AVALUE, BID_AVALUE),
+    RedBotPacket(TYPE_AVALUE, "AVALUE", BID_AVALUE),
     myPin(1),
     myValue(0)
 {
@@ -86,7 +87,7 @@ AnalogValuePacket::AnalogValuePacket(
         unsigned int    pin,
         unsigned int    value
         ) :
-    RedBotPacket(TYPE_AVALUE, BID_AVALUE),
+    RedBotPacket(TYPE_AVALUE, "AVALUE", BID_AVALUE),
     myPin(pin),
     myValue(value)
 {
@@ -104,16 +105,22 @@ AnalogValuePacket::writeContents(
 }
 
 void
-AnalogValuePacket::writeXML(
-        std::ostream&   outputStream
+AnalogValuePacket::getXMLElements(
+        XMLElements& elements
         ) const
 {
-    outputStream
-        << "<packet>"
-        << "<type>AVALUE</type>"
-        << "<pin>" << myPin << "</pin>"
-        << "<value>" << myValue << "</value>"
-        << "</packet>";
+    elements.add(
+            new XMLDataElement<unsigned int>(
+                "pin",
+                myPin
+                )
+            );
+    elements.add(
+            new XMLDataElement<unsigned int>(
+                "value",
+                myValue
+                )
+            );
 }
 
 void
