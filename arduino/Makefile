@@ -1,4 +1,6 @@
 
+LDFLAGS = -L.. -lwpirb 
+
 include ../include.mk
 
 MODULES= \
@@ -16,7 +18,7 @@ DEPENDS = $(MODULES:%=%.d) $(TEST_MODULES:%=%.d)
 
 CPPFLAGS += -I$(CPPUTEST_HOME)/include -I..
 CXXFLAGS = -g -Wall -Werror
-LD_LIBRARIES += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt -L.. -lwpirb
+LDFLAGS += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 
 ARDUINO_ROOT = $(HOME)/Development/redbot/arduino-1.6.3
 
@@ -38,7 +40,7 @@ $(TEST_RUNNER) : $(OBJS) $(TEST_OBJS)
 	    $(CXXFLAGS) \
 	    -o $@ \
 	    AllTests.cpp $(OBJS) $(TEST_OBJS) \
-	    $(LD_LIBRARIES)
+	    $(LDFLAGS)
 
 -include $(DEPENDS)
 
