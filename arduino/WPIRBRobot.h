@@ -33,6 +33,10 @@ class WPIRBRobot
                 unsigned int    pin,
                 unsigned int    value
                 );
+        void sendPinConfigInfo(
+                unsigned int    pin,
+                bool            isOutput
+                );
 
         const static byte PACKET_BOUND = 0xFF;
 
@@ -43,9 +47,10 @@ class WPIRBRobot
         const static byte PACKET_TYPE_PINCONFIG =   0x05;
         const static byte PACKET_TYPE_MDRIVE =      0x06;
 
-        const static byte PACKET_TYPE_ACK =     0x82;
-        const static byte PACKET_TYPE_DVALUE =  0x81;
-        const static byte PACKET_TYPE_AVALUE =  0x83;
+        const static byte PACKET_TYPE_ACK =             0x82;
+        const static byte PACKET_TYPE_DVALUE =          0x81;
+        const static byte PACKET_TYPE_AVALUE =          0x83;
+        const static byte PACKET_TYPE_PINCONFIGINFO =   0x84;
 
         const static unsigned int PACKET_BUFSIZE = 10;
 

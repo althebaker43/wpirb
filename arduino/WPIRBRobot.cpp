@@ -196,21 +196,39 @@ WPIRBRobot::parseAnalogInputPacket()
 void
 WPIRBRobot::parsePinConfigPacket()
 {
+    bool isConfigured = false;
+    unsigned int pin = 0;
+    bool isOutput = false;
+
     if (myPacketSize == 5)
     {
-        unsigned int pin = myPacketBuffer[2];
-        unsigned int direction = myPacketBuffer[3];
+        pin = myPacketBuffer[2];
 
-        if (pin < 13)
+        unsigned int direction = myPacketBuffer[3];
+        isOutput = (direction == 1);
+
+        if (pin <= 13)
         {
             pinMode(
                     pin,
-                    ((direction == 1) ? OUTPUT : INPUT)
+                    (isOutput ? OUTPUT : INPUT)
                    );
+            isConfigured = true;
         }
     }
 
-    acknowledge();
+    if (isConfigured == true)
+    {
+        sendPinConfigInfo(
+                pin,
+                isOutput
+                );
+    }
+    else
+    {
+        acknowledge();
+    }
+
     return;
 }
 
@@ -305,6 +323,18 @@ WPIRBRobot::sendAnalogValue(unsigned int pin, unsigned int value)
     Serial.write(byte(pin + 1));
     Serial.write(byte(((0x3E0 & value) >> 5) + 1));
     Serial.write(byte((0x01F & value) + 1));
+    Serial.write(PACKET_BOUND);
+
+    Serial.flush();
+}
+
+void
+WPIRBRobot::sendPinConfigInfo(unsigned int pin, bool isOutput)
+{
+    Serial.write(PACKET_BOUND);
+    Serial.write(PACKET_TYPE_PINCONFIGINFO);
+    Serial.write(byte(pin));
+    Serial.write(byte(isOutput ? 0x01 : 0x02));
     Serial.write(PACKET_BOUND);
 
     Serial.flush();

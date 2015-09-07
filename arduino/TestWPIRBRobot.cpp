@@ -507,19 +507,25 @@ TEST(WPIRBRobot, PinConfigTest)
                 8,
                 PinConfigPacket::DIR_INPUT
                 ),
-            AcknowledgePacket(),
+            PinConfigInfoPacket(
+                8,
+                PinConfigInfoPacket::DIR_INPUT
+                ),
             robot
             );
 
     mock().checkExpectations();
 
-    mock().expectOneCall("pinMode").withParameter("pin", 12).withParameter("mode", OUTPUT);
+    mock().expectOneCall("pinMode").withParameter("pin", 13).withParameter("mode", OUTPUT);
     SendPacket(
             PinConfigPacket(
-                12,
+                13,
                 PinConfigPacket::DIR_OUTPUT
                 ),
-            AcknowledgePacket(),
+            PinConfigInfoPacket(
+                13,
+                PinConfigInfoPacket::DIR_OUTPUT
+                ),
             robot
             );
 
