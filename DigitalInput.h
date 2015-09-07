@@ -3,6 +3,7 @@
 
 #include "Input.h"
 #include "RedBotPacket.h"
+#include "ConfigurableInterface.h"
 #include <stdint.h>
 
 // Forward declarations
@@ -167,7 +168,9 @@ class DigitalValuePacket : public RedBotPacket
 /**
  * Digital input class
  */
-class DigitalInput : public Input<DigitalInputPacket, DigitalValuePacket, bool>
+class DigitalInput :
+    public Input<DigitalInputPacket, DigitalValuePacket, bool>,
+    private ConfigurableInterface
 {
     public:
 
@@ -194,18 +197,6 @@ class DigitalInput : public Input<DigitalInputPacket, DigitalValuePacket, bool>
         bool processPacket(
                 const Packet& packet
                 );
-
-    private:
-
-        /**
-         * Indicates if the pin has been configured yet
-         */
-        bool myIsPinConfigured;
-
-        /**
-         * Pin configuration packet sent for this cycle
-         */
-        PinConfigPacket* myConfigPacket;
 };
 
 #endif /* ifndef DIGITALINPUT_H */

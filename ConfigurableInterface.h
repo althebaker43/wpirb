@@ -1,6 +1,7 @@
 #ifndef PINCONFIG_H
 #define PINCONFIG_H
 
+#include "Component.h"
 #include "RedBotPacket.h"
 
 /**
@@ -156,6 +157,82 @@ class PinConfigInfoPacket : public RedBotPacket
          * Direction the pin is set to
          */
         PinDirection myDirection;
+};
+
+/**
+ * Base class for configurable I/O interfaces
+ *
+ * Components of this type need to configure their hardware first before using
+ * them for I/O.
+ */
+class ConfigurableInterface
+{
+    public:
+
+        /**
+         * Constructor
+         */
+        ConfigurableInterface(
+                unsigned int                pin,    /**< Pin to configure */
+                RedBotPacket::PinDirection  dir     /**< Direction to set pin */
+                );
+
+        /**
+         * Destructor
+         */
+        virtual ~ConfigurableInterface(){}
+
+    protected:
+
+        /**
+         * Provides the next configuration packet if available
+         */
+        Packet* getNextConfigPacket();
+
+        /**
+         * Processes the given configuration packet if appropriate
+         *
+         * \note A true return value from this function does not necessarily
+         * mean that the pin was successfully configured, only that the given
+         * packet was successfully processed.
+         *
+         * \return True if the given packet was successfully parsed, false
+         * otherwise.
+         */
+        bool processConfigInfoPacket(
+                const Packet& packet
+                );
+
+        /**
+         * Indicates if configuration is complete
+         *
+         * Instances are initialized as not being configured. After
+         * communicating configuration information to the robot and verifying
+         * its responses, they become configured.
+         */
+        bool isConfigured() const;
+
+    private:
+
+        /**
+         * Number of pin that needs to be configured
+         */
+        const unsigned int myPin;
+
+        /**
+         * Direction that pin should be set to
+         */
+        const RedBotPacket::PinDirection myDirection;
+
+        /**
+         * Indicates if the pin has been configured yet
+         */
+        bool myIsPinConfigured;
+
+        /**
+         * Pin configuration packet sent for this cycle
+         */
+        PinConfigPacket* myConfigPacket;
 };
 
 #endif /* ifndef PINCONFIG_H */

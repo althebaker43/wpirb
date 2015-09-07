@@ -1,6 +1,5 @@
 
 #include "DigitalOutput.h"
-#include "PinConfigPacket.h"
 #include <stdlib.h>
 
 
@@ -125,9 +124,9 @@ DigitalOutput::DigitalOutput(
         uint32_t channel
         ) :
     Component(),
+    ConfigurableInterface(channel, RedBotPacket::DIR_OUTPUT),
     myChannel(channel),
-    myCurrentPacket(NULL),
-    myIsPinConfigured(false)
+    myCurrentPacket(NULL)
 {
 }
 
@@ -156,18 +155,14 @@ DigitalOutput::getNextPacket()
 {
     Packet* packet = NULL;
 
-    if (myIsPinConfigured == true)
+    if (isConfigured() == true)
     {
         packet = myCurrentPacket;
         myCurrentPacket = NULL;
     }
     else
     {
-        packet = new PinConfigPacket(
-                myChannel,
-                PinConfigPacket::DIR_OUTPUT
-                );
-        myIsPinConfigured = true;
+        packet = getNextConfigPacket();
     }
 
     return packet;
@@ -178,6 +173,13 @@ DigitalOutput::processPacket(
         const Packet& packet
         )
 {
-    return false;
+    if (isConfigured() == true)
+    {
+        return false;
+    }
+    else
+    {
+        return processConfigInfoPacket(packet);
+    }
 }
 

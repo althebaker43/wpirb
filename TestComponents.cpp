@@ -1,11 +1,9 @@
 
 #include "TestComponents.h"
 #include "RedBotComponent.h"
-#include "PinConfigPacket.h"
 
 
-void
-CheckDrive(
+static void CheckDrive(
         RobotDrive&             drive,
         std::list<Packet*>&     packets,
         double                  magnitude,
@@ -14,6 +12,26 @@ CheckDrive(
         const MotorDrivePacket& leftPacket
         );
 
+template <class RequestType> static void CheckConfiguration(
+        Component&                          component,
+        unsigned int                        pin,
+        PinConfigInfoPacket::PinDirection   direction,
+        std::list<Packet*>&                 packets
+        );
+
+
+TEST(Components, DigitalOutputConfigTest)
+{
+    DigitalOutput dOut(9);
+    dOut.Set(1);
+
+    CheckConfiguration<DigitalOutputPacket>(
+            dOut,
+            9,
+            PinConfigInfoPacket::DIR_OUTPUT,
+            myPackets
+            );
+}
 
 TEST(Components, DigitalOutputTest)
 {
@@ -29,6 +47,8 @@ TEST(Components, DigitalOutputTest)
 
     CHECK_EQUAL(5, pinConfigPacket->getPin());
     CHECK_EQUAL(PinConfigPacket::DIR_OUTPUT, pinConfigPacket->getDirection());
+
+    dOut.processPacket(PinConfigInfoPacket(5, PinConfigInfoPacket::DIR_OUTPUT));
 
     Packet* packet1 = dOut.getNextPacket();
     myPackets.push_back(packet1);
@@ -59,71 +79,13 @@ TEST(Components, DigitalOutputTest)
 TEST(Components, DigitalInputConfigTest)
 {
     DigitalInput dIn(9);
-    Packet* requestPacket;
 
-    // cycle 1: no response
-
-    requestPacket = dIn.getNextPacket();
-    myPackets.push_back(requestPacket);
-
-    CHECK(NULL != requestPacket);
-    CHECK(NULL != dynamic_cast<PinConfigPacket*>(requestPacket));
-
-    requestPacket = dIn.getNextPacket();
-    myPackets.push_back(requestPacket);
-
-    POINTERS_EQUAL(NULL, requestPacket);
-
-    // cycle 2: no response
-
-    requestPacket = dIn.getNextPacket();
-    myPackets.push_back(requestPacket);
-
-    CHECK(NULL != requestPacket);
-    CHECK(NULL != dynamic_cast<PinConfigPacket*>(requestPacket));
-
-    requestPacket = dIn.getNextPacket();
-    myPackets.push_back(requestPacket);
-
-    POINTERS_EQUAL(NULL, requestPacket);
-
-    // cycle 3: bad responses
-
-    PinConfigInfoPacket configInfoPacket1(4, PinConfigInfoPacket::DIR_INPUT);
-
-    CHECK_FALSE(dIn.processPacket(configInfoPacket1));
-
-    PinConfigInfoPacket configInfoPacket2(9, PinConfigInfoPacket::DIR_OUTPUT);
-
-    CHECK(dIn.processPacket(configInfoPacket2));
-
-    requestPacket = dIn.getNextPacket();
-    myPackets.push_back(requestPacket);
-
-    CHECK(NULL != requestPacket);
-    CHECK(NULL != dynamic_cast<PinConfigPacket*>(requestPacket));
-
-    requestPacket = dIn.getNextPacket();
-    myPackets.push_back(requestPacket);
-
-    POINTERS_EQUAL(NULL, requestPacket);
-
-    // cycle 4: good response
-
-    PinConfigInfoPacket configInfoPacket3(9, PinConfigInfoPacket::DIR_INPUT);
-
-    CHECK(dIn.processPacket(configInfoPacket3));
-
-    requestPacket = dIn.getNextPacket();
-    myPackets.push_back(requestPacket);
-
-    CHECK(NULL != requestPacket);
-    CHECK(NULL != dynamic_cast<DigitalInputPacket*>(requestPacket));
-
-    requestPacket = dIn.getNextPacket();
-    myPackets.push_back(requestPacket);
-
-    POINTERS_EQUAL(NULL, requestPacket);
+    CheckConfiguration<DigitalInputPacket>(
+            dIn,
+            9,
+            PinConfigInfoPacket::DIR_INPUT,
+            myPackets
+            );
 }
 
 TEST(Components, DigitalInputTest)
@@ -459,4 +421,86 @@ CheckDrive(
 
     CHECK(rightDrivePacketFound);
     CHECK(leftDrivePacketFound);
+}
+
+template <class RequestType>
+void
+CheckConfiguration(
+        Component&                          component,
+        unsigned int                        pin,
+        PinConfigInfoPacket::PinDirection   direction,
+        std::list<Packet*>&                 packets
+        )
+{
+    Packet* requestPacket;
+    const unsigned int wrongPin = pin + 1;
+    const PinConfigInfoPacket::PinDirection wrongDirection = (
+            (direction == PinConfigInfoPacket::DIR_OUTPUT) ?
+                PinConfigInfoPacket::DIR_INPUT :
+                PinConfigInfoPacket::DIR_OUTPUT
+            );
+
+    // cycle 1: no response
+
+    requestPacket = component.getNextPacket();
+    packets.push_back(requestPacket);
+
+    CHECK(NULL != requestPacket);
+    CHECK(NULL != dynamic_cast<PinConfigPacket*>(requestPacket));
+
+    requestPacket = component.getNextPacket();
+    packets.push_back(requestPacket);
+
+    POINTERS_EQUAL(NULL, requestPacket);
+
+    // cycle 2: no response
+
+    requestPacket = component.getNextPacket();
+    packets.push_back(requestPacket);
+
+    CHECK(NULL != requestPacket);
+    CHECK(NULL != dynamic_cast<PinConfigPacket*>(requestPacket));
+
+    requestPacket = component.getNextPacket();
+    packets.push_back(requestPacket);
+
+    POINTERS_EQUAL(NULL, requestPacket);
+
+    // cycle 3: bad responses
+
+    PinConfigInfoPacket configInfoPacket1(wrongPin, direction);
+
+    CHECK_FALSE(component.processPacket(configInfoPacket1));
+
+    PinConfigInfoPacket configInfoPacket2(pin, wrongDirection);
+
+    CHECK(component.processPacket(configInfoPacket2));
+
+    requestPacket = component.getNextPacket();
+    packets.push_back(requestPacket);
+
+    CHECK(NULL != requestPacket);
+    CHECK(NULL != dynamic_cast<PinConfigPacket*>(requestPacket));
+
+    requestPacket = component.getNextPacket();
+    packets.push_back(requestPacket);
+
+    POINTERS_EQUAL(NULL, requestPacket);
+
+    // cycle 4: good response
+
+    PinConfigInfoPacket configInfoPacket3(pin, direction);
+
+    CHECK(component.processPacket(configInfoPacket3));
+
+    requestPacket = component.getNextPacket();
+    packets.push_back(requestPacket);
+
+    CHECK(NULL != requestPacket);
+    CHECK(NULL != dynamic_cast<RequestType*>(requestPacket));
+
+    requestPacket = component.getNextPacket();
+    packets.push_back(requestPacket);
+
+    POINTERS_EQUAL(NULL, requestPacket);
 }

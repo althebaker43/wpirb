@@ -1,7 +1,6 @@
 
 #include "RedBotPacket.h"
 #include "RedBotComponent.h"
-#include "PinConfigPacket.h"
 #include <sstream>
 #include <vector>
 #include <math.h>

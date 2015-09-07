@@ -1,6 +1,5 @@
 
 #include "DigitalInput.h"
-#include "PinConfigPacket.h"
 #include <stdlib.h>
 
 
@@ -226,8 +225,7 @@ DigitalInput::DigitalInput(
         uint32_t channel
         ) :
     Input(channel),
-    myIsPinConfigured(false),
-    myConfigPacket(NULL)
+    ConfigurableInterface(channel, RedBotPacket::DIR_INPUT)
 {
 }
 
@@ -240,25 +238,13 @@ DigitalInput::getNextPacket()
 {
     Packet* packet = NULL;
 
-    if (myIsPinConfigured == true)
+    if (isConfigured() == true)
     {
         packet = getNextPacketIfTimedOut();
     }
     else
     {
-        // Only send one configuration packet per cycle
-        if (myConfigPacket == NULL)
-        {
-            myConfigPacket = new PinConfigPacket(
-                    myChannel,
-                    PinConfigPacket::DIR_INPUT
-                    );
-            packet = myConfigPacket;
-        }
-        else
-        {
-            myConfigPacket = NULL;
-        }
+        packet = getNextConfigPacket();
     }
 
     return packet;
@@ -269,29 +255,13 @@ DigitalInput::processPacket(
         const Packet& packet
         )
 {
-    if (myIsPinConfigured == true)
+    if (isConfigured() == true)
     {
         return processDataPacket(packet);
     }
     else
     {
-        const PinConfigInfoPacket* configInfoPacket = dynamic_cast<const PinConfigInfoPacket*>(&packet);
-        if (configInfoPacket == NULL)
-        {
-            return false;
-        }
-
-        if (configInfoPacket->getPin() != myChannel)
-        {
-            return false;
-        }
-
-        if (configInfoPacket->getDirection() == PinConfigInfoPacket::DIR_INPUT)
-        {
-            myIsPinConfigured = true;
-        }
-
-        return true;
+        return processConfigInfoPacket(packet);
     }
 }
 

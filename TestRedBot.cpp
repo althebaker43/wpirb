@@ -1,7 +1,6 @@
 
 #include "TestRedBot.h"
 #include "RedBot.h"
-#include "PinConfigPacket.h"
 
 
 void
@@ -69,15 +68,23 @@ TEST(RedBot, CommandTest)
     FieldControlSystem::Mode mode = FieldControlSystem::MODE_DISABLED;
     robot.modeInit(mode);
 
+    // cycle 1: configure
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x05\x04\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x84\x04\x01\xFF");
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
+    mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
+
+    // cycle 2: command
+    mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x02\x04\x02\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
     mock().expectOneCall("sendString").withParameter("outputString", "\xFF\x01\xFF");
     mock().expectOneCall("receiveString").andReturnValue("\xFF\x82\xFF");
 
+    robot.modePeriodic(mode);
     robot.modePeriodic(mode);
 
     mock().checkExpectations();

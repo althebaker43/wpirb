@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "Component.h"
 #include "RedBotPacket.h"
+#include "ConfigurableInterface.h"
 
 /**
  * Digital output command class
@@ -86,7 +87,9 @@ class DigitalOutputPacket : public RedBotPacket
 /**
  * Digital output class
  */
-class DigitalOutput : public Component
+class DigitalOutput :
+    public Component,
+    private ConfigurableInterface
 {
     public:
 
@@ -134,11 +137,6 @@ class DigitalOutput : public Component
          * Packet to send to robot
          */
         Packet* myCurrentPacket;
-
-        /**
-         * Indicates if the pin has been configured yet
-         */
-        bool myIsPinConfigured;
 };
 
 #endif /* ifndef DIGITALOUTPUT_H */

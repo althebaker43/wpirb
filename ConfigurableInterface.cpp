@@ -1,5 +1,5 @@
 
-#include "PinConfigPacket.h"
+#include "ConfigurableInterface.h"
 
 
 PinConfigPacket::PinConfigPacket() :
@@ -202,5 +202,69 @@ RedBotPacket::PinDirection
 PinConfigInfoPacket::getDirection() const
 {
     return myDirection;
+}
+
+
+ConfigurableInterface::ConfigurableInterface(
+        unsigned int                pin,
+        RedBotPacket::PinDirection  dir
+        ) :
+    myPin(pin),
+    myDirection(dir),
+    myIsPinConfigured(false),
+    myConfigPacket(NULL)
+{
+}
+
+Packet*
+ConfigurableInterface::getNextConfigPacket()
+{
+    Packet* packet = NULL;
+
+    // Only send one configuration packet per cycle
+    if (myConfigPacket == NULL)
+    {
+        myConfigPacket = new PinConfigPacket(
+                myPin,
+                myDirection
+                );
+        packet = myConfigPacket;
+    }
+    else
+    {
+        myConfigPacket = NULL;
+    }
+
+    return packet;
+}
+
+bool
+ConfigurableInterface::processConfigInfoPacket(
+        const Packet& packet
+        )
+{
+    const PinConfigInfoPacket* configInfoPacket = dynamic_cast<const PinConfigInfoPacket*>(&packet);
+    if (configInfoPacket == NULL)
+    {
+        return false;
+    }
+
+    if (configInfoPacket->getPin() != myPin)
+    {
+        return false;
+    }
+
+    if (configInfoPacket->getDirection() == myDirection)
+    {
+        myIsPinConfigured = true;
+    }
+
+    return true;
+}
+
+bool
+ConfigurableInterface::isConfigured() const
+{
+    return myIsPinConfigured;
 }
 

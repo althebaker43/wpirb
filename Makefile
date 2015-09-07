@@ -17,7 +17,7 @@ MODULES= \
 	IOBuffer \
 	Packet \
 	RedBotPacket \
-	PinConfigPacket \
+	ConfigurableInterface \
 	Component \
 	Main \
 	XMLElement
