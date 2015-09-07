@@ -2,7 +2,6 @@
 #include "WPIRBRobot.h"
 #include "Arduino.h"
 #include "RedBotComponent.h"
-#include "PinConfigPacket.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include <sstream>
