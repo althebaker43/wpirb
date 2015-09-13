@@ -1,7 +1,11 @@
 
 #include "WPIRBRobot.h"
 #include "Arduino.h"
-#include "RedBotComponent.h"
+#include "RedBotPacket.h"
+#include "DigitalInput.h"
+#include "DigitalOutput.h"
+#include "AnalogInput.h"
+#include "RobotDrive.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include <sstream>

@@ -35,6 +35,8 @@ REDBOTCOMPONENTS_DIR = redBotComponents
 REDBOTCOMPONENTS_LIB = $(REDBOTCOMPONENTS_DIR)/libredbotcomponents.a
 CPPFLAGS += -I$(REDBOTCOMPONENTS_DIR)
 
+ARDUINO_DIR = arduino
+
 RESIDUE= \
 	$(LIB) \
 	$(OBJS) \
@@ -53,6 +55,7 @@ test : $(TEST_RUNNER)
 .PHONY : test_all
 test_all : test
 	$(MAKE) -C $(REDBOTCOMPONENTS_DIR) test
+	$(MAKE) -C $(ARDUINO_DIR) test
 
 $(TEST_RUNNER) : $(LIB) $(COMPONENT_LIB) $(REDBOTCOMPONENTS_LIB) $(TEST_OBJS)
 	$(CXX) \
@@ -83,4 +86,5 @@ tags : $(MODULES:%=%.cpp) $(MODULES:%=%.h)
 clean :
 	$(MAKE) -C $(COMPONENT_DIR) clean
 	$(MAKE) -C $(REDBOTCOMPONENTS_DIR) clean
+	$(MAKE) -C $(ARDUINO_DIR) clean
 	rm -rf $(RESIDUE)

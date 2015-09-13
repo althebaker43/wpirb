@@ -1,14 +1,14 @@
 
-LDFLAGS += \
-	-L$(WPIRB_DIR) -lwpirb \
-	-L$(COMPONENT_DIR) -lcomponent \
-	-L$(REDBOTCOMPONENTS_DIR) -lredbotcomponents
-
-include ../../include.mk
-
 WPIRB_DIR = ../..
 COMPONENT_DIR = $(WPIRB_DIR)/component
 REDBOTCOMPONENTS_DIR = $(WPIRB_DIR)/redBotComponents
+
+LDFLAGS += \
+	-L$(WPIRB_DIR) -lwpirb \
+	-L$(REDBOTCOMPONENTS_DIR) -lredbotcomponents \
+	-L$(COMPONENT_DIR) -lcomponent
+
+include ../../include.mk
 
 CPPFLAGS += \
 	-I$(WPIRB_DIR) \

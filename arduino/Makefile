@@ -1,5 +1,12 @@
 
-LDFLAGS = -L.. -lwpirb 
+WPIRB_DIR = ..
+COMPONENT_DIR = $(WPIRB_DIR)/component
+REDBOTCOMPONENTS_DIR = $(WPIRB_DIR)/redBotComponents
+
+LDFLAGS += \
+	-L$(WPIRB_DIR) -lwpirb \
+	-L$(REDBOTCOMPONENTS_DIR) -lredbotcomponents \
+	-L$(COMPONENT_DIR) -lcomponent
 
 include ../include.mk
 
@@ -16,7 +23,7 @@ TEST_RUNNER=runTests
 
 DEPENDS = $(MODULES:%=%.d) $(TEST_MODULES:%=%.d)
 
-CPPFLAGS += -I$(CPPUTEST_HOME)/include -I..
+CPPFLAGS += -I$(WPIRB_DIR) -I$(REDBOTCOMPONENTS_DIR) -I$(COMPONENT_DIR)
 CXXFLAGS = -g -Wall -Werror
 LDFLAGS += -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 
