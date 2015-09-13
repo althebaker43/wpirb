@@ -1,6 +1,7 @@
 #ifndef JOYSTICK_H
 #define JOYSTICK_H
 
+#include "TwoDimController.h"
 #include "SDL2/SDL.h"
 
 /**
@@ -18,7 +19,7 @@ enum JoystickHand
  * This class currently uses the Simple DirectMedia Layer (SDL) to use
  * connected joysticks.
  */
-class Joystick
+class Joystick : public TwoDimController
 {
     public:
 
@@ -52,6 +53,18 @@ class Joystick
          * Indicates if this joystick is connected
          */
         bool isConnected() const;
+
+        // TwoDimController interface
+
+        /**
+         * Provides this controller's position on the X axis
+         */
+        float getXPosition();
+
+        /**
+         * Provides this controller's position on the Y axis
+         */
+        float getYPosition();
 
     private:
 

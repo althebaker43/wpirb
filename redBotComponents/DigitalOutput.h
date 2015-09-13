@@ -2,7 +2,7 @@
 #define DIGITALOUTPUT_H
 
 #include <stdint.h>
-#include "Component.h"
+#include "RedBotComponent.h"
 #include "RedBotPacket.h"
 #include "ConfigurableInterface.h"
 
@@ -88,7 +88,7 @@ class DigitalOutputPacket : public RedBotPacket
  * Digital output class
  */
 class DigitalOutput :
-    public Component,
+    public RedBotComponent,
     private ConfigurableInterface
 {
     public:

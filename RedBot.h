@@ -3,6 +3,7 @@
 
 #include "FieldControlSystem.h"
 #include "IOBuffer.h"
+#include "Component.h"
 #include <stdio.h>
 #include <termios.h>
 #include <list>
@@ -10,7 +11,6 @@
 
 // Forward declarations
 class IterativeRobot;
-class Component;
 class Packet;
 class PacketGenerator;
 
@@ -34,21 +34,6 @@ class RedBot
             STATUS_INCOHERENT,      /**< Robot is not sending vaild packets */
             STATUS_GOOD             /**< Robot is operating normally */
         };
-
-        /**
-         * Registers a component used in a program with a robot object
-         *
-         * This is done during program initialization so that packets can be
-         * exchanged between the robot and the different components.
-         */
-        static void RegisterComponent(
-                Component* component
-                );
-
-        /**
-         * Clears the registered components awaiting ownership
-         */
-        static void ClearRegisteredComponents();
 
         /**
          * Constructor given program and serial device name
@@ -134,20 +119,6 @@ class RedBot
                 ) const;
 
     private:
-
-        /**
-         * Component collection type
-         */
-        typedef std::list<Component*> Components;
-
-        /**
-         * Components used in last-initialized robot program
-         *
-         * After the program has finished being constructed, the robot instance
-         * that owns the program should grab all of the components in this
-         * collection to use for packet communication and then clear it.
-         */
-        static Components ourCurrentComponents;
 
         /**
          * Baud rate enumerator for robot connection

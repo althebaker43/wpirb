@@ -1,12 +1,12 @@
 #ifndef ROBOTDRIVE_H
 #define ROBOTDRIVE_H
 
-#include "Component.h"
+#include "RedBotComponent.h"
 #include "RedBotPacket.h"
 #include <stdint.h>
 
 // Forward declarations
-class Joystick;
+class TwoDimController;
 
 /**
  * Motor drive command class
@@ -135,7 +135,7 @@ class MotorDrivePacket : public RedBotPacket
 /**
  * Handles common drive operations for a robot with two motors
  */
-class RobotDrive : public Component
+class RobotDrive : public RedBotComponent
 {
     public:
 
@@ -152,13 +152,14 @@ class RobotDrive : public Component
                 );
 
         /**
-         * Drives the robot arcade style using the given joystick
+         * Drives the robot arcade style using the given controller
          *
-         * This function uses the Y-axis from the joystick as the magnitude and
-         * the X-axis as the curve for the Drive function.
+         * This function uses the Y-axis from the controller as the magnitude
+         * and the X-axis as the curve for the Drive function. The controller
+         * is most often a joystick.
          */
         void ArcadeDrive(
-                Joystick& joystick
+                TwoDimController& controller
                 );
 
         /**

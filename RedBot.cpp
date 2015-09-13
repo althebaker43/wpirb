@@ -12,23 +12,6 @@
 #include <errno.h>
 
 
-RedBot::Components RedBot::ourCurrentComponents;
-
-
-void
-RedBot::RegisterComponent(
-        Component* component
-        )
-{
-    ourCurrentComponents.push_back(component);
-}
-
-void
-RedBot::ClearRegisteredComponents()
-{
-    ourCurrentComponents.clear();
-}
-
 RedBot::RedBot(
         IterativeRobot*     program,
         const char*         deviceName,
@@ -43,8 +26,8 @@ RedBot::RedBot(
     myPacketGenerator(packetGen)
 {
     // Move all newly registered components to my own collection
-    myComponents = ourCurrentComponents;
-    ourCurrentComponents.clear();
+    myComponents = Component::GetRegisteredComponents();
+    Component::ClearRegisteredComponents();
 
     if (deviceName != NULL)
     {
@@ -77,8 +60,8 @@ RedBot::RedBot(
     myPacketGenerator(packetGen)
 {
     // Move all newly registered components to my own collection
-    myComponents = ourCurrentComponents;
-    ourCurrentComponents.clear();
+    myComponents = Component::GetRegisteredComponents();
+    Component::ClearRegisteredComponents();
 }
 
 RedBot::RedBot(
@@ -96,8 +79,8 @@ RedBot::RedBot(
     myPacketGenerator(packetGen)
 {
     // Move all newly registered components to my own collection
-    myComponents = ourCurrentComponents;
-    ourCurrentComponents.clear();
+    myComponents = Component::GetRegisteredComponents();
+    Component::ClearRegisteredComponents();
 }
 
 RedBot::~RedBot()

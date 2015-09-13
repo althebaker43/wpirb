@@ -84,3 +84,18 @@ Joystick::GetY(
         return (yVal / MIN_AXIS);
     }
 }
+
+// TwoDimController implementations
+
+float
+Joystick::getXPosition()
+{
+    return GetX();
+}
+
+float
+Joystick::getYPosition()
+{
+    return GetY();
+}
+

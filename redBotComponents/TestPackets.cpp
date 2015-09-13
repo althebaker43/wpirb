@@ -1,6 +1,10 @@
 
 #include "RedBotPacket.h"
-#include "RedBotComponent.h"
+#include "ConfigurableInterface.h"
+#include "DigitalInput.h"
+#include "DigitalOutput.h"
+#include "AnalogInput.h"
+#include "RobotDrive.h"
 #include "TestUtils.h"
 #include <sstream>
 #include <list>

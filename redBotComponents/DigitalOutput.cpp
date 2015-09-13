@@ -123,7 +123,7 @@ DigitalOutputPacket::getValue() const
 DigitalOutput::DigitalOutput(
         uint32_t channel
         ) :
-    Component(),
+    RedBotComponent(),
     ConfigurableInterface(channel, RedBotPacket::DIR_OUTPUT),
     myChannel(channel),
     myCurrentPacket(NULL)

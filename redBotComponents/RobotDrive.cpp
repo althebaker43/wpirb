@@ -1,7 +1,8 @@
 
 #include "RobotDrive.h"
-#include "Joystick.h"
+#include "TwoDimController.h"
 #include <stdlib.h>
+#include <math.h>
 
 
 MotorDrivePacket::MotorDrivePacket() :
@@ -178,7 +179,7 @@ RobotDrive::RobotDrive(
         uint32_t leftChannel,
         uint32_t rightChannel
         ) :
-    Component(),
+    RedBotComponent(),
     myCurrentLMotorPacket(NULL),
     myCurrentRMotorPacket(NULL)
 {
@@ -193,12 +194,12 @@ RobotDrive::SetExpiration(
 
 void
 RobotDrive::ArcadeDrive(
-        Joystick& joystick
+        TwoDimController& controller
         )
 {
     Drive(
-            joystick.GetY(),
-            joystick.GetX()
+            controller.getXPosition(),
+            controller.getYPosition()
          );
 }
 

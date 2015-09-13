@@ -6,21 +6,12 @@ CXXFLAGS += -g -Wall -Werror
 MODULES= \
 	FieldControlSystem \
 	IterativeRobot \
-	RobotDrive \
-	DigitalOutput \
-	DigitalInput \
-	AnalogInput \
 	Timer \
 	Joystick \
 	LiveWindow \
 	RedBot \
 	IOBuffer \
-	Packet \
-	RedBotPacket \
-	ConfigurableInterface \
-	Component \
-	Main \
-	XMLElement
+	Main
 OBJS=$(MODULES:%=%.o)
 LIB=libwpirb.a
 
@@ -30,13 +21,19 @@ TEST_MODULES= \
 	TestUtils \
 	TestIterativeRobot \
 	TestRedBot \
-	TestPackets \
-	TestComponents \
 	TestIOBuffer
 TEST_OBJS=$(TEST_MODULES:%=%.o)
 TEST_RUNNER=runTests
 
 DEPENDS = $(MODULES:%=%.d) $(TEST_MODULES:%=%.d)
+
+COMPONENT_DIR = component
+COMPONENT_LIB = $(COMPONENT_DIR)/libcomponent.a
+CPPFLAGS += -I$(COMPONENT_DIR)
+
+REDBOTCOMPONENTS_DIR = redBotComponents
+REDBOTCOMPONENTS_LIB = $(REDBOTCOMPONENTS_DIR)/libredbotcomponents.a
+CPPFLAGS += -I$(REDBOTCOMPONENTS_DIR)
 
 RESIDUE= \
 	$(LIB) \
@@ -53,16 +50,26 @@ all : tags test
 test : $(TEST_RUNNER)
 	./$(TEST_RUNNER)
 
-$(TEST_RUNNER) : $(LIB) $(TEST_OBJS)
+.PHONY : test_all
+test_all : test
+	$(MAKE) -C $(REDBOTCOMPONENTS_DIR) test
+
+$(TEST_RUNNER) : $(LIB) $(COMPONENT_LIB) $(REDBOTCOMPONENTS_LIB) $(TEST_OBJS)
 	$(CXX) \
 	    $(CPPFLAGS) \
 	    $(CXXFLAGS) \
 	    -o $@ \
-	    AllTests.cpp $(TEST_OBJS) libwpirb.a \
-	    $(LDFLAGS)
+	    AllTests.cpp $(TEST_OBJS) \
+	    -L. -lwpirb -L$(COMPONENT_DIR) -lcomponent -L$(REDBOTCOMPONENTS_DIR) -lredbotcomponents $(LDFLAGS)
 
 $(LIB) : $(OBJS)
 	ar r $@ $^
+
+$(COMPONENT_LIB) : $(COMPONENT_LIB)
+	$(MAKE) -C $(COMPONENT_DIR) lib
+
+$(REDBOTCOMPONENTS_LIB) : $(COMPONENT_LIB)
+	$(MAKE) -C $(REDBOTCOMPONENTS_DIR) lib
 
 -include $(DEPENDS)
 
@@ -74,4 +81,6 @@ tags : $(MODULES:%=%.cpp) $(MODULES:%=%.h)
 
 .PHONY : clean
 clean :
+	$(MAKE) -C $(COMPONENT_DIR) clean
+	$(MAKE) -C $(REDBOTCOMPONENTS_DIR) clean
 	rm -rf $(RESIDUE)

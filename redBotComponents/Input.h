@@ -1,7 +1,7 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "Component.h"
+#include "RedBotComponent.h"
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -15,7 +15,7 @@
  * have passed without any response.
  */
 template <class RequestType, class ResponseType, class ValueType>
-class Input : public Component
+class Input : public RedBotComponent
 {
     public:
 
@@ -91,7 +91,7 @@ template <class RequestType, class ResponseType, class ValueType>
 Input<RequestType, ResponseType, ValueType>::Input(
         uint32_t channel
         ) :
-    Component(),
+    RedBotComponent(),
     myChannel(channel),
     myValue(0),
     myOutgoingPacket(new RequestType(myChannel)),

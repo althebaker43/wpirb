@@ -5,8 +5,8 @@
 #include "DigitalOutput.h"
 #include "DigitalInput.h"
 #include "RobotDrive.h"
+#include "Timer.h"
 #include "IOBuffer.h"
-#include "Packet.h"
 #include "FieldControlSystem.h"
 #include "TestUtils.h"
 #include "CppUTestExt/MockSupport.h"
@@ -215,6 +215,36 @@ class DriveRobot : public IterativeRobot
 
         void TeleopPeriodic()
         {
+        }
+};
+
+TEST_GROUP(Timer)
+{
+};
+
+struct timespec MockTime;
+
+int
+MockTimeAccessor(
+        clockid_t           clock,
+        struct timespec*    time
+        )
+{
+    time->tv_sec = MockTime.tv_sec;
+    time->tv_nsec = MockTime.tv_nsec;
+    return 0;
+}
+
+class MockTimer : public Timer
+{
+    public:
+
+        MockTimer(
+                TimeAccessor accessor
+                ) :
+            Timer()
+        {
+            Timer::getTime = accessor;
         }
 };
 

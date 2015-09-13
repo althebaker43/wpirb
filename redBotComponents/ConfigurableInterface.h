@@ -1,7 +1,6 @@
 #ifndef PINCONFIG_H
 #define PINCONFIG_H
 
-#include "Component.h"
 #include "RedBotPacket.h"
 
 /**
