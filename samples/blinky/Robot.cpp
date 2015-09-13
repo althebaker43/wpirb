@@ -10,7 +10,7 @@ class Robot : public IterativeRobot
     public:
 
         Robot() :
-            myLED(9),
+            myLED(13),
             myBlinkTimer(),
             myLEDState(0)
         {
