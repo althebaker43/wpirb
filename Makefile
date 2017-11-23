@@ -46,7 +46,7 @@ RESIDUE= \
 
 
 .PHONY : all
-all : tags test
+all : tags TAGS test
 
 .PHONY : test
 test : $(TEST_RUNNER)
@@ -81,6 +81,9 @@ $(DEPENDS) : %.d : %.cpp
 
 tags : $(MODULES:%=%.cpp) $(MODULES:%=%.h)
 	ctags $(MODULES:%=%.cpp) $(MODULES:%=%.h)
+
+TAGS : $(MODULES:%=%.cpp) $(MODULES:%=%.h)
+	etags -l c++ $(MODULES:%=%.cpp) $(MODULES:%=%.h)
 
 .PHONY : clean
 clean :
