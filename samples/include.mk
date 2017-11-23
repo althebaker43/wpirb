@@ -6,7 +6,7 @@ REDBOTCOMPONENTS_DIR = $(WPIRB_DIR)/redBotComponents
 LDFLAGS += \
 	-L$(WPIRB_DIR) -lwpirb \
 	-L$(REDBOTCOMPONENTS_DIR) -lredbotcomponents \
-	-L$(COMPONENT_DIR) -lcomponent
+	-L$(COMPONENT_DIR) -lcomponent -ldl -pthread
 
 include ../../include.mk
 
