@@ -143,6 +143,14 @@ TEST(Components, AnalogInputTest)
 
     CHECK(packet1 != NULL);
     CHECK(NULL != dynamic_cast<AnalogInputPacket*>(packet1));
+
+    aIn.processPacket(AnalogValuePacket(3, 5));
+
+    CHECK_EQUAL((int)5, aIn.GetValue());
+
+    aIn.processPacket(AnalogValuePacket(3, -19));
+
+    CHECK_EQUAL(-19, aIn.GetValue());
 }
 
 TEST(Components, RobotDriveSimpleTest)

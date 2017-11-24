@@ -196,7 +196,7 @@ AnalogInput::~AnalogInput()
 {
 }
 
-uint16_t
+int
 AnalogInput::GetValue()
 {
     return Get();

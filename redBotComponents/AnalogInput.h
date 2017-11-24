@@ -157,7 +157,7 @@ namespace frc
 /**
  * Analog input class
  */
-class AnalogInput : public Input<AnalogInputPacket, AnalogValuePacket, uint16_t>
+class AnalogInput : public Input<AnalogInputPacket, AnalogValuePacket, int>
 {
     public:
 
@@ -179,7 +179,7 @@ class AnalogInput : public Input<AnalogInputPacket, AnalogValuePacket, uint16_t>
          * This returns a 10-bit value produced by the Analog-to-Digital
          * converter that the input pin is connected to on the robot.
          */
-        uint16_t GetValue();
+        int GetValue();
 
         /**
          * Provides the next available packet to send
