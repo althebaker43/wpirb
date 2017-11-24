@@ -84,6 +84,9 @@ class DigitalOutputPacket : public RedBotPacket
         bool myValue;
 };
 
+namespace frc
+{
+
 /**
  * Digital output class
  */
@@ -138,5 +141,7 @@ class DigitalOutput :
          */
         Packet* myCurrentPacket;
 };
+
+}; /* namespace frc */
 
 #endif /* ifndef DIGITALOUTPUT_H */

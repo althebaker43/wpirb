@@ -2,6 +2,8 @@
 #include "DigitalOutput.h"
 #include <stdlib.h>
 
+using namespace frc;
+
 
 DigitalOutputPacket::DigitalOutputPacket() :
     RedBotPacket(TYPE_DOUTPUT, "DOUTPUT", BID_DOUTPUT),

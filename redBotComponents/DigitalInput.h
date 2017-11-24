@@ -165,6 +165,9 @@ class DigitalValuePacket : public RedBotPacket
         std::vector<int> myBinaryData;
 };
 
+namespace frc
+{
+
 /**
  * Digital input class
  */
@@ -198,5 +201,7 @@ class DigitalInput :
                 const Packet& packet
                 );
 };
+
+}; /* namespace frc */
 
 #endif /* ifndef DIGITALINPUT_H */

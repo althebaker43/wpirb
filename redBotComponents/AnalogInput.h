@@ -151,6 +151,9 @@ class AnalogValuePacket : public RedBotPacket
         unsigned int myValue;
 };
 
+namespace frc
+{
+
 /**
  * Analog input class
  */
@@ -190,5 +193,7 @@ class AnalogInput : public Input<AnalogInputPacket, AnalogValuePacket, uint16_t>
                 const Packet& packet
                 );
 };
+
+}; /* namespace frc */
 
 #endif /* ifndef ANALOGINPUT_H */

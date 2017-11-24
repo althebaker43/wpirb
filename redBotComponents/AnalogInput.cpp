@@ -2,6 +2,8 @@
 #include "AnalogInput.h"
 #include <stdlib.h>
 
+using namespace frc;
+
 
 AnalogInputPacket::AnalogInputPacket() :
     RedBotPacket(TYPE_AINPUT, "AINPUT", BID_AINPUT),

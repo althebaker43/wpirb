@@ -6,7 +6,7 @@ class Robot : public frc::IterativeRobot
 {
     private:
 
-        DigitalInput dIn;
+        frc::DigitalInput dIn;
         bool lastVal;
 
     public:

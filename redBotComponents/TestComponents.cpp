@@ -25,7 +25,7 @@ template <class RequestType> static void CheckConfiguration(
 
 TEST(Components, DigitalOutputConfigTest)
 {
-    DigitalOutput dOut(9);
+    frc::DigitalOutput dOut(9);
     dOut.Set(1);
 
     CheckConfiguration<DigitalOutputPacket>(
@@ -38,7 +38,7 @@ TEST(Components, DigitalOutputConfigTest)
 
 TEST(Components, DigitalOutputTest)
 {
-    DigitalOutput dOut(5);
+    frc::DigitalOutput dOut(5);
     dOut.Set(1);
     Packet* packet0 = dOut.getNextPacket();
     myPackets.push_back(packet0);
@@ -81,7 +81,7 @@ TEST(Components, DigitalOutputTest)
 
 TEST(Components, DigitalInputConfigTest)
 {
-    DigitalInput dIn(9);
+    frc::DigitalInput dIn(9);
 
     CheckConfiguration<DigitalInputPacket>(
             dIn,
@@ -93,7 +93,7 @@ TEST(Components, DigitalInputConfigTest)
 
 TEST(Components, DigitalInputTest)
 {
-    DigitalInput dIn(4);
+    frc::DigitalInput dIn(4);
 
     Packet* packet0 = dIn.getNextPacket();
     myPackets.push_back(packet0);
@@ -136,7 +136,7 @@ TEST(Components, DigitalInputTest)
 
 TEST(Components, AnalogInputTest)
 {
-    AnalogInput aIn(3);
+    frc::AnalogInput aIn(3);
 
     Packet* packet1 = aIn.getNextPacket();
     myPackets.push_back(packet1);

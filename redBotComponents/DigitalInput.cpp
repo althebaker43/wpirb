@@ -2,6 +2,8 @@
 #include "DigitalInput.h"
 #include <stdlib.h>
 
+using namespace frc;
+
 
 DigitalInputPacket::DigitalInputPacket() :
     RedBotPacket(TYPE_DINPUT, "DINPUT", BID_DINPUT),

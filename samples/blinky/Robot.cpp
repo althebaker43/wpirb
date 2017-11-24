@@ -3,7 +3,7 @@
 
 class Robot : public frc::IterativeRobot
 {
-    DigitalOutput myLED;
+    frc::DigitalOutput myLED;
     frc::Timer myBlinkTimer;
     uint32_t myLEDState;
 

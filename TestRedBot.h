@@ -150,7 +150,7 @@ class DigitalOutputRobot : public frc::IterativeRobot
 {
     private:
 
-        DigitalOutput dOut;
+        frc::DigitalOutput dOut;
 
     public:
 
@@ -170,7 +170,7 @@ class DigitalInputRobot : public frc::IterativeRobot
 {
     private:
 
-        DigitalInput dIn;
+        frc::DigitalInput dIn;
 
         bool myValue;
 
