@@ -1,6 +1,6 @@
 #include "WPILib.h"
 
-class Robot : public IterativeRobot
+class Robot : public frc::IterativeRobot
 {
     private:
 

@@ -1,6 +1,8 @@
 
 #include "IterativeRobot.h"
 
+using namespace frc;
+
 
 void
 IterativeRobot::RobotInit()

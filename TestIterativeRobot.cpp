@@ -14,7 +14,7 @@ TEST_GROUP(IterativeRobot)
     }
 };
 
-class CountRobot : public IterativeRobot
+class CountRobot : public frc::IterativeRobot
 {
     private:
 
@@ -60,7 +60,7 @@ class MockRedBot : public RedBot
     public:
 
         MockRedBot(
-                IterativeRobot* program
+		frc::IterativeRobot* program
                 ) :
             RedBot(
                     program,

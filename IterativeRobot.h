@@ -1,6 +1,9 @@
 #ifndef ROBOTBASE_H
 #define ROBOTBASE_H
 
+namespace frc
+{
+
 /**
  * Robot base class whose functions iterate once per cycle
  *
@@ -90,6 +93,8 @@ class IterativeRobot
          */
         virtual void TestPeriodic();
 };
+
+}; /* namespace frc */
 
 
 #endif /* ifndef ROBOTBASE_H */

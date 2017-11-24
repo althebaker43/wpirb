@@ -10,7 +10,10 @@
 #include <queue>
 
 // Forward declarations
-class IterativeRobot;
+namespace frc
+{
+  class IterativeRobot;
+};
 class Packet;
 class PacketGenerator;
 
@@ -42,7 +45,7 @@ class RedBot
          * communication with the robot.
          */
         RedBot(
-                IterativeRobot*     program,
+                frc::IterativeRobot*     program,
                 const char*         deviceName,
                 PacketGenerator*    packetGen
               );
@@ -54,7 +57,7 @@ class RedBot
          * I/O.
          */
         RedBot(
-                IterativeRobot*     program,
+                frc::IterativeRobot*     program,
                 FILE*               device,
                 PacketGenerator*    packetGen
               );
@@ -65,7 +68,7 @@ class RedBot
          * This makes this robot object use the given buffers for packet I/O.
          */
         RedBot(
-                IterativeRobot*     program,
+                frc::IterativeRobot*     program,
                 InputBuffer*        inputBuffer,
                 OutputBuffer*       outputBuffer,
                 PacketGenerator*    packetGen
@@ -143,7 +146,7 @@ class RedBot
         /**
          * Program that controls this robot
          */
-        IterativeRobot* myProgram;
+        frc::IterativeRobot* myProgram;
 
         /**
          * Indicates the current status of the robot

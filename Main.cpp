@@ -95,7 +95,7 @@ int
 WPIRBMain(
         int             argc,
         char**          argv,
-        IterativeRobot& program
+        frc::IterativeRobot& program
         )
 {
     RedBot* robot = NULL;

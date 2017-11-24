@@ -13,7 +13,7 @@
 
 
 RedBot::RedBot(
-        IterativeRobot*     program,
+        frc::IterativeRobot*     program,
         const char*         deviceName,
         PacketGenerator*    packetGen
         ) :
@@ -47,7 +47,7 @@ RedBot::RedBot(
 }
 
 RedBot::RedBot(
-        IterativeRobot*     program,
+        frc::IterativeRobot*     program,
         FILE*               device,
         PacketGenerator*    packetGen
         ) :
@@ -65,7 +65,7 @@ RedBot::RedBot(
 }
 
 RedBot::RedBot(
-        IterativeRobot*     program,
+        frc::IterativeRobot*     program,
         InputBuffer*        inputBuffer,
         OutputBuffer*       outputBuffer,
         PacketGenerator*    packetGen

@@ -288,7 +288,7 @@ TEST(RedBot, DriveTest)
 
 TEST(RedBot, UnrecognizedPacketTest)
 {
-    IterativeRobot program;
+    frc::IterativeRobot program;
     RedBot robot(
             &program,
             myMockInputOutputBuffer,
@@ -374,7 +374,7 @@ TEST(RedBot, UnrecognizedPacketTest)
 
 TEST(RedBot, UnresponsiveTest)
 {
-    IterativeRobot program;
+    frc::IterativeRobot program;
     RedBot robot(
             &program,
             myMockInputOutputBuffer,
@@ -409,7 +409,7 @@ TEST(RedBot, UnresponsiveTest)
 
 TEST(RedBot, ResyncTest)
 {
-    IterativeRobot program;
+    frc::IterativeRobot program;
     RedBot robot(
             &program,
             myMockInputOutputBuffer,

@@ -146,7 +146,7 @@ Exchange(
         size_t                      numCycles
         );
 
-class DigitalOutputRobot : public IterativeRobot
+class DigitalOutputRobot : public frc::IterativeRobot
 {
     private:
 
@@ -166,7 +166,7 @@ class DigitalOutputRobot : public IterativeRobot
         }
 };
 
-class DigitalInputRobot : public IterativeRobot
+class DigitalInputRobot : public frc::IterativeRobot
 {
     private:
 
@@ -194,7 +194,7 @@ class DigitalInputRobot : public IterativeRobot
         }
 };
 
-class DriveRobot : public IterativeRobot
+class DriveRobot : public frc::IterativeRobot
 {
     private:
 

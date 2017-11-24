@@ -2,7 +2,7 @@
 #include "WPILib.h"
 #include <iostream>
 
-class Robot : public IterativeRobot
+class Robot : public frc::IterativeRobot
 {
     private:
 

@@ -1,7 +1,7 @@
 #include "WPILib.h"
 #include <stdio.h>
 
-class Robot : public IterativeRobot
+class Robot : public frc::IterativeRobot
 {
     DigitalOutput myLED;
     Timer myBlinkTimer;
