@@ -4,6 +4,9 @@
 #include "TwoDimController.h"
 #include "SDL2/SDL.h"
 
+namespace frc
+{
+
 /**
  * Enumeration for different joysticks
  */
@@ -83,5 +86,7 @@ class Joystick : public TwoDimController
          */
         SDL_Joystick* mySDLStick;
 };
+
+}; /* namespace frc */
 
 #endif /* ifndef JOYSTICK_H */

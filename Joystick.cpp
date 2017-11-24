@@ -1,6 +1,8 @@
 
 #include "Joystick.h"
 
+using namespace frc;
+
 
 Joystick::Joystick(
         int port

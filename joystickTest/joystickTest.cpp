@@ -9,7 +9,7 @@ main(
         char*   argv[]
     )
 {
-    Joystick joystick(0);
+    frc::Joystick joystick(0);
 
     if (joystick.isConnected() == false)
     {

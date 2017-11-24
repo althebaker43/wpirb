@@ -5,7 +5,7 @@ class Robot : public frc::IterativeRobot
     private:
 
         RobotDrive drive;
-        Joystick joystick;
+        frc::Joystick joystick;
 
     public:
 

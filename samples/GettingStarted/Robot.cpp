@@ -4,7 +4,7 @@ class Robot: public frc::IterativeRobot
 {
 
 	RobotDrive myRobot; // robot drive system
-	Joystick stick; // only joystick
+        frc::Joystick stick; // only joystick
 	LiveWindow *lw;
 	int autoLoopCounter;
 
