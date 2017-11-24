@@ -1,6 +1,8 @@
 
 #include "Timer.h"
 
+using namespace frc;
+
 
 Timer::Timer() :
     getTime(clock_gettime),

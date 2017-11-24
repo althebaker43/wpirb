@@ -235,7 +235,7 @@ MockTimeAccessor(
     return 0;
 }
 
-class MockTimer : public Timer
+class MockTimer : public frc::Timer
 {
     public:
 

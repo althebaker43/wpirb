@@ -4,7 +4,7 @@
 class Robot : public frc::IterativeRobot
 {
     RobotDrive myDrive;
-    Timer myDriveTimer;
+    frc::Timer myDriveTimer;
     bool myIsDrivingForward;
 
     public:

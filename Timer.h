@@ -3,6 +3,9 @@
 
 #include <time.h>
 
+namespace frc
+{
+
 /**
  * Class used to keep track of time
  */
@@ -87,5 +90,7 @@ class Timer
          */
         bool myIsStopped;
 };
+
+}; /* namespace frc */
 
 #endif /* ifndef TIMER_H */

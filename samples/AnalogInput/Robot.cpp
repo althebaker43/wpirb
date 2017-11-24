@@ -7,7 +7,7 @@ class Robot : public frc::IterativeRobot
     private:
 
         AnalogInput aIn;
-        Timer mySampleTimer;
+        frc::Timer mySampleTimer;
 
     public:
 
