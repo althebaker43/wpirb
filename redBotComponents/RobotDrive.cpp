@@ -196,7 +196,8 @@ DifferentialDrive::SetExpiration(
 void
 DifferentialDrive::ArcadeDrive(
         double magnitude,
-        double curve
+        double curve,
+        bool squaredInputs
         )
 {
     // Check bounds on magnitude
@@ -206,6 +207,12 @@ DifferentialDrive::ArcadeDrive(
       )
     {
         return;
+    }
+
+    if (squaredInputs == true)
+    {
+      magnitude = ((magnitude < 0.0) ? -1.0 : 1.0) * pow(magnitude, 2.0);
+      curve = ((curve < 0.0) ? -1.0 : 1.0) * pow(curve, 2.0);
     }
 
     if (myCurrentLMotorPacket != NULL)

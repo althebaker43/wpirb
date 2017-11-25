@@ -155,10 +155,16 @@ class DifferentialDrive : public RedBotComponent
 
         /**
          * Drives the robot with the given magnitude and curve
+	 *
+	 * An optional argument disables squaring the magnitude and
+	 * curve inputs before forwarding them to the speed
+	 * controllers. Normally, this makes the robot less sensitive
+	 * to input changes at low speeds.
          */
         void ArcadeDrive(
                 double magnitude,
-                double curve
+                double curve,
+                bool squaredInputs = true
                 );
 
         /**

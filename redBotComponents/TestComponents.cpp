@@ -13,7 +13,8 @@ static void CheckDrive(
         double                  magnitude,
         double                  curve,
         const MotorDrivePacket& rightPacket,
-        const MotorDrivePacket& leftPacket
+        const MotorDrivePacket& leftPacket,
+        bool squaredInputs = true
         );
 
 template <class RequestType> static void CheckConfiguration(
@@ -243,8 +244,8 @@ TEST(Components, RobotDriveStraightTest)
 
     CHECK(NULL != mDrivePacket1);
     CHECK(NULL != mDrivePacket2);
-    CHECK_EQUAL(127, mDrivePacket1->getSpeed());
-    CHECK_EQUAL(127, mDrivePacket2->getSpeed());
+    CHECK_EQUAL(63, mDrivePacket1->getSpeed());
+    CHECK_EQUAL(63, mDrivePacket2->getSpeed());
     CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket1->getDirection());
     CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket2->getDirection());
 
@@ -301,6 +302,24 @@ TEST(Components, CurveDriveTest)
                 )
             );
 
+    // Drive forward at half speed
+    CheckDrive(
+            drive,
+            myPackets,
+            0.5,
+            0.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                63,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                63,
+                MotorDrivePacket::DIR_FORWARD
+                )
+            );
+
     // Drive backward
     CheckDrive(
             drive,
@@ -315,6 +334,24 @@ TEST(Components, CurveDriveTest)
             MotorDrivePacket(
                 MotorDrivePacket::MOTOR_LEFT,
                 255,
+                MotorDrivePacket::DIR_BACKWARD
+                )
+            );
+
+    // Drive backward at half speed
+    CheckDrive(
+            drive,
+            myPackets,
+            -0.5,
+            0.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                63,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                63,
                 MotorDrivePacket::DIR_BACKWARD
                 )
             );
@@ -337,6 +374,24 @@ TEST(Components, CurveDriveTest)
                 )
             );
 
+    // Pivot right at half speed
+    CheckDrive(
+            drive,
+            myPackets,
+            0.0,
+            0.5,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                63,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                63,
+                MotorDrivePacket::DIR_FORWARD
+                )
+            );
+
     // Pivot left
     CheckDrive(
             drive,
@@ -354,6 +409,202 @@ TEST(Components, CurveDriveTest)
                 MotorDrivePacket::DIR_BACKWARD
                 )
             );
+
+    // Pivot left at half speed
+    CheckDrive(
+            drive,
+            myPackets,
+            0.0,
+            -0.5,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                63,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                63,
+                MotorDrivePacket::DIR_BACKWARD
+                )
+            );
+}
+
+TEST(Components, CurveDriveTestLinear)
+{
+    RedBotSpeedController lMotor(0);
+    RedBotSpeedController rMotor(1);
+    frc::DifferentialDrive drive(lMotor, rMotor);
+
+    // Stationary
+    CheckDrive(
+            drive,
+            myPackets,
+            0.0,
+            0.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                0,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                0,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            false
+            );
+
+    // Drive forward
+    CheckDrive(
+            drive,
+            myPackets,
+            1.0,
+            0.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                255,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                255,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            false
+            );
+
+    // Drive forward at half speed
+    CheckDrive(
+            drive,
+            myPackets,
+            0.5,
+            0.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                127,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                127,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            false
+            );
+
+    // Drive backward
+    CheckDrive(
+            drive,
+            myPackets,
+            -1.0,
+            0.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                255,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                255,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            false
+            );
+
+    // Drive backward at half speed
+    CheckDrive(
+            drive,
+            myPackets,
+            -0.5,
+            0.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                127,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                127,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            false
+            );
+
+    // Pivot right
+    CheckDrive(
+            drive,
+            myPackets,
+            0.0,
+            1.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                255,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                255,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            false
+            );
+
+    // Pivot right at half speed
+    CheckDrive(
+            drive,
+            myPackets,
+            0.0,
+            0.5,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                127,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                127,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            false
+            );
+
+    // Pivot left
+    CheckDrive(
+            drive,
+            myPackets,
+            0.0,
+            -1.0,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                255,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                255,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            false
+            );
+
+    // Pivot left at half speed
+    CheckDrive(
+            drive,
+            myPackets,
+            0.0,
+            -0.5,
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_RIGHT,
+                127,
+                MotorDrivePacket::DIR_FORWARD
+                ),
+            MotorDrivePacket(
+                MotorDrivePacket::MOTOR_LEFT,
+                127,
+                MotorDrivePacket::DIR_BACKWARD
+                ),
+            false
+            );
 }
 
 void
@@ -363,12 +614,14 @@ CheckDrive(
         double                  magnitude,
         double                  curve,
         const MotorDrivePacket& expRightPacket,
-        const MotorDrivePacket& expLeftPacket
+        const MotorDrivePacket& expLeftPacket,
+        bool squaredInputs
         )
 {
     drive.ArcadeDrive(
             magnitude,
-            curve
+            curve,
+            squaredInputs
             );
 
     bool rightDrivePacketFound = false;
