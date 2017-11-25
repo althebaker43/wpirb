@@ -4,14 +4,18 @@ class Robot : public frc::IterativeRobot
 {
     private:
 
-        RobotDrive drive;
+        RedBotSpeedController lMotor;
+        RedBotSpeedController rMotor;
+        frc::DifferentialDrive drive;
         frc::Joystick joystick;
 
     public:
 
         Robot() :
             IterativeRobot(),
-            drive(0, 0),
+	    lMotor(0),
+	    rMotor(1),
+            drive(lMotor, rMotor),
             joystick(0)
         {
         }
@@ -19,13 +23,13 @@ class Robot : public frc::IterativeRobot
         void
         DisabledInit()
         {
-            drive.Drive(0.0, 0.0);
+            drive.ArcadeDrive(0.0, 0.0);
         }
 
         void
         TeleopPeriodic()
         {
-            drive.ArcadeDrive(joystick);
+	    drive.ArcadeDrive(joystick.GetY(), joystick.GetX());
         }
 };
 

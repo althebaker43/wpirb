@@ -5,6 +5,7 @@
 #include "DigitalOutput.h"
 #include "DigitalInput.h"
 #include "RobotDrive.h"
+#include "RedBotSpeedController.h"
 #include "Timer.h"
 #include "IOBuffer.h"
 #include "FieldControlSystem.h"
@@ -198,19 +199,23 @@ class DriveRobot : public frc::IterativeRobot
 {
     private:
 
-        RobotDrive drive;
+        RedBotSpeedController lMotor;
+        RedBotSpeedController rMotor;
+        frc::DifferentialDrive drive;
 
     public:
 
         DriveRobot() :
             IterativeRobot(),
-            drive(0,0)
+	    lMotor(0),
+	    rMotor(1),
+	    drive(lMotor, rMotor)
         {
         }
 
         void TeleopInit()
         {
-            drive.Drive(1.0, 0);
+            drive.ArcadeDrive(1.0, 0);
         }
 
         void TeleopPeriodic()

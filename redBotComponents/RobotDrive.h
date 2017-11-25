@@ -5,9 +5,6 @@
 #include "RedBotPacket.h"
 #include <stdint.h>
 
-// Forward declarations
-class TwoDimController;
-
 /**
  * Motor drive command class
  */
@@ -132,19 +129,24 @@ class MotorDrivePacket : public RedBotPacket
         Direction myDirection;
 };
 
+namespace frc
+{
+
+class SpeedController;
+
 /**
  * Handles common drive operations for a robot with two motors
  */
-class RobotDrive : public RedBotComponent
+class DifferentialDrive : public RedBotComponent
 {
     public:
 
         /**
          * Initializes the robot drive
          */
-        RobotDrive(
-                uint32_t leftChannel,
-                uint32_t rightChannel
+        DifferentialDrive(
+		SpeedController& leftController,
+                SpeedController& rightController
                 );
 
         void SetExpiration(
@@ -152,20 +154,9 @@ class RobotDrive : public RedBotComponent
                 );
 
         /**
-         * Drives the robot arcade style using the given controller
-         *
-         * This function uses the Y-axis from the controller as the magnitude
-         * and the X-axis as the curve for the Drive function. The controller
-         * is most often a joystick.
-         */
-        void ArcadeDrive(
-                TwoDimController& controller
-                );
-
-        /**
          * Drives the robot with the given magnitude and curve
          */
-        void Drive(
+        void ArcadeDrive(
                 double magnitude,
                 double curve
                 );
@@ -195,5 +186,6 @@ class RobotDrive : public RedBotComponent
         MotorDrivePacket* myCurrentRMotorPacket;
 };
 
+}; /* namespace frc */
 
 #endif /* ifndef ROBOTDRIVE_H */

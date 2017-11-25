@@ -1,8 +1,9 @@
 
 #include "RobotDrive.h"
-#include "TwoDimController.h"
 #include <stdlib.h>
 #include <math.h>
+
+using namespace frc;
 
 
 MotorDrivePacket::MotorDrivePacket() :
@@ -175,9 +176,9 @@ MotorDrivePacket::getDirection() const
 }
 
 
-RobotDrive::RobotDrive(
-        uint32_t leftChannel,
-        uint32_t rightChannel
+DifferentialDrive::DifferentialDrive(
+	SpeedController& leftController,
+        SpeedController& rightController
         ) :
     RedBotComponent(),
     myCurrentLMotorPacket(NULL),
@@ -186,25 +187,14 @@ RobotDrive::RobotDrive(
 }
 
 void
-RobotDrive::SetExpiration(
+DifferentialDrive::SetExpiration(
         double expiration
         )
 {
 }
 
 void
-RobotDrive::ArcadeDrive(
-        TwoDimController& controller
-        )
-{
-    Drive(
-            controller.getXPosition(),
-            controller.getYPosition()
-         );
-}
-
-void
-RobotDrive::Drive(
+DifferentialDrive::ArcadeDrive(
         double magnitude,
         double curve
         )
@@ -240,7 +230,7 @@ RobotDrive::Drive(
 }
 
 Packet*
-RobotDrive::getNextPacket()
+DifferentialDrive::getNextPacket()
 {
     if (myCurrentRMotorPacket != NULL)
     {
@@ -261,7 +251,7 @@ RobotDrive::getNextPacket()
 }
 
 bool
-RobotDrive::processPacket(
+DifferentialDrive::processPacket(
         const Packet& packet
         )
 {

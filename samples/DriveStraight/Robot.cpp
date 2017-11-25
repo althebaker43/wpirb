@@ -3,14 +3,18 @@
 
 class Robot : public frc::IterativeRobot
 {
-    RobotDrive myDrive;
+    RedBotSpeedController myLeftMotor;
+    RedBotSpeedController myRightMotor;
+    frc::DifferentialDrive myDrive;
     frc::Timer myDriveTimer;
     bool myIsDrivingForward;
 
     public:
 
         Robot() :
-            myDrive(0, 0),
+	    myLeftMotor(0),
+	    myRightMotor(1),
+	    myDrive(myLeftMotor, myRightMotor),
             myDriveTimer(),
             myIsDrivingForward(true)
         {
@@ -25,7 +29,7 @@ class Robot : public frc::IterativeRobot
         void DisabledInit()
         {
             myDriveTimer.Start();
-            myDrive.Drive(1.0, 0.0);
+            myDrive.ArcadeDrive(1.0, 0.0);
         }
 
         void DisabledPeriodic()
@@ -34,7 +38,7 @@ class Robot : public frc::IterativeRobot
             {
                 myDriveTimer.Reset();
                 myIsDrivingForward = !myIsDrivingForward;
-                myDrive.Drive((myIsDrivingForward ? 1.0 : -1.0), 0.0);
+                myDrive.ArcadeDrive((myIsDrivingForward ? 1.0 : -1.0), 0.0);
                 printf("Program: driving %s\n", (myIsDrivingForward ? "forward" : "backward"));
             }
         }

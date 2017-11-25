@@ -4,10 +4,11 @@
 #include "DigitalOutput.h"
 #include "AnalogInput.h"
 #include "RobotDrive.h"
+#include "RedBotSpeedController.h"
 
 
 static void CheckDrive(
-        RobotDrive&             drive,
+	frc::DifferentialDrive& drive,
         std::list<Packet*>&     packets,
         double                  magnitude,
         double                  curve,
@@ -155,12 +156,14 @@ TEST(Components, AnalogInputTest)
 
 TEST(Components, RobotDriveSimpleTest)
 {
-    RobotDrive drive(0, 0);
+    RedBotSpeedController lMotor(0);
+    RedBotSpeedController rMotor(1);
+    frc::DifferentialDrive drive(lMotor, rMotor);
     myPackets.push_back(drive.getNextPacket());
 
     CHECK_EQUAL((Packet*)NULL, myPackets.back());
 
-    drive.Drive(0.0, 0.0);
+    drive.ArcadeDrive(0.0, 0.0);
     myPackets.push_back(drive.getNextPacket());
 
     CHECK(NULL != myPackets.back());
@@ -197,11 +200,13 @@ TEST(Components, RobotDriveSimpleTest)
 
 TEST(Components, RobotDriveStraightTest)
 {
-    RobotDrive drive(0, 0);
+    RedBotSpeedController lMotor(0);
+    RedBotSpeedController rMotor(1);
+    frc::DifferentialDrive drive(lMotor, rMotor);
     MotorDrivePacket* mDrivePacket1;
     MotorDrivePacket* mDrivePacket2;
 
-    drive.Drive(1.0, 0.0);
+    drive.ArcadeDrive(1.0, 0.0);
 
     myPackets.push_back(drive.getNextPacket());
     mDrivePacket1 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
@@ -215,7 +220,7 @@ TEST(Components, RobotDriveStraightTest)
     CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket1->getDirection());
     CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket2->getDirection());
 
-    drive.Drive(-1.0, 0.0);
+    drive.ArcadeDrive(-1.0, 0.0);
 
     myPackets.push_back(drive.getNextPacket());
     mDrivePacket1 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
@@ -229,7 +234,7 @@ TEST(Components, RobotDriveStraightTest)
     CHECK_EQUAL(MotorDrivePacket::DIR_BACKWARD, mDrivePacket1->getDirection());
     CHECK_EQUAL(MotorDrivePacket::DIR_BACKWARD, mDrivePacket2->getDirection());
 
-    drive.Drive(0.5, 0.0);
+    drive.ArcadeDrive(0.5, 0.0);
 
     myPackets.push_back(drive.getNextPacket());
     mDrivePacket1 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
@@ -243,7 +248,7 @@ TEST(Components, RobotDriveStraightTest)
     CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket1->getDirection());
     CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket2->getDirection());
 
-    drive.Drive(1.5, 0.0);
+    drive.ArcadeDrive(1.5, 0.0);
 
     myPackets.push_back(drive.getNextPacket());
     mDrivePacket1 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
@@ -256,7 +261,9 @@ TEST(Components, RobotDriveStraightTest)
 
 TEST(Components, CurveDriveTest)
 {
-    RobotDrive drive(0, 0);
+    RedBotSpeedController lMotor(0);
+    RedBotSpeedController rMotor(1);
+    frc::DifferentialDrive drive(lMotor, rMotor);
 
     // Stationary
     CheckDrive(
@@ -351,7 +358,7 @@ TEST(Components, CurveDriveTest)
 
 void
 CheckDrive(
-        RobotDrive&             drive,
+	frc::DifferentialDrive& drive,
         std::list<Packet*>&     packets,
         double                  magnitude,
         double                  curve,
@@ -359,7 +366,7 @@ CheckDrive(
         const MotorDrivePacket& expLeftPacket
         )
 {
-    drive.Drive(
+    drive.ArcadeDrive(
             magnitude,
             curve
             );
