@@ -468,20 +468,25 @@ TEST(Timer, BasicTest)
 
 TEST_GROUP(SmartDashboard)
 {
+  nt::NetworkTableInstance ntInst;
+
   void setup()
   {
     MemoryLeakWarningPlugin::turnOffNewDeleteOverloads();
+    ntInst = nt::NetworkTableInstance::Create();
   }
 
   void teardown()
   {
+    nt::NetworkTableInstance::Destroy(ntInst);
     MemoryLeakWarningPlugin::turnOnNewDeleteOverloads();
   }
 };
 
 TEST(SmartDashboard, BooleanTest)
 {
-  std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard");
+  frc::SmartDashboard::init(ntInst);
+  std::shared_ptr<nt::NetworkTable> table = ntInst.GetTable("SmartDashboard");
   nt::NetworkTableEntry entry = table->GetEntry("testVar");
 
   CHECK_FALSE(entry.Exists());
