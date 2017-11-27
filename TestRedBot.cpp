@@ -1,6 +1,10 @@
 
+#define CPPUTEST_MEM_LEAK_DETECTION_DISABLED 1
+
 #include "TestRedBot.h"
 #include "RedBot.h"
+#include "SmartDashboard.h"
+#include "networktables/NetworkTableInstance.h"
 
 
 void
@@ -460,4 +464,43 @@ TEST(Timer, BasicTest)
     timer.Stop();
 
     CHECK_EQUAL(0.0, timer.Get());
+}
+
+TEST_GROUP(SmartDashboard)
+{
+  void setup()
+  {
+    MemoryLeakWarningPlugin::turnOffNewDeleteOverloads();
+  }
+
+  void teardown()
+  {
+    MemoryLeakWarningPlugin::turnOnNewDeleteOverloads();
+  }
+};
+
+TEST(SmartDashboard, BooleanTest)
+{
+  std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard");
+  nt::NetworkTableEntry entry = table->GetEntry("testVar");
+
+  CHECK_FALSE(entry.Exists());
+  CHECK_TRUE(frc::SmartDashboard::GetBoolean("testVar", true));
+  CHECK_FALSE(frc::SmartDashboard::GetBoolean("testVar", false));
+
+  CHECK_TRUE(frc::SmartDashboard::PutBoolean("testVar", true));
+
+  entry = table->GetEntry("testVar");
+
+  CHECK_TRUE(entry.Exists());
+  CHECK_TRUE(table->GetBoolean("testVar", false));
+  CHECK_TRUE(frc::SmartDashboard::GetBoolean("testVar", false));
+
+  CHECK_TRUE(frc::SmartDashboard::PutBoolean("testVar", false));
+
+  entry = table->GetEntry("testVar");
+
+  CHECK_TRUE(entry.Exists());
+  CHECK_FALSE(table->GetBoolean("testVar", true));
+  CHECK_FALSE(frc::SmartDashboard::GetBoolean("testVar", true));
 }

@@ -9,6 +9,7 @@ MODULES= \
 	Timer \
 	Joystick \
 	LiveWindow \
+	SmartDashboard \
 	RedBot \
 	IOBuffer \
 	Main

@@ -13,6 +13,7 @@
 #include "RedBotSpeedController.h"
 #include "Joystick.h"
 #include "LiveWindow.h"
+#include "SmartDashboard.h"
 
 // Program entry point
 #include "Main.h"
