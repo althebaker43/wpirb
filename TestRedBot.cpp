@@ -474,6 +474,7 @@ TEST_GROUP(SmartDashboard)
   {
     MemoryLeakWarningPlugin::turnOffNewDeleteOverloads();
     ntInst = nt::NetworkTableInstance::Create();
+    frc::SmartDashboard::init(ntInst);
   }
 
   void teardown()
@@ -485,7 +486,6 @@ TEST_GROUP(SmartDashboard)
 
 TEST(SmartDashboard, BooleanTest)
 {
-  frc::SmartDashboard::init(ntInst);
   std::shared_ptr<nt::NetworkTable> table = ntInst.GetTable("SmartDashboard");
   nt::NetworkTableEntry entry = table->GetEntry("testVar");
 
@@ -508,4 +508,20 @@ TEST(SmartDashboard, BooleanTest)
   CHECK_TRUE(entry.Exists());
   CHECK_FALSE(table->GetBoolean("testVar", true));
   CHECK_FALSE(frc::SmartDashboard::GetBoolean("testVar", true));
+}
+
+TEST(SmartDashboard, NumberTest)
+{
+  std::shared_ptr<nt::NetworkTable> table = ntInst.GetTable("SmartDashboard");
+
+  CHECK_EQUAL(0.0, frc::SmartDashboard::GetNumber("testVar", 0.0));
+  CHECK_EQUAL(1.0, frc::SmartDashboard::GetNumber("testVar", 1.0));
+
+  CHECK_TRUE(frc::SmartDashboard::PutNumber("testVar", 1.0));
+  CHECK_EQUAL(1.0, table->GetNumber("testVar", 0.0));
+  CHECK_EQUAL(1.0, frc::SmartDashboard::GetNumber("testVar", 0.0));
+
+  CHECK_TRUE(frc::SmartDashboard::PutNumber("testVar", 2.0));
+  CHECK_EQUAL(2.0, table->GetNumber("testVar", 0.0));
+  CHECK_EQUAL(2.0, frc::SmartDashboard::GetNumber("testVar", 0.0));
 }

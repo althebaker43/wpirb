@@ -22,13 +22,31 @@ SmartDashboard::init(nt::NetworkTableInstance ntInst)
 }
 
 bool
-SmartDashboard::PutBoolean(const char* key, bool value)
+SmartDashboard::PutBoolean(llvm::StringRef key, bool value)
 {
-  return ourNTInstance.GetTable("SmartDashboard")->PutBoolean(key, value);
+  return GetTable()->PutBoolean(key, value);
 }
 
 bool
-SmartDashboard::GetBoolean(const char* key, bool defaultValue)
+SmartDashboard::GetBoolean(llvm::StringRef key, bool defaultValue)
 {
-  return ourNTInstance.GetTable("SmartDashboard")->GetBoolean(key, defaultValue);
+  return GetTable()->GetBoolean(key, defaultValue);
+}
+
+bool
+SmartDashboard::PutNumber(llvm::StringRef key, double value)
+{
+  return GetTable()->PutNumber(key, value);
+}
+
+double
+SmartDashboard::GetNumber(llvm::StringRef key, double defaultValue)
+{
+  return GetTable()->GetNumber(key, defaultValue);
+}
+
+std::shared_ptr<NetworkTable>
+SmartDashboard::GetTable()
+{
+  return ourNTInstance.GetTable("SmartDashboard");
 }
