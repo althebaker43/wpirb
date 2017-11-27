@@ -45,6 +45,18 @@ SmartDashboard::GetNumber(llvm::StringRef key, double defaultValue)
   return GetTable()->GetNumber(key, defaultValue);
 }
 
+bool
+SmartDashboard::PutString(llvm::StringRef key, llvm::StringRef value)
+{
+  return GetTable()->PutString(key, value);
+}
+
+std::string
+SmartDashboard::GetString(llvm::StringRef key, llvm::StringRef defaultValue)
+{
+  return GetTable()->GetString(key, defaultValue);
+}
+
 std::shared_ptr<NetworkTable>
 SmartDashboard::GetTable()
 {

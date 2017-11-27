@@ -525,3 +525,19 @@ TEST(SmartDashboard, NumberTest)
   CHECK_EQUAL(2.0, table->GetNumber("testVar", 0.0));
   CHECK_EQUAL(2.0, frc::SmartDashboard::GetNumber("testVar", 0.0));
 }
+
+TEST(SmartDashboard, StringTest)
+{
+  std::shared_ptr<nt::NetworkTable> table = ntInst.GetTable("SmartDashboard");
+
+  STRCMP_EQUAL("", frc::SmartDashboard::GetString("testVar", "").c_str());
+  STRCMP_EQUAL("foo", frc::SmartDashboard::GetString("testVar", "foo").c_str());
+
+  CHECK_TRUE(frc::SmartDashboard::PutString("testVar", "foo"));
+  STRCMP_EQUAL("foo", table->GetString("testVar", "").c_str());
+  STRCMP_EQUAL("foo", frc::SmartDashboard::GetString("testVar", "").c_str());
+
+  CHECK_TRUE(frc::SmartDashboard::PutString("testVar", "bar"));
+  STRCMP_EQUAL("bar", table->GetString("testVar", "").c_str());
+  STRCMP_EQUAL("bar", frc::SmartDashboard::GetString("testVar", "").c_str());
+}

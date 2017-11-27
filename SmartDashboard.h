@@ -1,11 +1,10 @@
 #ifndef SMARTDASHBOARD_H
 #define SMARTDASHBOARD_H
 
+#include <string>
+#include <memory>
+
 // Forward declarations
-namespace std
-{
-  template <class T> class shared_ptr;
-}
 namespace nt
 {
   class NetworkTableInstance;
@@ -36,6 +35,9 @@ namespace frc
 
     static bool PutNumber(llvm::StringRef key, double value);
     static double GetNumber(llvm::StringRef key, double defaultValue);
+
+    static bool PutString(llvm::StringRef key, llvm::StringRef value);
+    static std::string GetString(llvm::StringRef key, llvm::StringRef defaultValue);
 
   private:
 
