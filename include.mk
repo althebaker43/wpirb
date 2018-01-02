@@ -18,3 +18,7 @@ NTCORE_ROOT = /home/allen/Development/first/ntcore
 CPPFLAGS += -I$(NTCORE_ROOT)/src/main/native/include
 LDFLAGS += -L$(NTCORE_ROOT)/build/libs/ntcore/shared -lntcore
 export LD_LIBRARY_PATH := $(NTCORE_ROOT)/build/libs/ntcore/shared:$(LD_LIBRARY_PATH)
+
+GOOGLETEST_ROOT = /home/allen/Development/tdd/googletest-build
+CPPFLAGS += -I$(GOOGLETEST_ROOT)/include
+LDFLAGS += -L$(GOOGLETEST_ROOT)/lib -lgmock -lgtest -pthread
