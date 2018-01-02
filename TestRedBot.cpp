@@ -2,9 +2,13 @@
 #define CPPUTEST_MEM_LEAK_DETECTION_DISABLED 1
 
 #include "TestRedBot.h"
+#include "CppUTestExt/GMock.h"
 #include "RedBot.h"
 #include "SmartDashboard.h"
 #include "networktables/NetworkTableInstance.h"
+#include "Command.h"
+#include "Subsystem.h"
+#include "Scheduler.h"
 
 
 void
@@ -540,4 +544,50 @@ TEST(SmartDashboard, StringTest)
   CHECK_TRUE(frc::SmartDashboard::PutString("testVar", "bar"));
   STRCMP_EQUAL("bar", table->GetString("testVar", "").c_str());
   STRCMP_EQUAL("bar", frc::SmartDashboard::GetString("testVar", "").c_str());
+}
+
+
+TEST_GROUP(Commands)
+{
+  void setup()
+  {
+  }
+
+  void teardown()
+  {
+    frc::Scheduler::DestroyInstance();
+  }
+};
+
+class MockSubsystem : public frc::Subsystem
+{
+public:
+
+  MockSubsystem() : Subsystem("mock")
+  {
+  }
+};
+
+class MockCommand : public frc::Command
+{
+public:
+
+  MockCommand(frc::Subsystem* subsystem)
+  {
+    Requires(subsystem);
+  }
+
+  MOCK_METHOD0(Initialize, void(void));
+};
+
+TEST(Commands, FirstTest)
+{
+  MockSubsystem mockSubsystem;
+  MockCommand mockCommand(&mockSubsystem);
+
+  mockCommand.Start();
+
+  //EXPECT_CALL(mockCommand, Initialize());
+
+  frc::Scheduler::GetInstance()->Run();
 }

@@ -10,6 +10,9 @@ MODULES= \
 	Joystick \
 	LiveWindow \
 	SmartDashboard \
+	Command \
+	Subsystem \
+	Scheduler \
 	RedBot \
 	IOBuffer \
 	Main
