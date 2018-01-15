@@ -1,5 +1,6 @@
 
 #include "Scheduler.h"
+#include "Subsystem.h"
 #include <stdlib.h>
 
 using namespace frc;
@@ -29,4 +30,15 @@ Scheduler::DestroyInstance()
 void
 Scheduler::Run()
 {
+  for (Subsystems::const_iterator sysIter = mySubsystems.begin(); sysIter != mySubsystems.end(); ++sysIter)
+    {
+      Subsystem* subsystem = *sysIter;
+      subsystem->ProcessCommands();
+    }
+}
+
+void
+Scheduler::AddSubsystem(Subsystem* subsystem)
+{
+  mySubsystems.push_back(subsystem);
 }

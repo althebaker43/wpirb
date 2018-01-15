@@ -1,8 +1,12 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
+#include <list>
+
 namespace frc
 {
+  class Subsystem;
+
   class Scheduler
   {
   public:
@@ -13,9 +17,15 @@ namespace frc
 
     void Run();
 
+    void AddSubsystem(Subsystem*);
+
   private:
 
+    typedef std::list<Subsystem*> Subsystems;
+
     static Scheduler* ourInstance;
+
+    Subsystems mySubsystems;
   };
 }; /* namespace frc */
 

@@ -551,11 +551,13 @@ TEST_GROUP(Commands)
 {
   void setup()
   {
+    MemoryLeakWarningPlugin::turnOffNewDeleteOverloads();
   }
 
   void teardown()
   {
     frc::Scheduler::DestroyInstance();
+    MemoryLeakWarningPlugin::turnOnNewDeleteOverloads();
   }
 };
 
@@ -587,7 +589,7 @@ TEST(Commands, FirstTest)
 
   mockCommand.Start();
 
-  //EXPECT_CALL(mockCommand, Initialize());
+  EXPECT_CALL(mockCommand, Initialize());
 
   frc::Scheduler::GetInstance()->Run();
 }

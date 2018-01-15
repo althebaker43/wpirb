@@ -9,6 +9,8 @@ namespace frc
   {
   public:
 
+    Command();
+
     virtual ~Command(){}
 
     void Requires(Subsystem*);
@@ -16,6 +18,10 @@ namespace frc
     void Start();
 
     virtual void Initialize();
+
+  private:
+
+    Subsystem* mySubsystem;
   };
 }; /* namespace frc */
 

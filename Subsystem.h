@@ -5,6 +5,8 @@
 
 namespace frc
 {
+  class Command;
+
   class Subsystem
   {
   public:
@@ -12,6 +14,18 @@ namespace frc
     Subsystem(const std::string&);
 
     virtual ~Subsystem(){}
+
+    void ProcessCommands();
+
+    void SetNextCommand(Command*);
+
+  private:
+
+    Subsystem();
+
+    Command* myCurrentCommand;
+
+    Command* myNextCommand;
   };
 }; /* namespace frc */
 
