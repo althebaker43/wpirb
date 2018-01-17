@@ -580,9 +580,15 @@ public:
   }
 
   MOCK_METHOD0(Initialize, void(void));
+
+  MOCK_METHOD0(Execute, void(void));
+
+  MOCK_METHOD0(IsFinished, bool(void));
+
+  MOCK_METHOD0(End, void(void));
 };
 
-TEST(Commands, FirstTest)
+TEST(Commands, SingleExecute)
 {
   MockSubsystem mockSubsystem;
   MockCommand mockCommand(&mockSubsystem);
@@ -590,6 +596,11 @@ TEST(Commands, FirstTest)
   mockCommand.Start();
 
   EXPECT_CALL(mockCommand, Initialize());
+  EXPECT_CALL(mockCommand, Execute());
+  EXPECT_CALL(mockCommand, IsFinished())
+    .WillOnce(Return(true));
+  EXPECT_CALL(mockCommand, End());
 
+  frc::Scheduler::GetInstance()->Run();
   frc::Scheduler::GetInstance()->Run();
 }

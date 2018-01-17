@@ -19,6 +19,12 @@ namespace frc
 
     virtual void Initialize();
 
+    virtual void Execute();
+
+    virtual bool IsFinished() = 0;
+
+    virtual void End();
+
   private:
 
     Subsystem* mySubsystem;

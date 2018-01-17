@@ -30,8 +30,19 @@ Subsystem::ProcessCommands()
       else
 	{
 	  myCurrentCommand = myNextCommand;
-	  myNextCommand->Initialize();
+	  myCurrentCommand->Initialize();
 	}
       myNextCommand = NULL;
+    }
+
+  if (myCurrentCommand)
+    {
+      myCurrentCommand->Execute();
+
+      if (myCurrentCommand->IsFinished())
+	{
+	  myCurrentCommand->End();
+	  myCurrentCommand = NULL;
+	}
     }
 }

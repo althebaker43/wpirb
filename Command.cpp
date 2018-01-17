@@ -27,3 +27,13 @@ void
 Command::Initialize()
 {
 }
+
+void
+Command::Execute()
+{
+}
+
+void
+Command::End()
+{
+}
