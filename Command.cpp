@@ -7,7 +7,8 @@ using namespace frc;
 
 
 Command::Command() :
-  mySubsystem(NULL)
+  mySubsystem(NULL),
+  myIsInterruptible(true)
 {
 }
 
@@ -23,6 +24,18 @@ Command::Start()
   mySubsystem->SetNextCommand(this);
 }
 
+bool
+Command::IsInterruptible() const
+{
+  return myIsInterruptible;
+}
+
+void
+Command::SetInterruptible(bool isInterruptible)
+{
+  myIsInterruptible = isInterruptible;
+}
+
 void
 Command::Initialize()
 {
@@ -35,5 +48,10 @@ Command::Execute()
 
 void
 Command::End()
+{
+}
+
+void
+Command::Interrupted()
 {
 }

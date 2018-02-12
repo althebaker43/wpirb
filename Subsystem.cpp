@@ -7,10 +7,17 @@ using namespace frc;
 
 
 Subsystem::Subsystem(const std::string& name) :
+  myDefaultCommand(NULL),
   myCurrentCommand(NULL),
   myNextCommand(NULL)
 {
   Scheduler::GetInstance()->AddSubsystem(this);
+}
+
+void
+Subsystem::SetDefaultCommand(Command* command)
+{
+  myDefaultCommand = command;
 }
 
 void
@@ -26,6 +33,12 @@ Subsystem::ProcessCommands()
     {
       if (myCurrentCommand)
 	{
+	  if (myCurrentCommand->IsInterruptible())
+	    {
+	      myCurrentCommand->Interrupted();
+	      myCurrentCommand = myNextCommand;
+	      myCurrentCommand->Initialize();
+	    }
 	}
       else
 	{
@@ -33,6 +46,12 @@ Subsystem::ProcessCommands()
 	  myCurrentCommand->Initialize();
 	}
       myNextCommand = NULL;
+    }
+
+  if (!myCurrentCommand && myDefaultCommand)
+    {
+      myCurrentCommand = myDefaultCommand;
+      myCurrentCommand->Initialize();
     }
 
   if (myCurrentCommand)

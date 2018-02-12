@@ -9,6 +9,8 @@ namespace frc
   {
   public:
 
+    friend class Subsystem;
+
     Command();
 
     virtual ~Command(){}
@@ -16,6 +18,12 @@ namespace frc
     void Requires(Subsystem*);
 
     void Start();
+
+    bool IsInterruptible() const;
+
+    void SetInterruptible(bool isInterruptible);
+
+  protected:
 
     virtual void Initialize();
 
@@ -25,9 +33,13 @@ namespace frc
 
     virtual void End();
 
+    virtual void Interrupted();
+
   private:
 
     Subsystem* mySubsystem;
+
+    bool myIsInterruptible;
   };
 }; /* namespace frc */
 

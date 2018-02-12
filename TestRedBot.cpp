@@ -586,6 +586,8 @@ public:
   MOCK_METHOD0(IsFinished, bool(void));
 
   MOCK_METHOD0(End, void(void));
+
+  MOCK_METHOD0(Interrupted, void(void));
 };
 
 TEST(Commands, SingleExecute)
@@ -601,6 +603,101 @@ TEST(Commands, SingleExecute)
     .WillOnce(Return(true));
   EXPECT_CALL(mockCommand, End());
 
+  frc::Scheduler::GetInstance()->Run();
+  frc::Scheduler::GetInstance()->Run();
+}
+
+TEST(Commands, TwoStepExecute)
+{
+  MockSubsystem mockSubsystem;
+  MockCommand mockCommand(&mockSubsystem);
+
+  mockCommand.Start();
+
+  EXPECT_CALL(mockCommand, Initialize());
+  EXPECT_CALL(mockCommand, Execute())
+    .Times(2);
+  EXPECT_CALL(mockCommand, IsFinished())
+    .WillOnce(Return(false))
+    .WillOnce(Return(true));
+  EXPECT_CALL(mockCommand, End());
+
+  frc::Scheduler::GetInstance()->Run();
+  frc::Scheduler::GetInstance()->Run();
+  frc::Scheduler::GetInstance()->Run();
+}
+
+TEST(Commands, Interrupt)
+{
+  MockSubsystem mockSubsystem;
+  MockCommand mockCommand1(&mockSubsystem);
+  MockCommand mockCommand2(&mockSubsystem);
+
+  mockCommand2.SetInterruptible(false);
+
+  {
+    ::testing::InSequence s;
+
+    EXPECT_CALL(mockCommand1, Initialize());
+    EXPECT_CALL(mockCommand1, Execute());
+    EXPECT_CALL(mockCommand1, IsFinished())
+      .WillOnce(Return(false));
+    EXPECT_CALL(mockCommand1, Interrupted());
+
+    EXPECT_CALL(mockCommand2, Initialize());
+    EXPECT_CALL(mockCommand2, Execute());
+    EXPECT_CALL(mockCommand2, IsFinished())
+      .WillOnce(Return(false));
+    EXPECT_CALL(mockCommand2, Execute());
+    EXPECT_CALL(mockCommand2, IsFinished())
+      .WillOnce(Return(true));
+    EXPECT_CALL(mockCommand2, End());
+  }
+
+  mockCommand1.Start();
+  frc::Scheduler::GetInstance()->Run();
+  mockCommand2.Start();
+  frc::Scheduler::GetInstance()->Run();
+  mockCommand1.Start();
+  frc::Scheduler::GetInstance()->Run();
+  frc::Scheduler::GetInstance()->Run();
+}
+
+TEST(Commands, DefaultCommand)
+{
+  MockSubsystem mockSubsystem;
+  MockCommand mockDefaultCommand(&mockSubsystem);
+  MockCommand mockCommand(&mockSubsystem);
+
+  mockSubsystem.SetDefaultCommand(&mockDefaultCommand);
+
+  {
+    ::testing::InSequence s;
+
+    EXPECT_CALL(mockDefaultCommand, Initialize());
+    EXPECT_CALL(mockDefaultCommand, Execute());
+    EXPECT_CALL(mockDefaultCommand, IsFinished())
+      .WillOnce(Return(false));
+    EXPECT_CALL(mockDefaultCommand, Execute());
+    EXPECT_CALL(mockDefaultCommand, IsFinished())
+      .WillOnce(Return(false));
+    EXPECT_CALL(mockDefaultCommand, Interrupted());
+
+    EXPECT_CALL(mockCommand, Initialize());
+    EXPECT_CALL(mockCommand, Execute());
+    EXPECT_CALL(mockCommand, IsFinished())
+      .WillOnce(Return(true));
+    EXPECT_CALL(mockCommand, End());
+
+    EXPECT_CALL(mockDefaultCommand, Initialize());
+    EXPECT_CALL(mockDefaultCommand, Execute());
+    EXPECT_CALL(mockDefaultCommand, IsFinished())
+      .WillOnce(Return(false));
+  }
+
+  frc::Scheduler::GetInstance()->Run();
+  frc::Scheduler::GetInstance()->Run();
+  mockCommand.Start();
   frc::Scheduler::GetInstance()->Run();
   frc::Scheduler::GetInstance()->Run();
 }

@@ -15,6 +15,8 @@ namespace frc
 
     virtual ~Subsystem(){}
 
+    void SetDefaultCommand(Command* command);
+
     void ProcessCommands();
 
     void SetNextCommand(Command*);
@@ -22,6 +24,8 @@ namespace frc
   private:
 
     Subsystem();
+
+    Command* myDefaultCommand;
 
     Command* myCurrentCommand;
 
