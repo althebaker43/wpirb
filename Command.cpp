@@ -7,8 +7,9 @@ using namespace frc;
 
 
 Command::Command() :
-  mySubsystem(NULL),
-  myIsInterruptible(true)
+  mySubsystem(DefaultSubsystem::GetInstance()),
+  myIsInterruptible(true),
+  myIsEndCalled(false)
 {
 }
 
@@ -34,6 +35,18 @@ void
 Command::SetInterruptible(bool isInterruptible)
 {
   myIsInterruptible = isInterruptible;
+}
+
+void
+Command::SetEndCalled(bool isEndCalled)
+{
+  myIsEndCalled = isEndCalled;
+}
+
+bool
+Command::IsEndCalled() const
+{
+  return myIsEndCalled;
 }
 
 void

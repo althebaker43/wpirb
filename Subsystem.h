@@ -2,6 +2,7 @@
 #define SUBSYSTEM_H
 
 #include <string>
+#include <list>
 
 namespace frc
 {
@@ -17,19 +18,48 @@ namespace frc
 
     void SetDefaultCommand(Command* command);
 
-    void ProcessCommands();
+    virtual void ProcessCommands();
 
-    void SetNextCommand(Command*);
+    virtual void SetNextCommand(Command*);
 
-  private:
+  protected:
 
     Subsystem();
+
+  private:
 
     Command* myDefaultCommand;
 
     Command* myCurrentCommand;
 
     Command* myNextCommand;
+  };
+
+  class DefaultSubsystem : public Subsystem
+  {
+  public:
+
+    static DefaultSubsystem* GetInstance();
+
+    static void DestroyInstance();
+
+  private:
+
+    typedef std::list<Command*> Commands;
+
+    DefaultSubsystem();
+
+    ~DefaultSubsystem();
+
+    void ProcessCommands();
+
+    void SetNextCommand(Command*);
+
+    static DefaultSubsystem* ourInstance;
+
+    Commands myNextCommands;
+
+    Commands myCurrentCommands;
   };
 }; /* namespace frc */
 

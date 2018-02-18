@@ -11,6 +11,7 @@ MODULES= \
 	LiveWindow \
 	SmartDashboard \
 	Command \
+	CommandGroup \
 	Subsystem \
 	Scheduler \
 	RedBot \
@@ -54,7 +55,7 @@ all : tags TAGS test
 
 .PHONY : test
 test : $(TEST_RUNNER)
-	./$(TEST_RUNNER)
+	./$(TEST_RUNNER) -v
 
 .PHONY : test_all
 test_all : test

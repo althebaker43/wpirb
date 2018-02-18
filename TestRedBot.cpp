@@ -7,6 +7,7 @@
 #include "SmartDashboard.h"
 #include "networktables/NetworkTableInstance.h"
 #include "Command.h"
+#include "CommandGroup.h"
 #include "Subsystem.h"
 #include "Scheduler.h"
 
@@ -574,9 +575,12 @@ class MockCommand : public frc::Command
 {
 public:
 
-  MockCommand(frc::Subsystem* subsystem)
+  MockCommand(frc::Subsystem* subsystem = NULL)
   {
-    Requires(subsystem);
+    if (subsystem)
+      {
+	Requires(subsystem);
+      }
   }
 
   MOCK_METHOD0(Initialize, void(void));
@@ -699,5 +703,82 @@ TEST(Commands, DefaultCommand)
   frc::Scheduler::GetInstance()->Run();
   mockCommand.Start();
   frc::Scheduler::GetInstance()->Run();
+  frc::Scheduler::GetInstance()->Run();
+}
+
+TEST(Commands, NoSubsystem)
+{
+  MockCommand mockCommand1;
+  MockCommand mockCommand2;
+
+  {
+    ::testing::InSequence s;
+
+    EXPECT_CALL(mockCommand1, Initialize());
+    EXPECT_CALL(mockCommand1, Execute());
+    EXPECT_CALL(mockCommand1, IsFinished())
+      .WillOnce(Return(true));
+    EXPECT_CALL(mockCommand1, End());
+  }
+
+  {
+    ::testing::InSequence s;
+
+    EXPECT_CALL(mockCommand2, Initialize());
+    EXPECT_CALL(mockCommand2, Execute());
+    EXPECT_CALL(mockCommand2, IsFinished())
+      .WillOnce(Return(false));
+    EXPECT_CALL(mockCommand2, Execute());
+    EXPECT_CALL(mockCommand2, IsFinished())
+      .WillOnce(Return(true));
+    EXPECT_CALL(mockCommand2, End());
+  }
+
+  mockCommand1.Start();
+  mockCommand2.Start();
+  frc::Scheduler::GetInstance()->Run();
+  frc::Scheduler::GetInstance()->Run();
+}
+
+// TEST(Commands, CommandGroup)
+// {
+//   MockSubsystem mockSubsystem;
+//   MockCommand mockCommand1(&mockSubsystem);
+//   MockCommand mockCommand2(&mockSubsystem);
+
+//   frc::CommandGroup group;
+//   group.AddSequential(&mockCommand1);
+//   group.AddSequential(&mockCommand2);
+
+//   {
+//     ::testing::InSequence s;
+
+//     EXPECT_CALL(mockCommand1, Initialize());
+//     EXPECT_CALL(mockCommand1, Execute());
+//     EXPECT_CALL(mockCommand1, IsFinished())
+//       .WillOnce(Return(false));
+//     EXPECT_CALL(mockCommand1, Execute());
+//     EXPECT_CALL(mockCommand1, IsFinished())
+//       .WillOnce(Return(true));
+//     EXPECT_CALL(mockCommand1, End());
+
+//     EXPECT_CALL(mockCommand2, Initialize());
+//     EXPECT_CALL(mockCommand2, Execute());
+//     EXPECT_CALL(mockCommand2, IsFinished())
+//       .WillOnce(Return(true));
+//     EXPECT_CALL(mockCommand2, End());
+//   }
+
+//   group.Start();
+//   frc::Scheduler::GetInstance()->Run();
+//   frc::Scheduler::GetInstance()->Run();
+//   frc::Scheduler::GetInstance()->Run();
+// }
+
+TEST(Commands, EmptyCommandGroup)
+{
+  frc::CommandGroup group;
+
+  group.Start();
   frc::Scheduler::GetInstance()->Run();
 }

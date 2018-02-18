@@ -10,6 +10,7 @@ namespace frc
   public:
 
     friend class Subsystem;
+    friend class DefaultSubsystem;
 
     Command();
 
@@ -17,11 +18,13 @@ namespace frc
 
     void Requires(Subsystem*);
 
-    void Start();
+    virtual void Start();
 
     bool IsInterruptible() const;
 
     void SetInterruptible(bool isInterruptible);
+
+    bool IsEndCalled() const;
 
   protected:
 
@@ -37,9 +40,13 @@ namespace frc
 
   private:
 
+    void SetEndCalled(bool isEndCalled);
+
     Subsystem* mySubsystem;
 
     bool myIsInterruptible;
+
+    bool myIsEndCalled;
   };
 }; /* namespace frc */
 

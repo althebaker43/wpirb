@@ -25,6 +25,8 @@ Scheduler::DestroyInstance()
 {
   delete ourInstance;
   ourInstance = NULL;
+
+  DefaultSubsystem::DestroyInstance();
 }
 
 void
