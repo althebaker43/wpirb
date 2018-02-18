@@ -38,11 +38,11 @@ namespace frc
 
     virtual void Interrupted();
 
+    Subsystem* mySubsystem;
+
   private:
 
     void SetEndCalled(bool isEndCalled);
-
-    Subsystem* mySubsystem;
 
     bool myIsInterruptible;
 

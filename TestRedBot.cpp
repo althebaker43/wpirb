@@ -740,40 +740,40 @@ TEST(Commands, NoSubsystem)
   frc::Scheduler::GetInstance()->Run();
 }
 
-// TEST(Commands, CommandGroup)
-// {
-//   MockSubsystem mockSubsystem;
-//   MockCommand mockCommand1(&mockSubsystem);
-//   MockCommand mockCommand2(&mockSubsystem);
+TEST(Commands, CommandGroup)
+{
+  MockSubsystem mockSubsystem;
+  MockCommand mockCommand1(&mockSubsystem);
+  MockCommand mockCommand2(&mockSubsystem);
 
-//   frc::CommandGroup group;
-//   group.AddSequential(&mockCommand1);
-//   group.AddSequential(&mockCommand2);
+  frc::CommandGroup group;
+  group.AddSequential(&mockCommand1);
+  group.AddSequential(&mockCommand2);
 
-//   {
-//     ::testing::InSequence s;
+  {
+    ::testing::InSequence s;
 
-//     EXPECT_CALL(mockCommand1, Initialize());
-//     EXPECT_CALL(mockCommand1, Execute());
-//     EXPECT_CALL(mockCommand1, IsFinished())
-//       .WillOnce(Return(false));
-//     EXPECT_CALL(mockCommand1, Execute());
-//     EXPECT_CALL(mockCommand1, IsFinished())
-//       .WillOnce(Return(true));
-//     EXPECT_CALL(mockCommand1, End());
+    EXPECT_CALL(mockCommand1, Initialize());
+    EXPECT_CALL(mockCommand1, Execute());
+    EXPECT_CALL(mockCommand1, IsFinished())
+      .WillOnce(Return(false));
+    EXPECT_CALL(mockCommand1, Execute());
+    EXPECT_CALL(mockCommand1, IsFinished())
+      .WillOnce(Return(true));
+    EXPECT_CALL(mockCommand1, End());
 
-//     EXPECT_CALL(mockCommand2, Initialize());
-//     EXPECT_CALL(mockCommand2, Execute());
-//     EXPECT_CALL(mockCommand2, IsFinished())
-//       .WillOnce(Return(true));
-//     EXPECT_CALL(mockCommand2, End());
-//   }
+    EXPECT_CALL(mockCommand2, Initialize());
+    EXPECT_CALL(mockCommand2, Execute());
+    EXPECT_CALL(mockCommand2, IsFinished())
+      .WillOnce(Return(true));
+    EXPECT_CALL(mockCommand2, End());
+  }
 
-//   group.Start();
-//   frc::Scheduler::GetInstance()->Run();
-//   frc::Scheduler::GetInstance()->Run();
-//   frc::Scheduler::GetInstance()->Run();
-// }
+  group.Start();
+  frc::Scheduler::GetInstance()->Run();
+  frc::Scheduler::GetInstance()->Run();
+  frc::Scheduler::GetInstance()->Run();
+}
 
 TEST(Commands, EmptyCommandGroup)
 {
