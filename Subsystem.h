@@ -2,7 +2,7 @@
 #define SUBSYSTEM_H
 
 #include <string>
-#include <list>
+#include <set>
 
 namespace frc
 {
@@ -45,7 +45,7 @@ namespace frc
 
   private:
 
-    typedef std::list<Command*> Commands;
+    typedef std::set<Command*> Commands;
 
     DefaultSubsystem();
 

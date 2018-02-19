@@ -845,6 +845,7 @@ TEST(Commands, CommandGroupParallel)
   frc::Scheduler::GetInstance()->Run();
   frc::Scheduler::GetInstance()->Run();
   frc::Scheduler::GetInstance()->Run();
+  frc::Scheduler::GetInstance()->Run();
 }
 
 TEST(Commands, EmptyCommandGroup)
@@ -852,5 +853,54 @@ TEST(Commands, EmptyCommandGroup)
   frc::CommandGroup group;
 
   group.Start();
+  frc::Scheduler::GetInstance()->Run();
+}
+
+TEST(Commands, StartOnce)
+{
+  MockSubsystem mockSubsystem;
+  MockCommand mockCommand(&mockSubsystem);
+
+  {
+    ::testing::InSequence s;
+
+    EXPECT_CALL(mockCommand, Initialize());
+    EXPECT_CALL(mockCommand, Execute());
+    EXPECT_CALL(mockCommand, IsFinished())
+      .WillOnce(Return(false));
+    EXPECT_CALL(mockCommand, Execute());
+    EXPECT_CALL(mockCommand, IsFinished())
+      .WillOnce(Return(true));
+    EXPECT_CALL(mockCommand, End());
+  }
+
+  mockCommand.Start();
+  mockCommand.Start();
+  frc::Scheduler::GetInstance()->Run();
+  mockCommand.Start();
+  frc::Scheduler::GetInstance()->Run();
+}
+
+TEST(Commands, StartOnceNoSubsystem)
+{
+  MockCommand mockCommand;
+
+  {
+    ::testing::InSequence s;
+
+    EXPECT_CALL(mockCommand, Initialize());
+    EXPECT_CALL(mockCommand, Execute());
+    EXPECT_CALL(mockCommand, IsFinished())
+      .WillOnce(Return(false));
+    EXPECT_CALL(mockCommand, Execute());
+    EXPECT_CALL(mockCommand, IsFinished())
+      .WillOnce(Return(true));
+    EXPECT_CALL(mockCommand, End());
+  }
+
+  mockCommand.Start();
+  mockCommand.Start();
+  frc::Scheduler::GetInstance()->Run();
+  mockCommand.Start();
   frc::Scheduler::GetInstance()->Run();
 }

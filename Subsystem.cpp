@@ -33,7 +33,7 @@ Subsystem::ProcessCommands()
     {
       if (myCurrentCommand)
 	{
-	  if (myCurrentCommand->IsInterruptible())
+	  if (myCurrentCommand->IsInterruptible() && (myNextCommand != myCurrentCommand))
 	    {
 	      myCurrentCommand->Interrupted();
 	      myCurrentCommand = myNextCommand;
@@ -102,7 +102,7 @@ DefaultSubsystem::~DefaultSubsystem()
 void
 DefaultSubsystem::SetNextCommand(Command* command)
 {
-  myNextCommands.push_back(command);
+  myNextCommands.insert(command);
 }
 
 void
@@ -111,8 +111,11 @@ DefaultSubsystem::ProcessCommands()
   for (Commands::const_iterator nextCmdIter = myNextCommands.begin(); nextCmdIter != myNextCommands.end(); ++nextCmdIter)
     {
       Command* cmd = *nextCmdIter;
-      cmd->Initialize();
-      myCurrentCommands.push_back(cmd);
+      if (myCurrentCommands.count(cmd) == 0)
+	{
+	  cmd->Initialize();
+	  myCurrentCommands.insert(cmd);
+	}
     }
   myNextCommands.clear();
 
