@@ -22,6 +22,15 @@ CommandGroup::AddSequential(Command* command)
 }
 
 void
+CommandGroup::AddParallel(Command* command)
+{
+  if (!(mySteps.empty()))
+    {
+      mySteps.back().push_back(command);
+    }
+}
+
+void
 CommandGroup::Start()
 {
   if (mySteps.empty())

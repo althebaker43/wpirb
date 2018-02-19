@@ -16,6 +16,8 @@ namespace frc
 
     void AddSequential(Command* command);
 
+    void AddParallel(Command* command);
+
     void Start();
 
   protected:

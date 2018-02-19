@@ -775,6 +775,78 @@ TEST(Commands, CommandGroup)
   frc::Scheduler::GetInstance()->Run();
 }
 
+TEST(Commands, CommandGroupParallel)
+{
+  MockCommand mockCommand0;
+  MockCommand mockCommand1;
+  MockCommand mockCommand2;
+  MockCommand mockCommand3;
+  MockCommand mockCommand4;
+
+  frc::CommandGroup group;
+  group.AddParallel(&mockCommand0);
+  group.AddSequential(&mockCommand1);
+  group.AddParallel(&mockCommand2);
+  group.AddSequential(&mockCommand3);
+  group.AddParallel(&mockCommand4);
+
+  ::testing::Sequence cmd1Seq, cmd2Seq, cmd3Seq, cmd4Seq;
+
+  EXPECT_CALL(mockCommand1, Initialize())
+    .InSequence(cmd1Seq);
+  EXPECT_CALL(mockCommand1, Execute())
+    .InSequence(cmd1Seq);
+  EXPECT_CALL(mockCommand1, IsFinished())
+    .InSequence(cmd1Seq)
+    .WillOnce(Return(true));
+  ::testing::Expectation cmd1End = EXPECT_CALL(mockCommand1, End())
+    .InSequence(cmd1Seq);
+
+  EXPECT_CALL(mockCommand2, Initialize())
+    .InSequence(cmd2Seq);
+  EXPECT_CALL(mockCommand2, Execute())
+    .InSequence(cmd2Seq);
+  EXPECT_CALL(mockCommand2, IsFinished())
+    .InSequence(cmd2Seq)
+    .WillOnce(Return(false));
+  EXPECT_CALL(mockCommand2, Execute())
+    .InSequence(cmd2Seq);
+  EXPECT_CALL(mockCommand2, IsFinished())
+    .InSequence(cmd2Seq)
+    .WillOnce(Return(true));
+  ::testing::Expectation cmd2End = EXPECT_CALL(mockCommand2, End())
+    .InSequence(cmd2Seq);
+
+  EXPECT_CALL(mockCommand3, Initialize())
+    .InSequence(cmd3Seq)
+    .After(cmd1End)
+    .After(cmd2End);
+  EXPECT_CALL(mockCommand3, Execute())
+    .InSequence(cmd3Seq);
+  EXPECT_CALL(mockCommand3, IsFinished())
+    .InSequence(cmd3Seq)
+    .WillOnce(Return(true));
+  EXPECT_CALL(mockCommand3, End())
+    .InSequence(cmd3Seq);
+
+  EXPECT_CALL(mockCommand4, Initialize())
+    .InSequence(cmd4Seq)
+    .After(cmd1End)
+    .After(cmd2End);
+  EXPECT_CALL(mockCommand4, Execute())
+    .InSequence(cmd4Seq);
+  EXPECT_CALL(mockCommand4, IsFinished())
+    .InSequence(cmd4Seq)
+    .WillOnce(Return(true));
+  EXPECT_CALL(mockCommand4, End())
+    .InSequence(cmd4Seq);
+
+  group.Start();
+  frc::Scheduler::GetInstance()->Run();
+  frc::Scheduler::GetInstance()->Run();
+  frc::Scheduler::GetInstance()->Run();
+}
+
 TEST(Commands, EmptyCommandGroup)
 {
   frc::CommandGroup group;
