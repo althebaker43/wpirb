@@ -569,6 +569,8 @@ public:
   MockSubsystem() : Subsystem("mock")
   {
   }
+
+  MOCK_METHOD0(InitDefaultCommand, void(void));
 };
 
 class MockCommand : public frc::Command
@@ -601,6 +603,8 @@ TEST(Commands, SingleExecute)
 
   mockCommand.Start();
 
+  EXPECT_CALL(mockSubsystem, InitDefaultCommand());
+
   EXPECT_CALL(mockCommand, Initialize());
   EXPECT_CALL(mockCommand, Execute());
   EXPECT_CALL(mockCommand, IsFinished())
@@ -617,6 +621,8 @@ TEST(Commands, TwoStepExecute)
   MockCommand mockCommand(&mockSubsystem);
 
   mockCommand.Start();
+
+  EXPECT_CALL(mockSubsystem, InitDefaultCommand());
 
   EXPECT_CALL(mockCommand, Initialize());
   EXPECT_CALL(mockCommand, Execute())
@@ -638,6 +644,8 @@ TEST(Commands, Interrupt)
   MockCommand mockCommand2(&mockSubsystem);
 
   mockCommand2.SetInterruptible(false);
+
+  EXPECT_CALL(mockSubsystem, InitDefaultCommand());
 
   {
     ::testing::InSequence s;
@@ -674,6 +682,8 @@ TEST(Commands, DefaultCommand)
   MockCommand mockCommand(&mockSubsystem);
 
   mockSubsystem.SetDefaultCommand(&mockDefaultCommand);
+
+  EXPECT_CALL(mockSubsystem, InitDefaultCommand());
 
   {
     ::testing::InSequence s;
@@ -749,6 +759,8 @@ TEST(Commands, CommandGroup)
   frc::CommandGroup group;
   group.AddSequential(&mockCommand1);
   group.AddSequential(&mockCommand2);
+
+  EXPECT_CALL(mockSubsystem, InitDefaultCommand());
 
   {
     ::testing::InSequence s;
@@ -860,6 +872,8 @@ TEST(Commands, StartOnce)
 {
   MockSubsystem mockSubsystem;
   MockCommand mockCommand(&mockSubsystem);
+
+  EXPECT_CALL(mockSubsystem, InitDefaultCommand());
 
   {
     ::testing::InSequence s;

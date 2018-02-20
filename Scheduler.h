@@ -25,7 +25,11 @@ namespace frc
 
     static Scheduler* ourInstance;
 
+    Scheduler();
+
     Subsystems mySubsystems;
+
+    bool myAreSubsystemsInitialized;
   };
 }; /* namespace frc */
 

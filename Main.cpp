@@ -2,6 +2,7 @@
 #include "FieldControlSystem.h"
 #include "RedBot.h"
 #include "RedBotPacket.h"
+#include "IterativeRobot.h"
 #include <iostream>
 #include <argp.h>
 #include <errno.h>
@@ -120,6 +121,7 @@ WPIRBMain(
     }
 
     std::cout << "Program: initializing program." << std::endl;
+    program.RobotInit();
     if (InputOutputDevicePath.empty() == false)
     {
         robot = new RedBot(
