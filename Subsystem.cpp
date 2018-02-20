@@ -27,6 +27,16 @@ Subsystem::SetNextCommand(Command* command)
 }
 
 void
+Subsystem::InitDefaultCommand()
+{
+}
+
+void
+Subsystem::Periodic()
+{
+}
+
+void
 Subsystem::ProcessCommands()
 {
   if (myNextCommand)

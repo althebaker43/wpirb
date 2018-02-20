@@ -3,6 +3,7 @@
 
 // Framework
 #include "IterativeRobot.h"
+#include "Scheduler.h"
 
 // Components
 #include "DigitalOutput.h"

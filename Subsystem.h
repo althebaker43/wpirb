@@ -18,6 +18,10 @@ namespace frc
 
     void SetDefaultCommand(Command* command);
 
+    virtual void InitDefaultCommand();
+
+    virtual void Periodic();
+
     virtual void ProcessCommands();
 
     virtual void SetNextCommand(Command*);

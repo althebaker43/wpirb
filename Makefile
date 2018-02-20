@@ -51,7 +51,7 @@ RESIDUE= \
 
 
 .PHONY : all
-all : tags TAGS test
+all : tags TAGS test $(LIB)
 
 .PHONY : test
 test : $(TEST_RUNNER)

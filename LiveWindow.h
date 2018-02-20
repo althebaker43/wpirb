@@ -1,6 +1,8 @@
 #ifndef LIVEWINDOW_H
 #define LIVEWINDOW_H
 
+namespace frc
+{
 
 class LiveWindow
 {
@@ -20,5 +22,7 @@ class LiveWindow
         LiveWindow(const LiveWindow&);
         ~LiveWindow();
 };
+
+}; /* namespace frc */
 
 #endif /* ifndef LIVEWINDOW_H */

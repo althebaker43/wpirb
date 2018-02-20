@@ -1,6 +1,8 @@
 #include "LiveWindow.h"
 #include <unistd.h>
 
+using namespace frc;
+
 
 LiveWindow* LiveWindow::ourInstance = NULL;
 
