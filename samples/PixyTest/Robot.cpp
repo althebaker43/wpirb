@@ -1,4 +1,6 @@
 #include "WPILib.h"
+#include "SmartDashboard.h"
+#include <llvm/StringRef.h>
 #include <pixy.h>
 
 class Robot : public frc::IterativeRobot
@@ -59,6 +61,12 @@ class Robot : public frc::IterativeRobot
             joystick(0)
         {
 	  CheckPixyStatus(pixy_init());
+
+	  frc::SmartDashboard::init();
+	  frc::SmartDashboard::PutBoolean("Found Cube", false);
+	  frc::SmartDashboard::PutNumber("Cube X", 0);
+	  frc::SmartDashboard::PutNumber("Cube Y", 0);
+	  frc::SmartDashboard::PutNumber("Drive X", 0.0);
 	}
 
         void
@@ -80,10 +88,18 @@ class Robot : public frc::IterativeRobot
 	      int numBlocks = pixy_get_blocks(1, &block);
 	      if ((numBlocks == 0) || (!CheckPixyStatus(numBlocks)))
 		{
+		  frc::SmartDashboard::PutBoolean("Found Cube", false);
 		  return;
 		}
 
-	      std::cout << "Found block at (" << block.x << ", " << block.y << ")" << std::endl;
+	      float xValue = ((float)(block.x - 160))/160;
+
+	      frc::SmartDashboard::PutBoolean("Found Cube", true);
+	      frc::SmartDashboard::PutNumber("Cube X", block.x);
+	      frc::SmartDashboard::PutNumber("Cube Y", block.y);
+	      frc::SmartDashboard::PutNumber("Drive X", xValue);
+
+	      drive.ArcadeDrive(joystick.GetY(), xValue);
 	    }
         }
 };
