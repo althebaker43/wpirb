@@ -69,6 +69,16 @@ class Joystick : public TwoDimController
          */
         float getYPosition();
 
+	/**
+	 * Provides the number of controller buttons
+	 */
+	int GetButtonCount() const;
+
+	/**
+	 * Provides the state of the button at the given index
+	 */
+	bool GetRawButton(int) const;
+
     private:
 
         /**

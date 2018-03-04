@@ -31,6 +31,13 @@ main(
     std::cout << "Move joystick left to continue." << std::endl;
     while (joystick.GetX() >= -0.9);
 
+    std::cout << "Found " << joystick.GetButtonCount() << " buttons." << std::endl;
+    for (size_t buttonIdx = 0; buttonIdx < joystick.GetButtonCount(); ++buttonIdx)
+      {
+	std::cout << "Push joystick button " << buttonIdx << std::endl;
+	while (joystick.GetRawButton(buttonIdx) == false);
+      }
+
     std::cout << "Info: joystick test successful." << std::endl;
 
     return 0;

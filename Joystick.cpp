@@ -87,6 +87,19 @@ Joystick::GetY(
     }
 }
 
+int
+Joystick::GetButtonCount() const
+{
+  return SDL_JoystickNumButtons(mySDLStick);
+}
+
+bool
+Joystick::GetRawButton(int buttonIdx) const
+{
+  SDL_JoystickUpdate();
+  return (SDL_JoystickGetButton(mySDLStick, buttonIdx) != 0);
+}
+
 // TwoDimController implementations
 
 float
