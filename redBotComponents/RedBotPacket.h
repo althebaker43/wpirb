@@ -25,6 +25,7 @@ class RedBotPacket : public Packet
             TYPE_AINPUT,    /**< Analog input packet */
             TYPE_PINCONFIG, /**< Pin configuration packet */
             TYPE_MDRIVE,    /**< Motor drive packet */
+	    TYPE_ENCINPUT,  /**< Encoder input packet */
 
             // Response packets
             TYPE_ACK,           /**< Acknowledgement packet */
@@ -47,6 +48,7 @@ class RedBotPacket : public Packet
             BID_AINPUT =    0x04,
             BID_PINCONFIG = 0x05,
             BID_MDRIVE =    0x06,
+	    BID_ENCINPUT =  0x07,
 
             // Response packets
             BID_ACK =           0x82,

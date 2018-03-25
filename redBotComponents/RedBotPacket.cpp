@@ -4,6 +4,7 @@
 #include "DigitalOutput.h"
 #include "AnalogInput.h"
 #include "RobotDrive.h"
+#include "RedBotEncoder.h"
 #include <sstream>
 #include <vector>
 #include <math.h>
@@ -92,6 +93,7 @@ RedBotPacketGenerator::createPacket(
         case RedBotPacket::BID_AINPUT:        return new AnalogInputPacket(); break;
         case RedBotPacket::BID_AVALUE:        return new AnalogValuePacket(); break;
         case RedBotPacket::BID_MDRIVE:        return new MotorDrivePacket(); break;
+        case RedBotPacket::BID_ENCINPUT:      return new EncoderInputPacket(); break;
         case RedBotPacket::BID_ACK:           return new AcknowledgePacket(); break;
         default: return NULL; break;
     };

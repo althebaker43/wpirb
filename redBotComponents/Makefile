@@ -14,6 +14,7 @@ MODULES = \
 	DigitalInput \
 	AnalogInput \
 	RedBotSpeedController \
+	RedBotEncoder \
 	ConfigurableInterface \
 	RedBotPacket \
 	XMLElement

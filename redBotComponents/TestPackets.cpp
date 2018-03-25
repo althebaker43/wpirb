@@ -5,6 +5,7 @@
 #include "DigitalOutput.h"
 #include "AnalogInput.h"
 #include "RobotDrive.h"
+#include "RedBotEncoder.h"
 #include "TestUtils.h"
 #include <sstream>
 #include <list>
@@ -246,6 +247,46 @@ TEST(Packets, MotorDrivePacket)
 
     delete mDrivePacket3;
 }
+
+TEST(Packets, EncoderInputPacket)
+{
+  EncoderInputPacket leftEncInPacket(false);
+  std::ostringstream outputStream;
+  leftEncInPacket.write(outputStream);
+
+  BPACKET_EQUAL("\xFF\x07\x01\xFF", outputStream.str().c_str());
+
+  EncoderInputPacket rightEncInPacket(true);
+  outputStream.str("");
+  rightEncInPacket.write(outputStream);
+
+  BPACKET_EQUAL("\xFF\x07\x02\xFF", outputStream.str().c_str());
+
+  std::istringstream inputStream;
+  inputStream.str("\xFF\x07\x01\xFF");
+  Packet* packet1 = readPacket(inputStream);
+
+  CHECK(NULL != packet1);
+  CHECK(NULL != dynamic_cast<EncoderInputPacket*>(packet1));
+
+  EncoderInputPacket* readLeftEncInPacket = dynamic_cast<EncoderInputPacket*>(packet1);
+
+  CHECK_FALSE(readLeftEncInPacket->isRight());
+
+  inputStream.str("\xFF\x07\x02\xFF");
+  Packet* packet2 = readPacket(inputStream);
+
+  CHECK(NULL != packet2);
+  CHECK(NULL != dynamic_cast<EncoderInputPacket*>(packet2));
+
+  EncoderInputPacket* readRightEncInPacket = dynamic_cast<EncoderInputPacket*>(packet2);
+
+  CHECK(readRightEncInPacket->isRight());
+
+  delete packet1;
+  delete packet2;
+}
+
 
 TEST(Packets, DigitalValuePacket)
 {
@@ -543,6 +584,32 @@ TEST(Packets, MotorDrivePacketXML)
         "<direction>forward</direction>"
         "</packet>";
     CHECK_EQUAL(expectedOutput, packetStream.str());
+}
+
+TEST(Packets, EncoderInputPacketXML)
+{
+  std::ostringstream packetStream;
+
+  EncoderInputPacket rightEncInPacket(true);
+  rightEncInPacket.writeXML(packetStream);
+
+  std::string expectedOutput =
+    "<packet>"
+    "<type>ENCINPUT</type>"
+    "<motor>right</motor>"
+    "</packet>";
+  CHECK_EQUAL(expectedOutput, packetStream.str());
+
+  EncoderInputPacket leftEncInPacket(false);
+  packetStream.str("");
+  leftEncInPacket.writeXML(packetStream);
+
+  expectedOutput =
+    "<packet>"
+    "<type>ENCINPUT</type>"
+    "<motor>left</motor>"
+    "</packet>";
+  CHECK_EQUAL(expectedOutput, packetStream.str())
 }
 
 TEST(Packets, DigitalValuePacketXML)
