@@ -41,6 +41,35 @@ class EncoderInputPacket : public RedBotPacket
   bool myIsRight;
 };
 
+class EncoderCountPacket : public RedBotPacket
+{
+ public:
+
+  EncoderCountPacket();
+
+  EncoderCountPacket(bool isRight, int32_t count);
+
+  bool isRight() const;
+
+  int32_t getCount() const;
+
+  void read(std::istream& inputStream);
+
+  bool isValid() const;
+
+  bool operator==(const Packet& packet) const;
+
+ private:
+
+  void writeContents(std::ostream& outputStream) const;
+
+  void getXMLElements(XMLElements& elements) const;
+
+  bool myIsRight;
+
+  int32_t myCount;
+};
+
 class RedBotEncoder : public frc::CounterBase
 {
  public:

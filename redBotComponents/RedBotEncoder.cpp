@@ -58,3 +58,96 @@ EncoderInputPacket::operator==(const Packet& packet) const
 {
   return true;
 }
+
+
+EncoderCountPacket::EncoderCountPacket() :
+  RedBotPacket(TYPE_ENCCOUNT, "ENCCOUNT", BID_ENCCOUNT),
+  myIsRight(true),
+  myCount(0)
+{
+}
+
+EncoderCountPacket::EncoderCountPacket(bool isRight, int32_t count) :
+  RedBotPacket(TYPE_ENCCOUNT, "ENCCOUNT", BID_ENCCOUNT),
+  myIsRight(isRight),
+  myCount(count)
+{
+}
+
+bool
+EncoderCountPacket::isRight() const
+{
+  return myIsRight;
+}
+
+int32_t
+EncoderCountPacket::getCount() const
+{
+  return myCount;
+}
+
+void
+EncoderCountPacket::read(std::istream& inputStream)
+{
+  bool isRight = true;
+  isRight = (inputStream.get() == 1);
+  if (inputStream.good() == false)
+    {
+      return;
+    }
+
+  myIsRight = isRight;
+
+  int32_t count = 0;
+  for (ssize_t upperByteIdx = 32; upperByteIdx >= 0; upperByteIdx -= 7)
+    {
+      char curByte = inputStream.get();
+      if (inputStream.good() == false)
+	{
+	  return;
+	}
+
+      --curByte;
+
+      ssize_t shiftAmt = (upperByteIdx > 7) ? upperByteIdx - 7 : 0;
+      count |= (curByte << shiftAmt);
+    }
+
+  myCount = count;
+
+  inputStream.get();
+}
+
+bool
+EncoderCountPacket::isValid() const
+{
+}
+
+bool
+EncoderCountPacket::operator==(const Packet& packet) const
+{
+}
+
+void
+EncoderCountPacket::writeContents(std::ostream& outputStream) const
+{
+  outputStream << (myIsRight ? "\x01" : "\x02");
+
+  // Split count up into 7-bit chunks
+  for (ssize_t bitOffset = 31; bitOffset >= 0; bitOffset -= 7)
+    {
+      char curByte = 0;
+      for (ssize_t bitIdx = bitOffset; (bitIdx >= 0) && (bitIdx >= bitOffset - 7); --bitIdx)
+	{
+	  curByte = (curByte << 1) | ((myCount & (1 << bitIdx)) ? 1 : 0);
+	}
+      ++curByte;
+
+      outputStream << curByte;
+    }
+}
+
+void
+EncoderCountPacket::getXMLElements(XMLElements& elements) const
+{
+}

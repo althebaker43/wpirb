@@ -25,13 +25,14 @@ class RedBotPacket : public Packet
             TYPE_AINPUT,    /**< Analog input packet */
             TYPE_PINCONFIG, /**< Pin configuration packet */
             TYPE_MDRIVE,    /**< Motor drive packet */
-	    TYPE_ENCINPUT,  /**< Encoder input packet */
+            TYPE_ENCINPUT,  /**< Encoder input packet */
 
             // Response packets
             TYPE_ACK,           /**< Acknowledgement packet */
             TYPE_DVALUE,        /**< Digital value response packet */
             TYPE_AVALUE,        /**< Analog value response packet */
             TYPE_PINCONFIGINFO, /**< Pin configuration info response packet */
+            TYPE_ENCCOUNT       /**< Encoder count packet */
         };
 
         /**
@@ -48,13 +49,14 @@ class RedBotPacket : public Packet
             BID_AINPUT =    0x04,
             BID_PINCONFIG = 0x05,
             BID_MDRIVE =    0x06,
-	    BID_ENCINPUT =  0x07,
+            BID_ENCINPUT =  0x07,
 
             // Response packets
             BID_ACK =           0x82,
             BID_DVALUE =        0x81,
             BID_AVALUE =        0x83,
             BID_PINCONFIGINFO = 0x84,
+            BID_ENCCOUNT =      0x85
         };
 
         /**

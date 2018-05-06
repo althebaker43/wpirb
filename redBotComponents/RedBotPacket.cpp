@@ -94,6 +94,7 @@ RedBotPacketGenerator::createPacket(
         case RedBotPacket::BID_AVALUE:        return new AnalogValuePacket(); break;
         case RedBotPacket::BID_MDRIVE:        return new MotorDrivePacket(); break;
         case RedBotPacket::BID_ENCINPUT:      return new EncoderInputPacket(); break;
+        case RedBotPacket::BID_ENCCOUNT:      return new EncoderCountPacket(); break;
         case RedBotPacket::BID_ACK:           return new AcknowledgePacket(); break;
         default: return NULL; break;
     };
