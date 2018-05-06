@@ -764,6 +764,34 @@ TEST(Packets, PinConfigInfoPacketXML)
     CHECK_EQUAL(expectedOutput, packetStream.str());
 }
 
+TEST(Packets, EncoderCountPacketXML)
+{
+  std::ostringstream packetStream;
+  std::string expectedOutput;
+  EncoderCountPacket countPacket1(true, 4);
+  countPacket1.writeXML(packetStream);
+
+  expectedOutput =
+    "<packet>"
+    "<type>ENCCOUNT</type>"
+    "<motor>right</motor>"
+    "<count>4</count>"
+    "</packet>";
+  CHECK_EQUAL(expectedOutput, packetStream.str());
+
+  EncoderCountPacket countPacket2(false, -3);
+  packetStream.str("");
+  countPacket2.writeXML(packetStream);
+
+  expectedOutput =
+    "<packet>"
+    "<type>ENCCOUNT</type>"
+    "<motor>left</motor>"
+    "<count>-3</count>"
+    "</packet>";
+  CHECK_EQUAL(expectedOutput, packetStream.str());
+}
+
 TEST(Packets, InvalidReadPacket)
 {
     std::istringstream inputStream;

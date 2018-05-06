@@ -121,11 +121,13 @@ EncoderCountPacket::read(std::istream& inputStream)
 bool
 EncoderCountPacket::isValid() const
 {
+  return true;
 }
 
 bool
 EncoderCountPacket::operator==(const Packet& packet) const
 {
+  return true;
 }
 
 void
@@ -150,4 +152,6 @@ EncoderCountPacket::writeContents(std::ostream& outputStream) const
 void
 EncoderCountPacket::getXMLElements(XMLElements& elements) const
 {
+  elements.add(new XMLDataElement<const char*>("motor", (myIsRight ? "right" : "left")));
+  elements.add(new XMLDataElement<int32_t>("count", myCount));
 }
