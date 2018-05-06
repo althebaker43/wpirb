@@ -9,6 +9,8 @@ LDFLAGS += -L$(SDL_ROOT)/lib -lSDL2
 
 CPPFLAGS += -std=c++14
 
+CXXFLAGS += -Wall -Werror
+
 WPIUTIL_ROOT = /home/allen/Development/first/wpiutil
 CPPFLAGS += -I$(WPIUTIL_ROOT)/src/main/native/include
 LDFLAGS += -L$(WPIUTIL_ROOT)/build/libs/wpiutil/shared -lwpiutil
