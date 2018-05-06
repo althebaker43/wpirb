@@ -305,7 +305,13 @@ TEST(Packets, EncoderCountPacket)
   outputStream.str("");
   leftEncCountPacket2.write(outputStream);
 
-  BPACKET_EQUAL("\xFF\x85\x02\x01\x01\x01\x1d\x05\xFF", outputStream.str().c_str());
+  BPACKET_EQUAL("\xFF\x85\x02\x01\x01\x01\x0F\x05\xFF", outputStream.str().c_str());
+
+  EncoderCountPacket rightEncCountPacket2(true, -30);
+  outputStream.str("");
+  rightEncCountPacket2.write(outputStream);
+
+  BPACKET_EQUAL("\xFF\x85\x01\x80\x80\x80\x7F\x03\xFF", outputStream.str().c_str());
 
   std::istringstream inputStream;
   inputStream.str("\xFF\x85\x01\x01\x01\x01\x01\x07\xFF");
@@ -330,8 +336,20 @@ TEST(Packets, EncoderCountPacket)
   CHECK_FALSE(leftEncCountInPacket->isRight());
   CHECK_EQUAL(20, leftEncCountInPacket->getCount());
 
+  inputStream.str("\xFF\x85\x01\x80\x80\x80\x7C\x0A\xFF");
+  Packet* packet3 = readPacket(inputStream);
+
+  CHECK(NULL != packet3);
+  CHECK(NULL != dynamic_cast<EncoderCountPacket*>(packet3));
+
+  rightEncCountInPacket = dynamic_cast<EncoderCountPacket*>(packet3);
+
+  CHECK_TRUE(rightEncCountInPacket->isRight());
+  CHECK_EQUAL(-71, rightEncCountInPacket->getCount());
+
   delete packet1;
   delete packet2;
+  delete packet3;
 }
 
 TEST(Packets, DigitalValuePacket)

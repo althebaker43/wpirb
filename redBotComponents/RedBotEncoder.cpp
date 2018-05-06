@@ -137,7 +137,7 @@ EncoderCountPacket::writeContents(std::ostream& outputStream) const
   for (ssize_t bitOffset = 31; bitOffset >= 0; bitOffset -= 7)
     {
       char curByte = 0;
-      for (ssize_t bitIdx = bitOffset; (bitIdx >= 0) && (bitIdx >= bitOffset - 7); --bitIdx)
+      for (ssize_t bitIdx = bitOffset; (bitIdx >= 0) && (bitIdx > bitOffset - 7); --bitIdx)
 	{
 	  curByte = (curByte << 1) | ((myCount & (1 << bitIdx)) ? 1 : 0);
 	}
