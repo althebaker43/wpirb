@@ -352,6 +352,45 @@ TEST(Packets, EncoderCountPacket)
   delete packet3;
 }
 
+TEST(Packets, EncoderClearPacket)
+{
+  EncoderClearPacket leftClearPacket1(false);
+  std::ostringstream outputStream;
+  leftClearPacket1.write(outputStream);
+
+  BPACKET_EQUAL("\xFF\x08\x02\xFF", outputStream.str().c_str());
+
+  EncoderClearPacket rightClearPacket1(true);
+  outputStream.str("");
+  rightClearPacket1.write(outputStream);
+
+  BPACKET_EQUAL("\xFF\x08\x01\xFF", outputStream.str().c_str());
+
+  std::istringstream inputStream;
+  inputStream.str("\xFF\x08\x01\xFF");
+  Packet* packet1 = readPacket(inputStream);
+
+  CHECK(NULL != packet1);
+  CHECK(NULL != dynamic_cast<EncoderClearPacket*>(packet1));
+
+  EncoderClearPacket* clearPacket1 = dynamic_cast<EncoderClearPacket*>(packet1);
+
+  CHECK(clearPacket1->isRight());
+
+  inputStream.str("\xFF\x08\x02\xFF");
+  Packet* packet2 = readPacket(inputStream);
+
+  CHECK(NULL != packet2);
+  CHECK(NULL != dynamic_cast<EncoderClearPacket*>(packet2));
+
+  EncoderClearPacket* clearPacket2 = dynamic_cast<EncoderClearPacket*>(packet2);
+
+  CHECK_FALSE(clearPacket2->isRight());
+
+  delete packet1;
+  delete packet2;
+}
+
 TEST(Packets, DigitalValuePacket)
 {
     DigitalValuePacket dValPacket1(2, true);

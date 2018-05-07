@@ -70,6 +70,31 @@ class EncoderCountPacket : public RedBotPacket
   int32_t myCount;
 };
 
+class EncoderClearPacket : public RedBotPacket
+{
+ public:
+
+  EncoderClearPacket();
+
+  EncoderClearPacket(bool isRight);
+
+  bool isRight() const;
+
+  void read(std::istream& inputStream);
+
+  bool isValid() const;
+
+  bool operator==(const Packet& packet) const;
+
+ private:
+
+  void writeContents(std::ostream& outputStream) const;
+
+  void getXMLElements(XMLElements& elements) const;
+
+  bool myIsRight;
+};
+
 class RedBotEncoder : public frc::CounterBase
 {
  public:

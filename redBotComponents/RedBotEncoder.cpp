@@ -155,3 +155,60 @@ EncoderCountPacket::getXMLElements(XMLElements& elements) const
   elements.add(new XMLDataElement<const char*>("motor", (myIsRight ? "right" : "left")));
   elements.add(new XMLDataElement<int32_t>("count", myCount));
 }
+
+
+EncoderClearPacket::EncoderClearPacket() :
+  RedBotPacket(TYPE_ENCCLEAR, "ENCCLEAR", BID_ENCCLEAR),
+  myIsRight(true)
+{
+}
+
+EncoderClearPacket::EncoderClearPacket(bool isRight) :
+  RedBotPacket(TYPE_ENCCLEAR, "ENCCLEAR", BID_ENCCLEAR),
+  myIsRight(isRight)
+{
+}
+
+bool
+EncoderClearPacket::isRight() const
+{
+  return myIsRight;
+}
+
+void
+EncoderClearPacket::read(std::istream& inputStream)
+{
+  bool isRight = true;
+  isRight = (inputStream.get() == 1);
+  if (inputStream.good() == false)
+    {
+      return;
+    }
+
+  myIsRight = isRight;
+
+  inputStream.get();
+}
+
+bool
+EncoderClearPacket::isValid() const
+{
+  return true;
+}
+
+bool
+EncoderClearPacket::operator==(const Packet& packet) const
+{
+  return true;
+}
+
+void
+EncoderClearPacket::writeContents(std::ostream& outputStream) const
+{
+  outputStream << (myIsRight ? '\x01' : '\x02');
+}
+
+void
+EncoderClearPacket::getXMLElements(XMLElements& elements) const
+{
+}
