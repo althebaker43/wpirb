@@ -3,6 +3,7 @@
 #define ENCODER_H
 
 #include "RedBotPacket.h"
+#include "RedBotComponent.h"
 
 namespace frc
 {
@@ -10,6 +11,10 @@ namespace frc
   {
   public:
     virtual ~CounterBase(){}
+
+    virtual int Get() const = 0;
+
+    virtual void Reset() = 0;
   };
 }; /* namespace frc */
 
@@ -95,9 +100,27 @@ class EncoderClearPacket : public RedBotPacket
   bool myIsRight;
 };
 
-class RedBotEncoder : public frc::CounterBase
+class RedBotEncoder : public frc::CounterBase, public RedBotComponent
 {
  public:
+
+  RedBotEncoder(bool isRight);
+
+  int Get() const;
+
+  void Reset();
+
+  Packet* getNextPacket();
+
+  bool processPacket(const Packet&);
+
+ private:
+
+  const bool myIsRight;
+
+  int myCount;
+
+  bool myIsReset;
 };
 
 #endif /* ifndef ENCODER_H */

@@ -213,3 +213,55 @@ EncoderClearPacket::getXMLElements(XMLElements& elements) const
 {
   elements.add(new XMLDataElement<const char*>("motor", (myIsRight ? "right" : "left")));
 }
+
+
+RedBotEncoder::RedBotEncoder(bool isRight) :
+  myIsRight(isRight),
+  myCount(0),
+  myIsReset(false)
+{
+}
+
+int
+RedBotEncoder::Get() const
+{
+  return myCount;
+}
+
+void
+RedBotEncoder::Reset()
+{
+  myIsReset = true;
+}
+
+Packet*
+RedBotEncoder::getNextPacket()
+{
+  if (myIsReset == true)
+    {
+      myIsReset = false;
+      return new EncoderClearPacket(false);
+    }
+  else
+    {
+      return new EncoderInputPacket(myIsRight);
+    }
+}
+
+bool
+RedBotEncoder::processPacket(const Packet& packet)
+{
+  const EncoderCountPacket* countPacket = dynamic_cast<const EncoderCountPacket*>(&packet);
+  if (countPacket == NULL)
+    {
+      return false;
+    }
+
+  if (countPacket->isRight() != myIsRight)
+    {
+      return false;
+    }
+
+  myCount = countPacket->getCount();
+  return true;
+}

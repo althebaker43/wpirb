@@ -5,6 +5,7 @@
 #include "AnalogInput.h"
 #include "RobotDrive.h"
 #include "RedBotSpeedController.h"
+#include "RedBotEncoder.h"
 
 
 static void CheckDrive(
@@ -153,6 +154,66 @@ TEST(Components, AnalogInputTest)
     aIn.processPacket(AnalogValuePacket(3, -19));
 
     CHECK_EQUAL(-19, aIn.GetValue());
+}
+
+TEST(Components, EncoderTest)
+{
+  RedBotEncoder leftEncoder(false);
+  RedBotEncoder rightEncoder(true);
+
+  Packet* packet0 = leftEncoder.getNextPacket();
+  myPackets.push_back(packet0);
+
+  CHECK(packet0 != NULL);
+  CHECK(NULL != dynamic_cast<EncoderInputPacket*>(packet0));
+
+  EncoderInputPacket* leftInputPacket = static_cast<EncoderInputPacket*>(packet0);
+
+  CHECK_FALSE(leftInputPacket->isRight());
+
+  Packet* packet1 = rightEncoder.getNextPacket();
+  myPackets.push_back(packet1);
+
+  CHECK(packet1 != NULL);
+  CHECK(NULL != dynamic_cast<EncoderInputPacket*>(packet1));
+
+  EncoderInputPacket* rightInputPacket = static_cast<EncoderInputPacket*>(packet1);
+
+  CHECK(rightInputPacket->isRight());
+
+  CHECK(leftEncoder.processPacket(EncoderCountPacket(false, 345)));
+  CHECK_EQUAL(345, leftEncoder.Get());
+
+  CHECK(leftEncoder.processPacket(EncoderCountPacket(false, 367)));
+  CHECK_EQUAL(367, leftEncoder.Get());
+
+  CHECK_FALSE(leftEncoder.processPacket(EncoderCountPacket(true, 203)));
+  CHECK_EQUAL(367, leftEncoder.Get());
+
+  CHECK_EQUAL(0, rightEncoder.Get());
+
+  CHECK(rightEncoder.processPacket(EncoderCountPacket(true, 211)));
+  CHECK_EQUAL(211, rightEncoder.Get());
+
+  CHECK_FALSE(rightEncoder.processPacket(AcknowledgePacket()));
+
+  leftEncoder.Reset();
+
+  Packet* packet2 = leftEncoder.getNextPacket();
+  myPackets.push_back(packet2);
+
+  CHECK(packet2 != NULL);
+  CHECK(NULL != dynamic_cast<EncoderClearPacket*>(packet2));
+
+  EncoderClearPacket* leftClearPacket = dynamic_cast<EncoderClearPacket*>(packet2);
+
+  CHECK_FALSE(leftClearPacket->isRight());
+
+  Packet* packet3 = leftEncoder.getNextPacket();
+  myPackets.push_back(packet3);
+
+  CHECK(packet2 != NULL);
+  CHECK(NULL != dynamic_cast<EncoderInputPacket*>(packet3));
 }
 
 TEST(Components, RobotDriveSimpleTest)
