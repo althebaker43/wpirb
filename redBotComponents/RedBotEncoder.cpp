@@ -211,4 +211,5 @@ EncoderClearPacket::writeContents(std::ostream& outputStream) const
 void
 EncoderClearPacket::getXMLElements(XMLElements& elements) const
 {
+  elements.add(new XMLDataElement<const char*>("motor", (myIsRight ? "right" : "left")));
 }

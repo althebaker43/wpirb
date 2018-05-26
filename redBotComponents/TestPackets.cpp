@@ -712,7 +712,33 @@ TEST(Packets, EncoderInputPacketXML)
     "<type>ENCINPUT</type>"
     "<motor>left</motor>"
     "</packet>";
-  CHECK_EQUAL(expectedOutput, packetStream.str())
+  CHECK_EQUAL(expectedOutput, packetStream.str());
+}
+
+TEST(Packets, EncoderClearPacketXML)
+{
+  std::ostringstream packetStream;
+
+  EncoderClearPacket rightEncClearPacket(true);
+  rightEncClearPacket.writeXML(packetStream);
+
+  std::string expectedOutput =
+    "<packet>"
+    "<type>ENCCLEAR</type>"
+    "<motor>right</motor>"
+    "</packet>";
+  CHECK_EQUAL(expectedOutput, packetStream.str());
+
+  EncoderClearPacket leftEncClearPacket(false);
+  packetStream.str("");
+  leftEncClearPacket.writeXML(packetStream);
+
+  expectedOutput =
+    "<packet>"
+    "<type>ENCCLEAR</type>"
+    "<motor>left</motor>"
+    "</packet>";
+  CHECK_EQUAL(expectedOutput, packetStream.str());
 }
 
 TEST(Packets, DigitalValuePacketXML)
