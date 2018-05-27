@@ -12,6 +12,7 @@
 #include "Timer.h"
 #include "RobotDrive.h"
 #include "RedBotSpeedController.h"
+#include "RedBotEncoder.h"
 #include "Joystick.h"
 #include "LiveWindow.h"
 #include "SmartDashboard.h"
