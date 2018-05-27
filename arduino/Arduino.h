@@ -18,6 +18,11 @@ enum Mode
     INPUT
 };
 
+enum AnalogInputs
+  {
+    A2
+  };
+
 class SerialHandler
 {
     public:

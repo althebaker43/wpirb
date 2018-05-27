@@ -6,9 +6,12 @@
 #include "DigitalOutput.h"
 #include "AnalogInput.h"
 #include "RobotDrive.h"
+#include "RedBotEncoder.h"
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include <sstream>
+
+using rb::RedBotMotors;
 
 
 TEST_GROUP(WPIRBRobot)
@@ -260,6 +263,39 @@ TEST(WPIRBRobot, AnalogInputTest)
             );
 
     mock().checkExpectations();
+}
+
+TEST(WPIRBRobot, EncoderTest)
+{
+  WPIRBRobot robot;
+
+  mock().expectOneCall("begin").onObject(&Serial).withParameter("baud", 9600);
+  robot.setup();
+  mock().checkExpectations();
+
+  mock().expectOneCall("encoderGetTicks").withParameter("motor", rb::LEFT).andReturnValue(40);
+
+  SendPacket(EncoderInputPacket(false), EncoderCountPacket(false, 40), robot);
+
+  mock().checkExpectations();
+
+  mock().expectOneCall("encoderGetTicks").withParameter("motor", rb::RIGHT).andReturnValue(68);
+
+  SendPacket(EncoderInputPacket(true), EncoderCountPacket(true, 68), robot);
+
+  mock().checkExpectations();
+
+  mock().expectOneCall("encoderClear").withParameter("motor", rb::LEFT);
+
+  SendPacket(EncoderClearPacket(false), AcknowledgePacket(), robot);
+
+  mock().checkExpectations();
+
+  mock().expectOneCall("encoderClear").withParameter("motor", rb::RIGHT);
+
+  SendPacket(EncoderClearPacket(true), AcknowledgePacket(), robot);
+
+  mock().checkExpectations();
 }
 
 TEST(WPIRBRobot, IncompletePacket)

@@ -3,6 +3,7 @@
 
 
 WPIRBRobot::WPIRBRobot() :
+  myEncoders(A2, 10),
     myPacketSize(0),
     myIsHeaderRead(false)
 {
@@ -112,7 +113,15 @@ WPIRBRobot::parsePacket()
     case PACKET_TYPE_MDRIVE:
       parseMotorDrivePacket();
       break;
-      
+
+  case PACKET_TYPE_ENCINPUT:
+    parseEncoderInputPacket();
+    break;
+
+  case PACKET_TYPE_ENCCLEAR:
+    parseEncoderClearPacket();
+    break;
+
     default:
       acknowledge();
       break;
@@ -294,6 +303,39 @@ WPIRBRobot::parseMotorDrivePacket()
 }
 
 void
+WPIRBRobot::parseEncoderInputPacket()
+{
+  if (myPacketSize == 4)
+    {
+      bool isRight = (myPacketBuffer[2] == 2);
+
+      long count = myEncoders.getTicks(isRight ? RB::RIGHT : RB::LEFT);
+
+      sendEncoderCount(isRight, count);
+    }
+  else
+    {
+      acknowledge();
+    }
+
+  return;
+}
+
+void
+WPIRBRobot::parseEncoderClearPacket()
+{
+  if (myPacketSize == 4)
+    {
+      bool isRight = (myPacketBuffer[2] == 1);
+
+      myEncoders.clearEnc(isRight ? RB::RIGHT : RB::LEFT);
+    }
+
+  acknowledge();
+  return;
+}
+
+void
 WPIRBRobot::acknowledge()
 {
   Serial.write(PACKET_BOUND);
@@ -338,4 +380,29 @@ WPIRBRobot::sendPinConfigInfo(unsigned int pin, bool isOutput)
     Serial.write(PACKET_BOUND);
 
     Serial.flush();
+}
+
+void
+WPIRBRobot::sendEncoderCount(bool isRight, long count)
+{
+  Serial.write(PACKET_BOUND);
+  Serial.write(PACKET_TYPE_ENCCOUNT);
+  Serial.write(byte(isRight ? 1 : 2));
+
+  // Split count up into 7-bit chunks
+  for (int bitOffset = 31; bitOffset >= 0; bitOffset -= 7)
+    {
+      char curByte = 0;
+      for (int bitIdx = bitOffset; (bitIdx >= 0) && (bitIdx > bitOffset - 7); --bitIdx)
+	{
+	  curByte = (curByte << 1) | ((count & (1 << bitIdx)) ? 1 : 0);
+	}
+      ++curByte;
+
+      Serial.write(byte(curByte));
+    }
+
+  Serial.write(PACKET_BOUND);
+
+  Serial.flush();
 }
