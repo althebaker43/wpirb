@@ -172,7 +172,7 @@ namespace frc
  * Digital input class
  */
 class DigitalInput :
-    public Input<DigitalInputPacket, DigitalValuePacket, bool>,
+    public PinInput<DigitalInputPacket, DigitalValuePacket, bool>,
     private ConfigurableInterface
 {
     public:

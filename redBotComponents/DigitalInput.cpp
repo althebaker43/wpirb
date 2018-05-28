@@ -226,7 +226,7 @@ DigitalValuePacket::getValue() const
 DigitalInput::DigitalInput(
         uint32_t channel
         ) :
-    Input(channel),
+    PinInput(channel),
     ConfigurableInterface(channel, RedBotPacket::DIR_INPUT)
 {
 }

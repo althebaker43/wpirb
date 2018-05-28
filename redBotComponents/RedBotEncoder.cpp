@@ -86,6 +86,12 @@ EncoderCountPacket::getCount() const
   return myCount;
 }
 
+int32_t
+EncoderCountPacket::getValue() const
+{
+  return getCount();
+}
+
 void
 EncoderCountPacket::read(std::istream& inputStream)
 {
@@ -217,7 +223,6 @@ EncoderClearPacket::getXMLElements(XMLElements& elements) const
 
 RedBotEncoder::RedBotEncoder(bool isRight) :
   myIsRight(isRight),
-  myCount(0),
   myIsReset(false)
 {
 }
@@ -225,7 +230,7 @@ RedBotEncoder::RedBotEncoder(bool isRight) :
 int
 RedBotEncoder::Get() const
 {
-  return myCount;
+  return Input<EncoderInputPacket, EncoderCountPacket, int>::Get();
 }
 
 void
@@ -244,24 +249,24 @@ RedBotEncoder::getNextPacket()
     }
   else
     {
-      return new EncoderInputPacket(myIsRight);
+      return getNextPacketIfTimedOut();
     }
 }
 
 bool
 RedBotEncoder::processPacket(const Packet& packet)
 {
-  const EncoderCountPacket* countPacket = dynamic_cast<const EncoderCountPacket*>(&packet);
-  if (countPacket == NULL)
-    {
-      return false;
-    }
+  return processDataPacket(packet);
+}
 
-  if (countPacket->isRight() != myIsRight)
-    {
-      return false;
-    }
+EncoderInputPacket*
+RedBotEncoder::createRequest()
+{
+  return new EncoderInputPacket(myIsRight);
+}
 
-  myCount = countPacket->getCount();
-  return true;
+bool
+RedBotEncoder::checkResponse(const EncoderCountPacket* packet)
+{
+  return (packet->isRight() == myIsRight);
 }

@@ -3,7 +3,7 @@
 #define ENCODER_H
 
 #include "RedBotPacket.h"
-#include "RedBotComponent.h"
+#include "Input.h"
 
 namespace frc
 {
@@ -58,6 +58,8 @@ class EncoderCountPacket : public RedBotPacket
 
   int32_t getCount() const;
 
+  int32_t getValue() const;
+
   void read(std::istream& inputStream);
 
   bool isValid() const;
@@ -100,7 +102,9 @@ class EncoderClearPacket : public RedBotPacket
   bool myIsRight;
 };
 
-class RedBotEncoder : public frc::CounterBase, public RedBotComponent
+class RedBotEncoder :
+  public frc::CounterBase,
+  public Input<EncoderInputPacket, EncoderCountPacket, int>
 {
  public:
 
@@ -118,9 +122,11 @@ class RedBotEncoder : public frc::CounterBase, public RedBotComponent
 
   const bool myIsRight;
 
-  int myCount;
-
   bool myIsReset;
+
+  EncoderInputPacket* createRequest();
+
+  bool checkResponse(const EncoderCountPacket*);
 };
 
 #endif /* ifndef ENCODER_H */

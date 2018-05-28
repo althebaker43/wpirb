@@ -8,8 +8,8 @@
 /**
  * Generic input class
  *
- * This class encapsulates an input pin on the robot. It sends RequestType
- * packets to request the latest value detected on the pin which are returned
+ * This class encapsulates an data input source on the robot. It sends RequestType
+ * packets to request the latest value detected on the source which are returned
  * via ResponseType packets. If the last-sent request was dropped for whatever
  * reason, another request will be automatically sent after a number of cycles
  * have passed without any response.
@@ -19,12 +19,7 @@ class Input : public RedBotComponent
 {
     public:
 
-        /**
-         * Constructor given channel
-         */
-        Input(
-                uint32_t channel
-             );
+  Input();
 
         /**
          * Destructor
@@ -34,7 +29,7 @@ class Input : public RedBotComponent
         /**
          * Gets the current value from the input channel
          */
-        ValueType Get();
+        ValueType Get() const;
 
     protected:
 
@@ -57,10 +52,9 @@ class Input : public RedBotComponent
                 const Packet& packet
                 );
 
-        /**
-         * Channel to read input signal from
-         */
-        uint32_t myChannel;
+  virtual RequestType* createRequest() = 0;
+
+  virtual bool checkResponse(const ResponseType* packet);
 
     private:
 
@@ -85,17 +79,45 @@ class Input : public RedBotComponent
         unsigned int myTimeoutCounter;
 };
 
+/**
+ * Pin input class
+ */
+template <class RequestType, class ResponseType, class ValueType>
+class PinInput : public Input<RequestType, ResponseType, ValueType>
+{
+public:
+
+  /**
+   * Constructor given channel
+   */
+  PinInput(
+	uint32_t channel
+	);
+
+  virtual ~PinInput(){}
+
+protected:
+
+  /**
+   * Channel to read input signal from
+   */
+  const uint32_t myChannel;
+
+private:
+
+  RequestType* createRequest();
+
+  bool checkResponse(const ResponseType* packet);
+};
+
 // Template implementations
 
 template <class RequestType, class ResponseType, class ValueType>
-Input<RequestType, ResponseType, ValueType>::Input(
-        uint32_t channel
-        ) :
+Input<RequestType, ResponseType, ValueType>::Input() :
     RedBotComponent(),
-    myChannel(channel),
     myValue(0),
-    myOutgoingPacket(new RequestType(myChannel)),
-    myTimeoutCounter(0)
+    myOutgoingPacket(NULL),
+    myTimeoutCounter(TIMEOUT_THRESH+1)
 {
 }
 
@@ -110,7 +132,7 @@ Input<RequestType, ResponseType, ValueType>::~Input()
 
 template <class RequestType, class ResponseType, class ValueType>
 ValueType
-Input<RequestType, ResponseType, ValueType>::Get()
+Input<RequestType, ResponseType, ValueType>::Get() const
 {
     return myValue;
 }
@@ -125,7 +147,7 @@ Input<RequestType, ResponseType, ValueType>::getNextPacketIfTimedOut()
     {
         if (myTimeoutCounter > TIMEOUT_THRESH)
         {
-            myOutgoingPacket = new RequestType(myChannel);
+	  myOutgoingPacket = createRequest();
             myTimeoutCounter = 0;
         }
         else
@@ -152,7 +174,7 @@ Input<RequestType, ResponseType, ValueType>::processDataPacket(
         return false;
     }
 
-    if (responsePacket->getPin() != myChannel)
+    if (checkResponse(responsePacket) == false)
     {
         return false;
     }
@@ -162,10 +184,38 @@ Input<RequestType, ResponseType, ValueType>::processDataPacket(
 
     if (myOutgoingPacket == NULL)
     {
-        myOutgoingPacket = new RequestType(myChannel);
+      myOutgoingPacket = createRequest();
     }
 
     return true;
+}
+
+template <class RequestType, class ResponseType, class ValueType>
+bool
+Input<RequestType, ResponseType, ValueType>::checkResponse(const ResponseType* packet)
+{
+  return true;
+}
+
+
+template <class RequestType, class ResponseType, class ValueType>
+PinInput<RequestType, ResponseType, ValueType>::PinInput(uint32_t channel) : 
+  myChannel(channel)
+{
+}
+
+template <class RequestType, class ResponseType, class ValueType>
+RequestType*
+PinInput<RequestType, ResponseType, ValueType>::createRequest()
+{
+  return new RequestType(myChannel);
+}
+
+template <class RequestType, class ResponseType, class ValueType>
+bool
+PinInput<RequestType, ResponseType, ValueType>::checkResponse(const ResponseType* packet)
+{
+  return (packet->getPin() == myChannel);
 }
 
 #endif /* ifndef INPUT_H */

@@ -157,7 +157,7 @@ namespace frc
 /**
  * Analog input class
  */
-class AnalogInput : public Input<AnalogInputPacket, AnalogValuePacket, int>
+class AnalogInput : public PinInput<AnalogInputPacket, AnalogValuePacket, int>
 {
     public:
 

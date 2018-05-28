@@ -188,7 +188,7 @@ AnalogValuePacket::getValue() const
 AnalogInput::AnalogInput(
         uint32_t channel
         ) :
-    Input(channel)
+    PinInput(channel)
 {
 }
 

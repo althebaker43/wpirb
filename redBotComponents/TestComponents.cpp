@@ -171,13 +171,18 @@ TEST(Components, EncoderTest)
 
   CHECK_FALSE(leftInputPacket->isRight());
 
-  Packet* packet1 = rightEncoder.getNextPacket();
+  Packet* packet1 = leftEncoder.getNextPacket();
   myPackets.push_back(packet1);
 
-  CHECK(packet1 != NULL);
-  CHECK(NULL != dynamic_cast<EncoderInputPacket*>(packet1));
+  CHECK_EQUAL((Packet*)NULL, packet1);
 
-  EncoderInputPacket* rightInputPacket = static_cast<EncoderInputPacket*>(packet1);
+  Packet* packet2 = rightEncoder.getNextPacket();
+  myPackets.push_back(packet2);
+
+  CHECK(packet2 != NULL);
+  CHECK(NULL != dynamic_cast<EncoderInputPacket*>(packet2));
+
+  EncoderInputPacket* rightInputPacket = static_cast<EncoderInputPacket*>(packet2);
 
   CHECK(rightInputPacket->isRight());
 
@@ -199,21 +204,21 @@ TEST(Components, EncoderTest)
 
   leftEncoder.Reset();
 
-  Packet* packet2 = leftEncoder.getNextPacket();
-  myPackets.push_back(packet2);
-
-  CHECK(packet2 != NULL);
-  CHECK(NULL != dynamic_cast<EncoderClearPacket*>(packet2));
-
-  EncoderClearPacket* leftClearPacket = dynamic_cast<EncoderClearPacket*>(packet2);
-
-  CHECK_FALSE(leftClearPacket->isRight());
-
   Packet* packet3 = leftEncoder.getNextPacket();
   myPackets.push_back(packet3);
 
-  CHECK(packet2 != NULL);
-  CHECK(NULL != dynamic_cast<EncoderInputPacket*>(packet3));
+  CHECK(packet3 != NULL);
+  CHECK(NULL != dynamic_cast<EncoderClearPacket*>(packet3));
+
+  EncoderClearPacket* leftClearPacket = dynamic_cast<EncoderClearPacket*>(packet3);
+
+  CHECK_FALSE(leftClearPacket->isRight());
+
+  Packet* packet4 = leftEncoder.getNextPacket();
+  myPackets.push_back(packet4);
+
+  CHECK(packet4 != NULL);
+  CHECK(NULL != dynamic_cast<EncoderInputPacket*>(packet4));
 }
 
 TEST(Components, RobotDriveSimpleTest)
