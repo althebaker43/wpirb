@@ -197,8 +197,8 @@ TEST(Components, EncoderTest)
 
   CHECK_EQUAL(0, rightEncoder.Get());
 
-  CHECK(rightEncoder.processPacket(EncoderCountPacket(true, 211)));
-  CHECK_EQUAL(211, rightEncoder.Get());
+  CHECK(rightEncoder.processPacket(EncoderCountPacket(true, -20)));
+  CHECK_EQUAL(-20, rightEncoder.Get());
 
   CHECK_FALSE(rightEncoder.processPacket(AcknowledgePacket()));
 
@@ -219,6 +219,18 @@ TEST(Components, EncoderTest)
 
   CHECK(packet4 != NULL);
   CHECK(NULL != dynamic_cast<EncoderInputPacket*>(packet4));
+
+  rightEncoder.Reset();
+
+  Packet* packet5 = rightEncoder.getNextPacket();
+  myPackets.push_back(packet5);
+
+  CHECK(packet5 != NULL);
+  CHECK(NULL != dynamic_cast<EncoderClearPacket*>(packet5));
+
+  EncoderClearPacket* rightClearPacket = dynamic_cast<EncoderClearPacket*>(packet5);
+
+  CHECK(rightClearPacket->isRight());
 }
 
 TEST(Components, RobotDriveSimpleTest)

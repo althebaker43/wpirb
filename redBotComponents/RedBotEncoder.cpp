@@ -245,7 +245,7 @@ RedBotEncoder::getNextPacket()
   if (myIsReset == true)
     {
       myIsReset = false;
-      return new EncoderClearPacket(false);
+      return new EncoderClearPacket(myIsRight);
     }
   else
     {
