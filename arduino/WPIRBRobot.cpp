@@ -395,7 +395,7 @@ WPIRBRobot::sendEncoderCount(bool isRight, long count)
       char curByte = 0;
       for (int bitIdx = bitOffset; (bitIdx >= 0) && (bitIdx > bitOffset - 7); --bitIdx)
 	{
-	  curByte = (curByte << 1) | ((count & (1 << bitIdx)) ? 1 : 0);
+	  curByte = (curByte << 1) | ((count & ((long(1) << bitIdx))) ? 1 : 0);
 	}
       ++curByte;
 
