@@ -48,7 +48,7 @@ all : test
 
 .PHONY : test
 test  : $(TEST_RUNNER)
-	./$(TEST_RUNNER)
+	./$(TEST_RUNNER) $(TEST_OPTIONS)
 
 $(TEST_RUNNER) : $(LIB) $(TEST_OBJS)
 	$(CXX) \
