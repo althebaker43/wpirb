@@ -4,7 +4,7 @@
 #include "DigitalInput.h"
 #include "DigitalOutput.h"
 #include "AnalogInput.h"
-#include "RobotDrive.h"
+#include "RedBotSpeedController.h"
 #include "RedBotEncoder.h"
 #include "TestUtils.h"
 #include <sstream>

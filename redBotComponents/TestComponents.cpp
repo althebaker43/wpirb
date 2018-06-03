@@ -233,17 +233,56 @@ TEST(Components, EncoderTest)
   CHECK(rightClearPacket->isRight());
 }
 
+TEST(Components, SpeedControllerTest)
+{
+  RedBotSpeedController lMotor(0);
+
+  myPackets.push_back(lMotor.getNextPacket());
+
+  CHECK_EQUAL((Packet*)NULL, myPackets.back());
+
+  lMotor.Set(1.0);
+  myPackets.push_back(lMotor.getNextPacket());
+
+  CHECK(NULL != myPackets.back());
+  CHECK(NULL != dynamic_cast<MotorDrivePacket*>(myPackets.back()));
+
+  MotorDrivePacket* mDrivePacket1 = static_cast<MotorDrivePacket*>(myPackets.back());
+
+  CHECK_EQUAL(255, mDrivePacket1->getSpeed());
+  CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket1->getDirection());
+  CHECK_EQUAL(MotorDrivePacket::MOTOR_LEFT, mDrivePacket1->getMotor());
+
+  RedBotSpeedController rMotor(1);
+
+  myPackets.push_back(rMotor.getNextPacket());
+
+  CHECK_EQUAL((Packet*)NULL, myPackets.back());
+
+  rMotor.Set(-0.5);
+  myPackets.push_back(rMotor.getNextPacket());
+
+  CHECK(NULL != myPackets.back());
+  CHECK(NULL != dynamic_cast<MotorDrivePacket*>(myPackets.back()));
+
+  MotorDrivePacket* mDrivePacket2 = static_cast<MotorDrivePacket*>(myPackets.back());
+
+  CHECK_EQUAL(127, mDrivePacket2->getSpeed());
+  CHECK_EQUAL(MotorDrivePacket::DIR_BACKWARD, mDrivePacket2->getDirection());
+  CHECK_EQUAL(MotorDrivePacket::MOTOR_RIGHT, mDrivePacket2->getMotor());
+}
+
 TEST(Components, RobotDriveSimpleTest)
 {
     RedBotSpeedController lMotor(0);
     RedBotSpeedController rMotor(1);
     frc::DifferentialDrive drive(lMotor, rMotor);
-    myPackets.push_back(drive.getNextPacket());
+    myPackets.push_back(lMotor.getNextPacket());
 
     CHECK_EQUAL((Packet*)NULL, myPackets.back());
 
     drive.ArcadeDrive(0.0, 0.0);
-    myPackets.push_back(drive.getNextPacket());
+    myPackets.push_back(lMotor.getNextPacket());
 
     CHECK(NULL != myPackets.back());
     CHECK(NULL != dynamic_cast<MotorDrivePacket*>(myPackets.back()));
@@ -253,7 +292,7 @@ TEST(Components, RobotDriveSimpleTest)
     CHECK_EQUAL(0, mDrivePacket1->getSpeed());
     CHECK_EQUAL(MotorDrivePacket::DIR_FORWARD, mDrivePacket1->getDirection());
 
-    myPackets.push_back(drive.getNextPacket());
+    myPackets.push_back(rMotor.getNextPacket());
 
     CHECK(NULL != myPackets.back());
     CHECK(NULL != dynamic_cast<MotorDrivePacket*>(myPackets.back()));
@@ -272,7 +311,7 @@ TEST(Components, RobotDriveSimpleTest)
         CHECK_EQUAL(MotorDrivePacket::MOTOR_RIGHT, mDrivePacket2->getMotor())
     }
 
-    myPackets.push_back(drive.getNextPacket());
+    myPackets.push_back(lMotor.getNextPacket());
 
     CHECK_EQUAL((Packet*)NULL, myPackets.back());
 }
@@ -287,9 +326,9 @@ TEST(Components, RobotDriveStraightTest)
 
     drive.ArcadeDrive(1.0, 0.0);
 
-    myPackets.push_back(drive.getNextPacket());
+    myPackets.push_back(lMotor.getNextPacket());
     mDrivePacket1 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
-    myPackets.push_back(drive.getNextPacket());
+    myPackets.push_back(rMotor.getNextPacket());
     mDrivePacket2 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
 
     CHECK(NULL != mDrivePacket1);
@@ -301,9 +340,9 @@ TEST(Components, RobotDriveStraightTest)
 
     drive.ArcadeDrive(-1.0, 0.0);
 
-    myPackets.push_back(drive.getNextPacket());
+    myPackets.push_back(lMotor.getNextPacket());
     mDrivePacket1 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
-    myPackets.push_back(drive.getNextPacket());
+    myPackets.push_back(rMotor.getNextPacket());
     mDrivePacket2 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
 
     CHECK(NULL != mDrivePacket1);
@@ -315,9 +354,9 @@ TEST(Components, RobotDriveStraightTest)
 
     drive.ArcadeDrive(0.5, 0.0);
 
-    myPackets.push_back(drive.getNextPacket());
+    myPackets.push_back(lMotor.getNextPacket());
     mDrivePacket1 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
-    myPackets.push_back(drive.getNextPacket());
+    myPackets.push_back(rMotor.getNextPacket());
     mDrivePacket2 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
 
     CHECK(NULL != mDrivePacket1);
@@ -329,9 +368,9 @@ TEST(Components, RobotDriveStraightTest)
 
     drive.ArcadeDrive(1.5, 0.0);
 
-    myPackets.push_back(drive.getNextPacket());
+    myPackets.push_back(lMotor.getNextPacket());
     mDrivePacket1 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
-    myPackets.push_back(drive.getNextPacket());
+    myPackets.push_back(rMotor.getNextPacket());
     mDrivePacket2 = dynamic_cast<MotorDrivePacket*>(myPackets.back());
 
     CHECK_EQUAL((MotorDrivePacket*)NULL, mDrivePacket1);
@@ -705,8 +744,11 @@ CheckDrive(
     bool rightDrivePacketFound = false;
     bool leftDrivePacketFound = false;
 
-    packets.push_back(drive.getNextPacket());
-    packets.push_back(drive.getNextPacket());
+    RedBotSpeedController& leftController = dynamic_cast<RedBotSpeedController&>(drive.getLeftController());
+    RedBotSpeedController& rightController = dynamic_cast<RedBotSpeedController&>(drive.getRightController());
+
+    packets.push_back(leftController.getNextPacket());
+    packets.push_back(rightController.getNextPacket());
 
     std::list<Packet*>::const_reverse_iterator packetIter = packets.rbegin();
 
