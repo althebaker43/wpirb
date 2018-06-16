@@ -1,5 +1,5 @@
 
-WPIRB_DIR = ../..
+WPIRB_DIR ?= ../..
 COMPONENT_DIR = $(WPIRB_DIR)/component
 REDBOTCOMPONENTS_DIR = $(WPIRB_DIR)/redBotComponents
 
@@ -8,7 +8,7 @@ LDFLAGS += \
 	-L$(REDBOTCOMPONENTS_DIR) -lredbotcomponents \
 	-L$(COMPONENT_DIR) -lcomponent -ldl -pthread
 
-include ../../include.mk
+include $(WPIRB_DIR)/include.mk
 
 CPPFLAGS += \
 	-I$(WPIRB_DIR) \
