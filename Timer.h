@@ -41,7 +41,7 @@ class Timer
         void Stop();
 
         /**
-         * Indicates if the given amount of time has elapsed
+         * Indicates if the given number of seconds has elapsed
          *
          * \return True if the time has elapse, false otherwise
          */
