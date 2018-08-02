@@ -24,8 +24,8 @@ public:
 
   void AutonomousInit()
   {
-    myLeftMotor.Set(-1.0);
-    myRightMotor.Set(1.0);
+    myLeftMotor.Set(-0.6);
+    myRightMotor.Set(0.6);
   }
 
   void AutonomousPeriodic()
